@@ -136,5 +136,18 @@ fun PenaltyNavHost(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
+
+        composable(
+            route = Screen.NfcPayment.route,
+            arguments = listOf(navArgument("fineId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val fineId = backStackEntry.arguments?.getString("fineId") ?: ""
+            NfcPaymentScreen(
+                fineId = fineId,
+                finesViewModel = finesViewModel,
+                onPaymentComplete = { navController.popBackStack() },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
     }
 }
