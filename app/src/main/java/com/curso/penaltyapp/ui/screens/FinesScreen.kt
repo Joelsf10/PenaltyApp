@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.curso.penaltyapp.data.model.FineStatus
+import com.curso.penaltyapp.model.FineStatus
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel

@@ -3,8 +3,11 @@ package com.curso.penaltyapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.curso.penaltyapp.data.model.*
 import com.curso.penaltyapp.data.repository.FakeRepository
+import com.curso.penaltyapp.model.Comment
+import com.curso.penaltyapp.model.Fine
+import com.curso.penaltyapp.model.FineCategory
+import com.curso.penaltyapp.model.FineStatus
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime

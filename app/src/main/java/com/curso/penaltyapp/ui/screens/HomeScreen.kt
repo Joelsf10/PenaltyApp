@@ -4,7 +4,6 @@ package com.curso.penaltyapp.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.curso.penaltyapp.data.model.FineStatus
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel

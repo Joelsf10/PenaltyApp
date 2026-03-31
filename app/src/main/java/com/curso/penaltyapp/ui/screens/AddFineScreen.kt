@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.curso.penaltyapp.data.model.FineCategory
+import com.curso.penaltyapp.model.FineCategory
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 
