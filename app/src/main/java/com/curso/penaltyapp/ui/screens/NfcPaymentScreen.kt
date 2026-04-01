@@ -1,14 +1,18 @@
 package com.curso.penaltyapp.ui.screens
 
-
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.Nfc
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,19 +40,28 @@ fun NfcPaymentScreen(
     val fine = finesViewModel.getFineById(fineId)
     var screenState by remember { mutableStateOf(NfcScreenState.SCANNING) }
 
-    // Pulse animation for the NFC icon
+    // Animación de pulso para el Radar NFC
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.15f,
+        targetValue = 1.3f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = EaseInOut),
-            repeatMode = RepeatMode.Reverse
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
         ),
         label = "scale"
     )
+    val opacity by infiniteTransition.animateFloat(
+        initialValue = 0.8f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "opacity"
+    )
 
-    // Auto-complete after 3s for skeleton simulation
+    // Simulación de lectura NFC
     LaunchedEffect(Unit) {
         delay(3000)
         screenState = NfcScreenState.SUCCESS
@@ -58,12 +71,14 @@ fun NfcPaymentScreen(
     }
 
     Scaffold(
+        containerColor = Color(0xFF0F1210),
         topBar = {
-            TopAppBar(
-                title = { Text("Pagament NFC") },
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                title = { Text("PAGAMENT NFC", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Tornar")
+                        Icon(Icons.Rounded.ArrowBackIosNew, null, tint = Color.White, modifier = Modifier.size(20.dp))
                     }
                 }
             )
@@ -73,145 +88,170 @@ fun NfcPaymentScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(32.dp),
+                .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             fine?.let {
-                // Fine info
-                Card(
+                // Tarjeta de información de la multa
+                Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    color = Color.White.copy(alpha = 0.03f),
+                    shape = RoundedCornerShape(24.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Multa a pagar", style = MaterialTheme.typography.labelSmall, color = PenaltyGray)
+                        Text("IMPORT A PAGAR", style = MaterialTheme.typography.labelSmall, color = Color.Gray, letterSpacing = 2.sp)
                         Text(
                             text = it.formattedAmount(),
-                            fontSize = 36.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = PenaltyRed
+                            fontSize = 42.sp,
+                            fontWeight = FontWeight.Black,
+                            color = Color.White
                         )
-                        Text(it.category.label, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Surface(
+                            color = PenaltyGreen.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text(
+                                it.category.label.uppercase(),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PenaltyGreen,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(60.dp))
             }
 
-            // NFC animation circle
             AnimatedContent(
                 targetState = screenState,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                transitionSpec = { fadeIn(tween(500)) togetherWith fadeOut(tween(500)) },
                 label = "nfc_state"
             ) { state ->
                 when (state) {
                     NfcScreenState.SCANNING -> {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Box(
-                                modifier = Modifier
-                                    .size(160.dp)
-                                    .scale(scale)
-                                    .background(PenaltyGreen.copy(alpha = 0.15f), CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            Box(contentAlignment = Alignment.Center) {
                                 Box(
                                     modifier = Modifier
-                                        .size(120.dp)
-                                        .background(PenaltyGreen.copy(alpha = 0.25f), CircleShape),
+                                        .size(140.dp)
+                                        .scale(scale)
+                                        .background(PenaltyGreen.copy(alpha = opacity), CircleShape)
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .background(Color.White.copy(alpha = 0.05f), CircleShape)
+                                        .border(2.dp, PenaltyGreen, CircleShape),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
-                                        Icons.Default.Nfc,
+                                        Icons.Rounded.Nfc,
                                         contentDescription = null,
-                                        modifier = Modifier.size(60.dp),
+                                        modifier = Modifier.size(45.dp),
                                         tint = PenaltyGreen
                                     )
                                 }
                             }
-                            Spacer(Modifier.height(32.dp))
+
+                            Spacer(Modifier.height(48.dp))
                             Text(
-                                text = "Apropa el dispositiu\nal lector NFC",
+                                text = "APROPA EL DISPOSITIU",
                                 style = MaterialTheme.typography.titleMedium,
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold
+                                color = Color.White,
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = 1.sp
                             )
-                            Spacer(Modifier.height(8.dp))
                             Text(
-                                text = "Simulant escaneig NFC...",
-                                color = PenaltyGray,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(Modifier.height(24.dp))
-                            LinearProgressIndicator(
-                                modifier = Modifier.fillMaxWidth(),
-                                color = PenaltyGreen
+                                text = "Escanejant sensor NFC...",
+                                color = Color.Gray,
+                                modifier = Modifier.padding(top = 8.dp)
                             )
                         }
                     }
 
                     NfcScreenState.SUCCESS -> {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Box(
-                                modifier = Modifier
-                                    .size(120.dp)
-                                    .background(PenaltyGreen.copy(alpha = 0.15f), CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.CheckCircle,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(80.dp),
-                                    tint = PenaltyGreen
-                                )
-                            }
+                            Icon(
+                                Icons.Rounded.CheckCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(100.dp),
+                                tint = PenaltyGreen
+                            )
                             Spacer(Modifier.height(24.dp))
                             Text(
-                                text = "Pagament validat! ✅",
+                                text = "PAGAMENT COMPLETAT",
                                 style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = PenaltyGreen
+                                fontWeight = FontWeight.Black,
+                                color = Color.White
                             )
                             Text(
-                                text = "La multa ha estat registrada com a pagada via NFC.",
+                                text = "La multa s'ha marcat com a pagada.",
                                 textAlign = TextAlign.Center,
-                                color = PenaltyGray,
+                                color = Color.Gray,
                                 modifier = Modifier.padding(top = 8.dp)
                             )
                         }
                     }
 
-                    NfcScreenState.NO_NFC -> {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Default.Warning, null, modifier = Modifier.size(80.dp), tint = PenaltyYellow)
-                            Spacer(Modifier.height(16.dp))
-                            Text("NFC no disponible", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                            Text("Aquest dispositiu no suporta NFC.", color = PenaltyGray, textAlign = TextAlign.Center)
+                    else -> {
+                        val isNoNfc = state == NfcScreenState.NO_NFC
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = if (isNoNfc) Icons.Rounded.Warning else Icons.Rounded.ErrorOutline,
+                                contentDescription = null,
+                                modifier = Modifier.size(80.dp),
+                                tint = if (isNoNfc) PenaltyYellow else PenaltyRed
+                            )
                             Spacer(Modifier.height(24.dp))
-                            Button(
-                                onClick = {
-                                    finesViewModel.markFineAsPaid(fineId)
-                                    onPaymentComplete()
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
-                            ) {
-                                Text("Confirmar pagament manual")
-                            }
-                        }
-                    }
+                            Text(
+                                text = if (isNoNfc) "NFC NO DISPONIBLE" else "ERROR DE LECTURA",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Black,
+                                color = Color.White
+                            )
+                            Text(
+                                text = if (isNoNfc)
+                                    "Aquest dispositiu no suporta pagaments físics."
+                                else
+                                    "No s'ha pogut completar l'escaneig.",
+                                color = Color.Gray,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
 
-                    NfcScreenState.ERROR -> {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Default.Error, null, modifier = Modifier.size(80.dp), tint = PenaltyRed)
-                            Spacer(Modifier.height(16.dp))
-                            Text("Error en el pagament", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                            Button(
-                                onClick = { screenState = NfcScreenState.SCANNING },
-                                colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
-                            ) {
-                                Text("Reintentar")
+                            Spacer(Modifier.height(40.dp))
+
+                            if (isNoNfc) {
+                                Button(
+                                    onClick = {
+                                        finesViewModel.markFineAsPaid(fineId)
+                                        onPaymentComplete()
+                                    },
+                                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
+                                ) {
+                                    Text("CONFIRMAR MANUALMENT", fontWeight = FontWeight.Black, color = Color.Black)
+                                }
+                            } else {
+                                OutlinedButton(
+                                    onClick = { screenState = NfcScreenState.SCANNING },
+                                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+                                ) {
+                                    Text("REINTENTAR ESCANEIG", color = Color.White, fontWeight = FontWeight.Bold)
+                                }
                             }
                         }
                     }

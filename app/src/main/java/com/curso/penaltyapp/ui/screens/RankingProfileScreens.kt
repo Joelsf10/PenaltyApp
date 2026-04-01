@@ -2,6 +2,7 @@ package com.curso.penaltyapp.ui.screens
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -23,86 +24,70 @@ import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 
 // ─── Ranking Screen ───────────────────────────────────────────────────────────
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RankingScreen(finesViewModel: FinesViewModel) {
     val ranking = finesViewModel.ranking
-    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
 
     Scaffold(
+        containerColor = Color(0xFF0F1210),
         topBar = {
-            TopAppBar(title = { Text("🏆 Rànquing", fontWeight = FontWeight.Bold) })
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                title = { Text("RÀNQUING", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White, fontWeight = FontWeight.Black) }
+            )
         }
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(16.dp, bottom = 100.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            contentPadding = PaddingValues(20.dp, bottom = 100.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
                 Text(
-                    text = "Qui ha fallat més al vestidor?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = PenaltyGray,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    text = "QUI HA FALLAT MÉS AL VESTIDOR?",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = PenaltyGreen,
+                    modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
                 )
             }
 
             itemsIndexed(ranking) { _, entry ->
                 val podiumColor = when (entry.position) {
-                    1 -> Color(0xFFFFD700)  // Gold
-                    2 -> Color(0xFFC0C0C0)  // Silver
-                    3 -> Color(0xFFCD7F32)  // Bronze
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
-                val medal = when (entry.position) {
-                    1 -> "🥇"; 2 -> "🥈"; 3 -> "🥉"; else -> "  ${entry.position}."
+                    1 -> Color(0xFFFFD700); 2 -> Color(0xFFC0C0C0); 3 -> Color(0xFFCD7F32)
+                    else -> Color.White.copy(alpha = 0.4f)
                 }
 
-                Card(
+                Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (entry.position <= 3)
-                            podiumColor.copy(alpha = 0.08f)
-                        else
-                            MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                    elevation = CardDefaults.cardElevation(if (entry.position == 1) 4.dp else 1.dp)
+                    color = Color.White.copy(alpha = 0.02f),
+                    shape = RoundedCornerShape(20.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, if (entry.position <= 3) podiumColor.copy(0.3f) else Color.White.copy(0.05f))
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = medal,
-                            fontSize = if (entry.position <= 3) 28.sp else 18.sp,
-                            modifier = Modifier.width(48.dp)
+                            text = if (entry.position <= 3) "0${entry.position}" else "${entry.position}",
+                            fontWeight = FontWeight.Black,
+                            color = podiumColor,
+                            modifier = Modifier.width(40.dp)
                         )
                         UserAvatar(
                             initials = entry.user.photoInitials,
-                            size = 44,
-                            color = podiumColor.takeIf { entry.position <= 3 } ?: PenaltyGreen
+                            size = 46,
+                            color = if (entry.position <= 3) podiumColor else PenaltyGreen
                         )
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
-                            Text(
-                                text = entry.user.name,
-                                fontWeight = if (entry.position <= 3) FontWeight.ExtraBold else FontWeight.Medium,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = "${entry.fineCount} multes · ${String.format("%.2f", entry.user.pendingFines)}€ pendents",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Text(entry.user.name, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("${entry.fineCount} multes", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                         }
                         Text(
                             text = "${String.format("%.2f", entry.totalAmount)}€",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = if (entry.position <= 3) podiumColor else PenaltyRed
+                            fontWeight = FontWeight.Black,
+                            color = if (entry.position <= 3) podiumColor else Color.White
                         )
                     }
                 }
@@ -110,8 +95,6 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
         }
     }
 }
-
-// ─── Profile Screen ───────────────────────────────────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,79 +108,71 @@ fun ProfileScreen(
     val paidCount = myFines.count { it.status.name == "PAID" }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)),
         contentPadding = PaddingValues(bottom = 100.dp)
     ) {
-        // Header
         item {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(32.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 40.dp, bottom = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    UserAvatar(initials = currentUser.photoInitials, size = 80)
+                    UserAvatar(initials = currentUser.photoInitials, size = 100, color = PenaltyGreen)
                     Spacer(Modifier.height(16.dp))
-                    Text(currentUser.name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.height(4.dp))
+                    Text(currentUser.name.uppercase(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = Color.White, letterSpacing = 2.sp)
+                    Spacer(Modifier.height(8.dp))
                     Surface(
-                        color = if (currentUser.role.name == "ADMIN") PenaltyGreen.copy(0.15f) else PenaltyGray.copy(0.15f),
-                        shape = RoundedCornerShape(8.dp)
+                        color = PenaltyGreen.copy(0.1f),
+                        shape = RoundedCornerShape(8.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
                     ) {
                         Text(
-                            text = if (currentUser.role.name == "ADMIN") "⚽ Capità" else "Jugador",
+                            text = if (currentUser.role.name == "ADMIN") "CAPITÀ" else "JUGADOR",
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                            color = if (currentUser.role.name == "ADMIN") PenaltyGreen else PenaltyGray,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 13.sp
+                            color = PenaltyGreen,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
-                    Text(FakeRepository.team.name, color = PenaltyGray)
                 }
             }
         }
 
-        // Stats
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                StatsCard("MULTES PENDENTS", "${pendingCount}", icon = Icons.Default.Warning, color = PenaltyRed, modifier = Modifier.weight(1f))
-                StatsCard("MULTES PAGADES", "${paidCount}", icon = Icons.Default.CheckCircle, color = PenaltyGreen, modifier = Modifier.weight(1f))
-                StatsCard("DEUTE TOTAL", "${String.format("%.0f", currentUser.totalFines)}€", icon = Icons.Default.Receipt, color = PenaltyGray, modifier = Modifier.weight(1f))
+                StatsCard("PENDENTS", "$pendingCount", icon = Icons.Default.Warning, color = PenaltyRed, modifier = Modifier.weight(1f))
+                StatsCard("PAGADES", "$paidCount", icon = Icons.Default.CheckCircle, color = PenaltyGreen, modifier = Modifier.weight(1f))
             }
         }
 
-        // Settings button
         item {
-            ListItem(
-                headlineContent = { Text("Configuració") },
-                supportingContent = { Text("Tema, notificacions, NFC...") },
-                leadingContent = { Icon(Icons.Default.Settings, null, tint = PenaltyGreen) },
-                trailingContent = { Icon(Icons.Default.ChevronRight, null) },
-                modifier = Modifier.padding(horizontal = 16.dp)
-                    .then(Modifier)
-                    .also { /* clickable via Modifier */ },
-            )
-            // Workaround: button below
-            OutlinedButton(
-                onClick = onNavigateToSettings,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = PenaltyGreen)
+            Spacer(Modifier.height(24.dp))
+            Surface(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .fillMaxWidth()
+                    .clickable { onNavigateToSettings() },
+                color = Color.White.copy(0.03f),
+                shape = RoundedCornerShape(20.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
             ) {
-                Icon(Icons.Default.Settings, null)
-                Spacer(Modifier.width(8.dp))
-                Text("Obrir Configuració")
+                Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Settings, null, tint = PenaltyGreen)
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text("CONFIGURACIÓ", color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        Text("Tema, notificacions, NFC...", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Icon(Icons.Default.ChevronRight, null, tint = Color.White.copy(0.3f))
+                }
             }
         }
     }
 }
-
-// ─── Team Members Screen ──────────────────────────────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -205,35 +180,50 @@ fun TeamMembersScreen(onNavigateBack: () -> Unit) {
     val team = FakeRepository.team
 
     Scaffold(
+        containerColor = Color(0xFF0F1210),
         topBar = {
-            TopAppBar(
-                title = { Text("Membres de l'equip") },
-                navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, "Tornar") } }
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                title = { Text("MEMBRES", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
+                navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, null, tint = Color.White) } }
             )
         }
     ) { padding ->
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             item {
                 Text(
-                    "${team.name} · ${team.members.size} membres",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = PenaltyGray,
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    "${team.name.uppercase()} · ${team.members.size} MEMBRES",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = PenaltyGreen,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
             itemsIndexed(team.members) { _, member ->
-                ListItem(
-                    headlineContent = { Text(member.name, fontWeight = FontWeight.Medium) },
-                    supportingContent = { Text(if (member.role.name == "ADMIN") "Capità" else "Jugador") },
-                    leadingContent = { UserAvatar(initials = member.photoInitials, size = 44) },
-                    trailingContent = {
+                Surface(
+                    color = Color.White.copy(0.02f),
+                    shape = RoundedCornerShape(16.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        UserAvatar(initials = member.photoInitials, size = 44)
+                        Spacer(Modifier.width(16.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(member.name, color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(if (member.role.name == "ADMIN") "Capità" else "Jugador", color = Color.Gray, style = MaterialTheme.typography.labelSmall)
+                        }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text("${String.format("%.2f", member.pendingFines)}€", color = if (member.pendingFines > 0) PenaltyRed else PenaltyGreen, fontWeight = FontWeight.Bold)
-                            Text("pendent", style = MaterialTheme.typography.labelSmall, color = PenaltyGray)
+                            Text("${String.format("%.2f", member.pendingFines)}€", color = if (member.pendingFines > 0) PenaltyRed else PenaltyGreen, fontWeight = FontWeight.Black)
+                            Text("deute", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                         }
                     }
-                )
-                HorizontalDivider()
+                }
             }
         }
     }
