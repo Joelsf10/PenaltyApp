@@ -31,7 +31,8 @@ fun HomeScreen(
     onNavigateToRanking: () -> Unit
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
-    val currentUser = finesViewModel.currentUser
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
+    val isAdmin = currentUser.role.name == "ADMIN"
     val team = finesViewModel.team
     val pendingFines = finesViewModel.pendingFines
     val recentFines = uiState.fines.take(3)
@@ -69,6 +70,7 @@ fun HomeScreen(
                                 text = team.name,
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.8f)
+
                             )
                         }
                         UserAvatar(
@@ -125,13 +127,15 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                QuickActionButton(
-                    label = "Posar\nmulta",
-                    icon = Icons.Default.AddCircle,
-                    color = PenaltyRed,
-                    onClick = onNavigateToAddFine,
-                    modifier = Modifier.weight(1f)
-                )
+                if (isAdmin) {
+                    QuickActionButton(
+                        label = "Posar\nmulta",
+                        icon = Icons.Default.AddCircle,
+                        color = PenaltyRed,
+                        onClick = onNavigateToAddFine,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
                 QuickActionButton(
                     label = "Totes les\nmultes",
                     icon = Icons.Default.List,

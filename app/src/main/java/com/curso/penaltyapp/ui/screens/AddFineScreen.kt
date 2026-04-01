@@ -80,7 +80,7 @@ fun AddFineScreen(
                         expanded = userExpanded,
                         onDismissRequest = { userExpanded = false }
                     ) {
-                        team.members.filter { it.id != finesViewModel.currentUser.id }
+                        team.members.filter { it.id != finesViewModel.currentUser.value.id }
                             .forEach { user ->
                                 DropdownMenuItem(
                                     text = { Text(user.name) },

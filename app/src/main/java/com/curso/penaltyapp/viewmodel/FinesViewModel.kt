@@ -54,7 +54,7 @@ class FinesViewModel : ViewModel() {
         get() = repo.fines.value.filter { it.status == FineStatus.PENDING }
 
     val myFines: List<Fine>
-        get() = repo.fines.value.filter { it.userId == currentUser.id }
+        get() = repo.fines.value.filter { it.userId == currentUser.value.id }
 
     fun getFineById(fineId: String): Fine? =
         repo.fines.value.find { it.id == fineId }
@@ -111,9 +111,9 @@ class FinesViewModel : ViewModel() {
             if (text.isBlank()) return@launch
             val comment = Comment(
                 id = UUID.randomUUID().toString(),
-                userId = currentUser.id,
-                userName = currentUser.name,
-                userInitials = currentUser.photoInitials,
+                userId = currentUser.value.id,
+                userName = currentUser.value.name,
+                userInitials = currentUser.value.photoInitials,
                 text = text,
                 date = LocalDateTime.now()
             )
@@ -135,4 +135,14 @@ class FinesViewModel : ViewModel() {
 
     private fun filterFines(fines: List<Fine>, status: FineStatus?): List<Fine> =
         if (status == null) fines else fines.filter { it.status == status }
+
+    // ─── Login / Switch User (Para pruebas) ──────────────────────────────────
+
+    fun loginAsAdmin() {
+        FakeRepository.loginAsAdmin()
+    }
+
+    fun loginAsPlayer() {
+        FakeRepository.loginAsPlayer()
+    }
 }
