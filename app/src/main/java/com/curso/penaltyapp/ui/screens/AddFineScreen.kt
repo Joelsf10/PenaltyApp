@@ -1,16 +1,21 @@
 package com.curso.penaltyapp.ui.screens
 
-
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.model.FineCategory
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
@@ -33,13 +38,41 @@ fun AddFineScreen(
     val selectedUser = team.members.find { it.id == selectedUserId }
     val amount = customAmount.toDoubleOrNull() ?: selectedCategory.defaultAmount
 
+    // Definimos un estilo de colores común para todos los inputs para asegurar visibilidad
+    val premiumFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.White,
+        focusedPlaceholderColor = Color.Gray,
+        unfocusedPlaceholderColor = Color.Gray,
+        unfocusedContainerColor = Color.White.copy(alpha = 0.03f),
+        focusedContainerColor = Color.White.copy(alpha = 0.06f),
+        unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
+        focusedBorderColor = PenaltyGreen,
+        focusedLeadingIconColor = PenaltyGreen,
+        unfocusedLeadingIconColor = PenaltyGreen.copy(alpha = 0.5f),
+        focusedTrailingIconColor = Color.White,
+        unfocusedTrailingIconColor = Color.Gray
+    )
+
     Scaffold(
+        containerColor = Color(0xFF0F1210), // Fondo Negro Stealth
         topBar = {
-            TopAppBar(
-                title = { Text("Posar multa", fontWeight = FontWeight.Bold) },
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = Color.White
+                ),
+                title = {
+                    Text(
+                        "NÒMINA DE SANCIONS",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 3.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.Close, "Tancar")
+                        Icon(Icons.Rounded.Close, "Tancar", tint = Color.White)
                     }
                 }
             )
@@ -49,189 +82,173 @@ fun AddFineScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(vertical = 20.dp)
         ) {
-            // ─── Select member ────────────────────────────────────────────────
+            // ─── SELECCIÓN DE MIEMBRO ────────────────────────────────────────
             item {
-                Text(
-                    "Membre sancionat",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(8.dp))
-                ExposedDropdownMenuBox(
-                    expanded = userExpanded,
-                    onExpandedChange = { userExpanded = it }
-                ) {
-                    OutlinedTextField(
-                        value = selectedUser?.name ?: "Selecciona un membre",
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = userExpanded) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen),
-                        leadingIcon = { Icon(Icons.Default.Person, null) }
+                Column {
+                    Text(
+                        "MEMBRE SANCIONAT",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(0.4f),
+                        letterSpacing = 2.sp
                     )
-                    ExposedDropdownMenu(
+                    Spacer(Modifier.height(12.dp))
+                    ExposedDropdownMenuBox(
                         expanded = userExpanded,
-                        onDismissRequest = { userExpanded = false }
-                    ) {
-                        team.members.filter { it.id != finesViewModel.currentUser.value.id }
-                            .forEach { user ->
+                        onExpandedChange = { userExpanded = it }) {
+                        OutlinedTextField(
+                            value = selectedUser?.name ?: "Selecciona un membre",
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = userExpanded) },
+                            modifier = Modifier.fillMaxWidth().menuAnchor(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = premiumFieldColors,
+                            leadingIcon = { Icon(Icons.Rounded.Person, null) }
+                        )
+                        ExposedDropdownMenu(
+                            modifier = Modifier.background(Color(0xFF1A1D1B)),
+                            expanded = userExpanded,
+                            onDismissRequest = { userExpanded = false }
+                        ) {
+                            team.members.filter { it.id != finesViewModel.currentUser.value.id }
+                                .forEach { user ->
+                                    DropdownMenuItem(
+                                        text = { Text(user.name, color = Color.White) },
+                                        onClick = { selectedUserId = user.id; userExpanded = false }
+                                    )
+                                }
+                        }
+                    }
+                }
+            }
+
+            // ─── CATEGORÍA Y MOTIVO ───────────────────────────────────────────
+            item {
+                Column {
+                    Text(
+                        "CATEGORIA I MOTIU",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(0.4f),
+                        letterSpacing = 2.sp
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    ExposedDropdownMenuBox(
+                        expanded = categoryExpanded,
+                        onExpandedChange = { categoryExpanded = it }) {
+                        OutlinedTextField(
+                            value = selectedCategory.label,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                            modifier = Modifier.fillMaxWidth().menuAnchor(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = premiumFieldColors,
+                            leadingIcon = { Icon(Icons.Rounded.Category, null) }
+                        )
+                        ExposedDropdownMenu(
+                            modifier = Modifier.background(Color(0xFF1A1D1B)),
+                            expanded = categoryExpanded,
+                            onDismissRequest = { categoryExpanded = false }
+                        ) {
+                            FineCategory.values().forEach { cat ->
                                 DropdownMenuItem(
-                                    text = { Text(user.name) },
-                                    onClick = {
-                                        selectedUserId = user.id
-                                        userExpanded = false
-                                    }
+                                    text = {
+                                        Text(
+                                            "${cat.label} (${cat.defaultAmount}€)",
+                                            color = Color.White
+                                        )
+                                    },
+                                    onClick = { selectedCategory = cat; categoryExpanded = false }
                                 )
                             }
+                        }
                     }
+                    Spacer(Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = reason,
+                        onValueChange = { reason = it },
+                        placeholder = { Text("Breu descripció dels fets...", color = Color.Gray) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = premiumFieldColors,
+                        leadingIcon = { Icon(Icons.Rounded.Description, null) }
+                    )
                 }
             }
 
-            // ─── Select category ──────────────────────────────────────────────
+            // ─── RESUMEN (Glassmorphism) ──────────────────────────────────────
             item {
-                Text(
-                    "Categoria de la multa",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(8.dp))
-                ExposedDropdownMenuBox(
-                    expanded = categoryExpanded,
-                    onExpandedChange = { categoryExpanded = it }
-                ) {
-                    OutlinedTextField(
-                        value = "${selectedCategory.label} (${selectedCategory.defaultAmount}€)",
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen),
-                        leadingIcon = { Icon(Icons.Default.Category, null) }
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = PenaltyRed.copy(alpha = 0.05f),
+                    shape = RoundedCornerShape(24.dp),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        PenaltyRed.copy(alpha = 0.2f)
                     )
-                    ExposedDropdownMenu(
-                        expanded = categoryExpanded,
-                        onDismissRequest = { categoryExpanded = false }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(24.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        FineCategory.values().forEach { cat ->
-                            DropdownMenuItem(
-                                text = { Text("${cat.label} — ${cat.defaultAmount}€") },
-                                onClick = {
-                                    selectedCategory = cat
-                                    categoryExpanded = false
-                                    if (cat != FineCategory.CUSTOM) customAmount = ""
-                                }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                "IMPORT DE LA SANCIÓ",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PenaltyRed.copy(0.6f),
+                                letterSpacing = 1.sp
+                            )
+                            Text(
+                                text = "${String.format("%.2f", amount)} €",
+                                fontSize = 32.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                color = Color.White
                             )
                         }
+                        Icon(
+                            Icons.Rounded.Gavel,
+                            null,
+                            tint = PenaltyRed,
+                            modifier = Modifier.size(40.dp)
+                        )
                     }
                 }
             }
 
-            // ─── Custom amount ────────────────────────────────────────────────
-            item {
-                Text(
-                    "Import (€)",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = if (customAmount.isEmpty()) selectedCategory.defaultAmount.toString() else customAmount,
-                    onValueChange = { customAmount = it },
-                    label = { Text("Import en euros") },
-                    leadingIcon = { Icon(Icons.Default.Euro, null) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-                )
-            }
-
-            // ─── Reason ───────────────────────────────────────────────────────
-            item {
-                Text(
-                    "Motiu",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = reason,
-                    onValueChange = { reason = it },
-                    label = { Text("Descriu la infracció...") },
-                    leadingIcon = { Icon(Icons.Default.Description, null) },
-                    maxLines = 3,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-                )
-            }
-
-            // ─── Preview ──────────────────────────────────────────────────────
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = PenaltyRed.copy(alpha = 0.08f)),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            "Resum de la multa",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = PenaltyRed
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            "👤 ${selectedUser?.name ?: "-"}",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            "📋 ${selectedCategory.label}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            "💰 ${String.format("%.2f", amount)} €",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = PenaltyRed
-                        )
-                        if (reason.isNotBlank()) {
-                            Text("📝 $reason", style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                }
-            }
-
-            // ─── Submit ───────────────────────────────────────────────────────
+            // ─── BOTÓN SUBMIT ─────────────────────────────────────────────────
             item {
                 Button(
                     onClick = {
                         if (selectedUserId.isNotEmpty() && reason.isNotBlank()) {
                             finesViewModel.addFine(
-                                targetUserId = selectedUserId,
-                                category = selectedCategory,
-                                reason = reason,
-                                customAmount = customAmount.toDoubleOrNull()
+                                selectedUserId,
+                                selectedCategory,
+                                reason,
+                                customAmount.toDoubleOrNull()
                             )
                             onFineAdded()
                         }
                     },
                     enabled = selectedUserId.isNotEmpty() && reason.isNotBlank(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = PenaltyRed)
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PenaltyRed,
+                        disabledContainerColor = PenaltyRed.copy(alpha = 0.1f)
+                    )
                 ) {
-                    Icon(Icons.Default.Warning, null)
-                    Spacer(Modifier.width(8.dp))
-                    Text("Posar multa", fontWeight = FontWeight.Bold)
+                    Text(
+                        "MULTAR A ${selectedUser?.name}",
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 2.sp
+                    )
+
                 }
             }
         }

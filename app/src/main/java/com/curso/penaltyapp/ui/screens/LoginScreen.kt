@@ -1,6 +1,5 @@
 package com.curso.penaltyapp.ui.screens
 
-
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,9 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.ui.theme.*
@@ -35,68 +38,106 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(PenaltyDark, PenaltyGreenDark.copy(alpha = 0.3f), PenaltyDark)
+                Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFF1E2923), // Un verde muy oscuro, casi negro "bosque"
+                        Color(0xFF0F1210)  // Negro profundo
+                    ),
+                    center = Offset(x = 500f, y = 400f),
+                    radius = 1500f
                 )
             )
-    ) {
+    ){
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .padding(horizontal = 40.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Logo
-            Text(
-                text = "⚽",
-                fontSize = 64.sp
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Penalty",
-                style = MaterialTheme.typography.headlineLarge,
-                color = PenaltyGreen,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 42.sp
-            )
-            Text(
-                text = "El vestidor digital",
-                style = MaterialTheme.typography.bodyLarge,
-                color = PenaltyGray
-            )
-
-            Spacer(Modifier.height(48.dp))
-
-            // Email field
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it; errorMsg = null },
-                label = { Text("Correu electrònic") },
-                leadingIcon = { Icon(Icons.Default.Email, null) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PenaltyGreen,
-                    focusedLabelColor = PenaltyGreen,
-                    focusedLeadingIconColor = PenaltyGreen
+            // ─── BRANDING PROFESIONAL ─────────────────────────────────────────
+            Box(contentAlignment = Alignment.Center) {
+                // Un círculo de luz muy tenue detrás del logo
+                Surface(
+                    modifier = Modifier.size(100.dp),
+                    color = PenaltyGreen.copy(alpha = 0.05f),
+                    shape = RoundedCornerShape(50.dp)
+                ) {}
+                Text(
+                    text = "⚽",
+                    fontSize = 52.sp,
+                    textAlign = TextAlign.Center
                 )
-            )
+            }
 
             Spacer(Modifier.height(16.dp))
 
-            // Password field
+            Text(
+                text = "PENALTY",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    letterSpacing = 6.sp, // Espaciado de marca de lujo
+                    fontFamily = FontFamily.SansSerif
+                ),
+                color = Color.White,
+                fontWeight = FontWeight.Black,
+                fontSize = 32.sp
+            )
+
+            Surface(
+                color = PenaltyGreen.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text(
+                    text = "EL VESTIDOR DIGITAL",
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = PenaltyGreenLight,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+            }
+
+            Spacer(Modifier.height(64.dp))
+
+            // ─── INPUTS MINIMALISTAS ──────────────────────────────────────────
+            Text(
+                text = "IDENTIFICA'T PER CONTINUAR",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.4f),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+            )
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it; errorMsg = null },
+                placeholder = { Text("Correu electrònic", color = Color.Gray) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White.copy(alpha = 0.03f),
+                    focusedContainerColor = Color.White.copy(alpha = 0.05f),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
+                    focusedBorderColor = PenaltyGreen,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                )
+            )
+
+            Spacer(Modifier.height(12.dp))
+
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it; errorMsg = null },
-                label = { Text("Contrasenya") },
-                leadingIcon = { Icon(Icons.Default.Lock, null) },
+                placeholder = { Text("Contrasenya", color = Color.Gray) },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = null
+                            contentDescription = null,
+                            tint = Color.Gray
                         )
                     }
                 },
@@ -105,13 +146,17 @@ fun LoginScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White.copy(alpha = 0.03f),
+                    focusedContainerColor = Color.White.copy(alpha = 0.05f),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
                     focusedBorderColor = PenaltyGreen,
-                    focusedLabelColor = PenaltyGreen
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
                 )
             )
 
-            // Error message
             AnimatedVisibility(visible = errorMsg != null) {
                 Text(
                     text = errorMsg ?: "",
@@ -123,66 +168,65 @@ fun LoginScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // Login button
+            // ─── BOTONES DE ACCIÓN ────────────────────────────────────────────
             Button(
                 onClick = {
-                    // Skeleton: accept any non-empty credentials
                     if (email.isBlank() || password.isBlank()) {
-                        errorMsg = "Introdueix el correu i la contrasenya"
+                        errorMsg = "Camps obligatoris"
                     } else {
                         isLoading = true
                         onLoginSuccess()
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen),
                 enabled = !isLoading
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(20.dp))
+                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp))
                 } else {
-                    Text("Iniciar sessió", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text("INICIAR SESSIÓ", fontWeight = FontWeight.Black, letterSpacing = 1.sp)
                 }
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            // Demo quick login
-            OutlinedButton(
-                onClick = {
-                    FakeRepository.loginAsAdmin()
-                    onLoginSuccess()
-                },
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = PenaltyGreen)
-            ) {
-                Text("Entrar como Capitán (DEMO)", fontWeight = FontWeight.Medium)
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            OutlinedButton(
-                onClick = {
-                    FakeRepository.loginAsPlayer()
-                    onLoginSuccess()
-                },
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = PenaltyGray)
-            ) {
-                Text("Entrar como Jugador (DEMO)", fontWeight = FontWeight.Medium)
             }
 
             Spacer(Modifier.height(24.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("No tens compte?", color = PenaltyGray)
-                TextButton(onClick = onNavigateToRegister) {
-                    Text("Registra't", color = PenaltyGreen, fontWeight = FontWeight.Bold)
+            // Demos con estilo más discreto
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = { FakeRepository.loginAsAdmin(); onLoginSuccess() },
+                    modifier = Modifier.weight(1f).height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    border = null,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White.copy(alpha = 0.05f),
+                        contentColor = Color.LightGray
+                    )
+                ) {
+                    Text("DEMO CAPITÀ", style = MaterialTheme.typography.labelSmall)
+                }
+
+                OutlinedButton(
+                    onClick = { FakeRepository.loginAsPlayer(); onLoginSuccess() },
+                    modifier = Modifier.weight(1f).height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    border = null,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White.copy(alpha = 0.05f),
+                        contentColor = Color.LightGray
+                    )
+                ) {
+                    Text("DEMO JUGADOR", style = MaterialTheme.typography.labelSmall)
+                }
+            }
+
+            Spacer(Modifier.height(48.dp))
+
+            TextButton(onClick = onNavigateToRegister) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Encara no tens compte? ", color = Color.Gray, fontSize = 13.sp)
+                    Text("REGISTRA'T", color = PenaltyGreen, fontWeight = FontWeight.Black, fontSize = 13.sp)
                 }
             }
         }

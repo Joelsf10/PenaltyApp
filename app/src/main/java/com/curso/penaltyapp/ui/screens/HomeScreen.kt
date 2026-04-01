@@ -1,19 +1,28 @@
 package com.curso.penaltyapp.ui.screens
 
-
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.FormatListBulleted
+import androidx.compose.material.icons.rounded.Receipt
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,215 +46,268 @@ fun HomeScreen(
     val pendingFines = finesViewModel.pendingFines
     val recentFines = uiState.fines.take(3)
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 100.dp)
-    ) {
-        // ─── Header with pot ─────────────────────────────────────────────────
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(PenaltyGreenDark, PenaltyGreen.copy(alpha = 0.8f))
-                        )
-                    )
-                    .padding(24.dp)
-            ) {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "Hola, ${currentUser.name.split(" ").first()} 👋",
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = androidx.compose.ui.graphics.Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = team.name,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.8f)
-
-                            )
-                        }
-                        UserAvatar(
-                            initials = currentUser.photoInitials,
-                            size = 48,
-                            color = PenaltyGreenDark
-                        )
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    // Pot card
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.15f)
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "💰 El Pot",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.8f),
-                                letterSpacing = 1.sp
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = "${String.format("%.2f", team.totalPot)} €",
-                                fontSize = 48.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = androidx.compose.ui.graphics.Color.White
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = "${pendingFines.size} multes pendents · ${team.members.size} membres",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.7f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // ─── Quick actions ────────────────────────────────────────────────────
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                if (isAdmin) {
-                    QuickActionButton(
-                        label = "Posar\nmulta",
-                        icon = Icons.Default.AddCircle,
-                        color = PenaltyRed,
-                        onClick = onNavigateToAddFine,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                QuickActionButton(
-                    label = "Totes les\nmultes",
-                    icon = Icons.Default.List,
-                    color = PenaltyGreen,
-                    onClick = onNavigateToFines,
-                    modifier = Modifier.weight(1f)
-                )
-                QuickActionButton(
-                    label = "Rànquing",
-                    icon = Icons.Default.EmojiEvents,
-                    color = PenaltyYellow,
-                    onClick = onNavigateToRanking,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        // ─── My stats ─────────────────────────────────────────────────────────
-        item {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                SectionHeader(title = "Les meves estadístiques")
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    StatsCard(
-                        title = "DEUTE PENDENT",
-                        value = "${String.format("%.2f", currentUser.pendingFines)}€",
-                        icon = Icons.Default.Warning,
-                        color = PenaltyRed,
-                        modifier = Modifier.weight(1f)
-                    )
-                    StatsCard(
-                        title = "TOTAL MULTES",
-                        value = "${String.format("%.2f", currentUser.totalFines)}€",
-                        icon = Icons.Default.Receipt,
-                        color = PenaltyGray,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-        }
-
-        // ─── Recent fines ─────────────────────────────────────────────────────
-        item {
-            Spacer(Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                SectionHeader(
-                    title = "Multes recents",
-                    actionLabel = "Veure-les totes",
-                    onAction = onNavigateToFines
-                )
-            }
-        }
-
-        items(recentFines, key = { it.id }) { fine ->
-            FineCard(
-                fine = fine,
-                onClick = { onNavigateToFineDetail(fine.id) },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-            )
-        }
-
-        if (recentFines.isEmpty()) {
+    Scaffold(
+        containerColor = Color(0xFF0F1210) // Negro profundo coherente con el Login
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(bottom = 100.dp)
+        ) {
+            // ─── HEADER: EL FOCO DE LUZ Y POT ────────────────────────────────
             item {
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(32.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(340.dp)
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(
+                                    PenaltyGreen.copy(alpha = 0.12f),
+                                    Color.Transparent
+                                ),
+                                center = Offset(x = 540f, y = 450f),
+                                radius = 1000f
+                            )
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Cap multa recent 🎉", color = PenaltyGray)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Badge del equipo con estilo minimalista
+                        Surface(
+                            color = Color.White.copy(alpha = 0.05f),
+                            shape = RoundedCornerShape(50.dp),
+                            modifier = Modifier.padding(bottom = 24.dp)
+                        ) {
+                            Text(
+                                text = team.name.uppercase(),
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PenaltyGreenLight,
+                                letterSpacing = 2.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Text(
+                            text = "EL POT TOTAL",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.4f),
+                            letterSpacing = 4.sp
+                        )
+
+                        Spacer(Modifier.height(8.dp))
+
+                        // Cifra con fuente Monospace y look premium
+                        Text(
+                            text = "${String.format("%.2f", team.totalPot)} €",
+                            fontSize = 62.sp,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White,
+                            letterSpacing = (-2).sp
+                        )
+
+                        Spacer(Modifier.height(16.dp))
+
+                        // Indicador de multas activas (Estilo píldora moderna)
+                        Surface(
+                            color = PenaltyGreen.copy(alpha = 0.08f),
+                            shape = RoundedCornerShape(12.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(alpha = 0.2f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .background(PenaltyGreen, RoundedCornerShape(3.dp))
+                                )
+                                Spacer(Modifier.width(10.dp))
+                                Text(
+                                    text = "${pendingFines.size} MULTES ACTIVES",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = PenaltyGreen,
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = 1.sp
+                                )
+                            }
+                        }
+                    }
                 }
+            }
+
+            // ─── ACCIONES RÁPIDAS: LOOK DARK STEALTH ─────────────────────────
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val actionModifier = Modifier.weight(1f).height(100.dp)
+
+                    if (isAdmin) {
+                        QuickActionButton(
+                            label = "MULTAR",
+                            icon = Icons.Rounded.Add,
+                            color = PenaltyRed,
+                            onClick = onNavigateToAddFine,
+                            modifier = actionModifier
+                        )
+                    }
+                    QuickActionButton(
+                        label = "HISTORIAL",
+                        icon = Icons.Rounded.FormatListBulleted,
+                        color = Color.White,
+                        onClick = onNavigateToFines,
+                        modifier = actionModifier
+                    )
+                    QuickActionButton(
+                        label = "RÀNQUING",
+                        icon = Icons.Rounded.EmojiEvents,
+                        color = PenaltyYellow,
+                        onClick = onNavigateToRanking,
+                        modifier = actionModifier
+                    )
+                }
+            }
+
+            // ─── MIS ESTADÍSTICAS (SURFACES NEGRAS) ──────────────────────────
+            item {
+                Spacer(Modifier.height(48.dp))
+                Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                    Text(
+                        text = "RESUM PERSONAL",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.3f),
+                        letterSpacing = 3.sp
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        StatsCard(
+                            title = "PENDENT",
+                            value = "${String.format("%.2f", currentUser.pendingFines)}€",
+                            icon = Icons.Rounded.Warning,
+                            color = PenaltyRed,
+                            modifier = Modifier.weight(1f)
+                        )
+                        StatsCard(
+                            title = "TOTAL",
+                            value = "${String.format("%.2f", currentUser.totalFines)}€",
+                            icon = Icons.Rounded.Receipt,
+                            color = Color.White,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
+            // ─── LISTADO RECIENTE ────────────────────────────────────────────
+            item {
+                Spacer(Modifier.height(48.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "MULTES RECENTS",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.3f),
+                        letterSpacing = 3.sp
+                    )
+                    TextButton(onClick = onNavigateToFines) {
+                        Text(
+                            "VEURE TOTES",
+                            color = PenaltyGreen,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 1.sp
+                        )
+                    }
+                }
+            }
+
+            items(recentFines, key = { it.id }) { fine ->
+                FineCard(
+                    fine = fine,
+                    onClick = { onNavigateToFineDetail(fine.id) },
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                )
             }
         }
     }
 }
 
-// ─── Quick Action Button ──────────────────────────────────────────────────────
+// ─── COMPONENTES REDISEÑADOS CON ESTILO PROFESIONAL ──────────────────────────
 
 @Composable
 fun QuickActionButton(
     label: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: androidx.compose.ui.graphics.Color,
+    color: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier,
+    Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f)),
-        elevation = CardDefaults.cardElevation(0.dp)
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White.copy(alpha = 0.03f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(28.dp)
-            )
-            Spacer(Modifier.height(6.dp))
+            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(26.dp))
+            Spacer(Modifier.height(10.dp))
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.8f),
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun StatsCard(
+    title: String,
+    value: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        color = Color.White.copy(alpha = 0.03f),
+        shape = RoundedCornerShape(20.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Icon(icon, null, tint = color.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.3f),
+                letterSpacing = 1.sp
+            )
+            Text(
+                text = value,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Black,
                 color = color,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                fontFamily = FontFamily.Monospace
             )
         }
     }

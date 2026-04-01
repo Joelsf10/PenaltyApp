@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +23,7 @@ import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.unit.sp
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,18 +35,19 @@ fun FinesScreen(
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
     val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
-    val isAdmin = currentUser.role == UserRole.ADMIN
 
     Scaffold(
+        containerColor = Color(0xFF0F1210),
         topBar = {
-            TopAppBar(
-                title = { Text("Multes", fontWeight = FontWeight.Bold) },
-                actions = {
-                    if (currentUser.role == UserRole.ADMIN) {
-                        IconButton(onClick = onNavigateToAddFine) {
-                            Icon(Icons.Default.Add, contentDescription = "Afegir multa", tint = PenaltyGreen)
-                        }
-                    }
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                title = {
+                    Text("REGISTRE GENERAL",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 4.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Black
+                    )
                 }
             )
         },
@@ -51,96 +55,64 @@ fun FinesScreen(
             if (currentUser.role == UserRole.ADMIN) {
                 FloatingActionButton(
                     onClick = onNavigateToAddFine,
-                    containerColor = PenaltyGreen
+                    containerColor = PenaltyGreen,
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Posar multa", tint = Color.White)
+                    Icon(Icons.Rounded.Add, contentDescription = null, tint = Color.Black, modifier = Modifier.size(30.dp))
                 }
             }
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // Filter chips
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+
+            // ─── FILTROS ESTILO TAB ──────────────────────────────────────────
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item {
-                    FilterChip(
-                        selected = uiState.filterStatus == null,
-                        onClick = { finesViewModel.setFilter(null) },
-                        label = { Text("Totes (${finesViewModel.uiState.collectAsState().value.fines.size})") },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = PenaltyGreen,
-                            selectedLabelColor = androidx.compose.ui.graphics.Color.White
-                        )
-                    )
-                }
-                item {
-                    FilterChip(
-                        selected = uiState.filterStatus == FineStatus.PENDING,
-                        onClick = { finesViewModel.setFilter(FineStatus.PENDING) },
-                        label = { Text("Pendents") },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = PenaltyRed,
-                            selectedLabelColor = androidx.compose.ui.graphics.Color.White
-                        )
-                    )
-                }
-                item {
-                    FilterChip(
-                        selected = uiState.filterStatus == FineStatus.PAID,
-                        onClick = { finesViewModel.setFilter(FineStatus.PAID) },
-                        label = { Text("Pagades") },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = PenaltyGreen,
-                            selectedLabelColor = androidx.compose.ui.graphics.Color.White
-                        )
-                    )
-                }
-                item {
-                    FilterChip(
-                        selected = uiState.filterStatus == FineStatus.DISPUTED,
-                        onClick = { finesViewModel.setFilter(FineStatus.DISPUTED) },
-                        label = { Text("En disputa") },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = PenaltyYellow,
-                            selectedLabelColor = androidx.compose.ui.graphics.Color.White
-                        )
-                    )
+                val statuses = listOf(null, FineStatus.PENDING, FineStatus.PAID, FineStatus.DISPUTED)
+                val labels = listOf("TOTES", "PENDENTS", "PAGADES", "DISPUTA")
+
+                items(statuses.size) { index ->
+                    val isSelected = uiState.filterStatus == statuses[index]
+                    Surface(
+                        onClick = { finesViewModel.setFilter(statuses[index]) },
+                        color = if (isSelected) PenaltyGreen else Color.White.copy(0.05f),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.height(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 16.dp)) {
+                            Text(
+                                text = labels[index],
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Black,
+                                color = if (isSelected) Color.Black else Color.White.copy(0.6f)
+                            )
+                        }
+                    }
                 }
             }
 
+            // ─── LISTADO DE MULTAS ───────────────────────────────────────────
             if (uiState.isLoading) {
                 PenaltyLoadingIndicator()
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 100.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     if (uiState.fines.isEmpty()) {
                         item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth().padding(48.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            Box(modifier = Modifier.fillMaxWidth().padding(top = 100.dp), contentAlignment = Alignment.Center) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text("🎉", style = MaterialTheme.typography.headlineLarge)
-                                    Spacer(Modifier.height(8.dp))
-                                    Text("Cap multa!", fontWeight = FontWeight.Bold)
-                                    Text("El vestidor es porta bé 🙌", color = PenaltyGray)
+                                    Text("🛡️", fontSize = 40.sp)
+                                    Text("HISTORIAL NET", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(0.3f), letterSpacing = 2.sp)
                                 }
                             }
                         }
                     } else {
                         items(uiState.fines, key = { it.id }) { fine ->
-                            FineCard(
-                                fine = fine,
-                                onClick = { onNavigateToFineDetail(fine.id) }
-                            )
+                            FineCard(fine = fine, onClick = { onNavigateToFineDetail(fine.id) })
                         }
                     }
                 }
