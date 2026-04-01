@@ -11,13 +11,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.model.FineStatus
+import com.curso.penaltyapp.model.UserRole
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import androidx.compose.runtime.collectAsState
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,13 +31,15 @@ fun FinesScreen(
     onNavigateToAddFine: () -> Unit
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
+    val isAdmin = currentUser.role == UserRole.ADMIN
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Multes", fontWeight = FontWeight.Bold) },
                 actions = {
-                    if (finesViewModel.currentUser.role.name == "ADMIN") {
+                    if (currentUser.role == UserRole.ADMIN) {
                         IconButton(onClick = onNavigateToAddFine) {
                             Icon(Icons.Default.Add, contentDescription = "Afegir multa", tint = PenaltyGreen)
                         }
@@ -42,12 +48,12 @@ fun FinesScreen(
             )
         },
         floatingActionButton = {
-            if (finesViewModel.currentUser.role.name == "ADMIN") {
+            if (currentUser.role == UserRole.ADMIN) {
                 FloatingActionButton(
                     onClick = onNavigateToAddFine,
                     containerColor = PenaltyGreen
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Posar multa", tint = androidx.compose.ui.graphics.Color.White)
+                    Icon(Icons.Default.Add, contentDescription = "Posar multa", tint = Color.White)
                 }
             }
         }
@@ -66,7 +72,7 @@ fun FinesScreen(
                     FilterChip(
                         selected = uiState.filterStatus == null,
                         onClick = { finesViewModel.setFilter(null) },
-                        label = { Text("Totes (${finesViewModel.uiState.value.fines.size})") },
+                        label = { Text("Totes (${finesViewModel.uiState.collectAsState().value.fines.size})") },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = PenaltyGreen,
                             selectedLabelColor = androidx.compose.ui.graphics.Color.White

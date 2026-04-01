@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.data.repository.FakeRepository
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
@@ -27,6 +28,7 @@ import com.curso.penaltyapp.viewmodel.FinesViewModel
 @Composable
 fun RankingScreen(finesViewModel: FinesViewModel) {
     val ranking = finesViewModel.ranking
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -117,7 +119,7 @@ fun ProfileScreen(
     finesViewModel: FinesViewModel,
     onNavigateToSettings: () -> Unit
 ) {
-    val currentUser = finesViewModel.currentUser
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
     val myFines = finesViewModel.myFines
     val pendingCount = myFines.count { it.status.name == "PENDING" }
     val paidCount = myFines.count { it.status.name == "PAID" }

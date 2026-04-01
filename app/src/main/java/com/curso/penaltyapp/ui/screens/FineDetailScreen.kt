@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.model.FineStatus
+import com.curso.penaltyapp.model.UserRole
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
@@ -29,9 +30,11 @@ fun FineDetailScreen(
     onNavigateToNfcPayment: (String) -> Unit
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
-    val fine = finesViewModel.getFineById(fineId)
     var commentText by remember { mutableStateOf("") }
 
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
+    val isAdmin = currentUser.role.name == "ADMIN"
+    val canConfirmPayment = currentUser.role == UserRole.ADMIN
     // Reload fine on state changes
     val currentFine = finesViewModel.getFineById(fineId)
 
@@ -171,7 +174,7 @@ fun FineDetailScreen(
                 }
 
                 // Admin can also mark as paid manually
-                if (finesViewModel.currentUser.role.name == "ADMIN") {
+                if (isAdmin) {
                     item {
                         OutlinedButton(
                             onClick = { finesViewModel.markFineAsPaid(fineId) },
@@ -214,7 +217,7 @@ fun FineDetailScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     UserAvatar(
-                        initials = finesViewModel.currentUser.photoInitials,
+                        initials = finesViewModel.currentUser.value.photoInitials,
                         size = 36
                     )
                     Spacer(Modifier.width(8.dp))

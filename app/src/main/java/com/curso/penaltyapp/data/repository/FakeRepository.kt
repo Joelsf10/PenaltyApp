@@ -1,6 +1,7 @@
 package com.curso.penaltyapp.data.repository
 
 
+import androidx.compose.runtime.mutableStateOf
 import com.curso.penaltyapp.model.Comment
 import com.curso.penaltyapp.model.Fine
 import com.curso.penaltyapp.model.FineCategory
@@ -22,18 +23,8 @@ object FakeRepository {
 
     // ─── Hardcoded users ──────────────────────────────────────────────────────
 
-    val currentUser = User(
-        id = "u1",
-        name = "Jon Stegherr",
-        photoInitials = "JS",
-        teamId = "team1",
-        role = UserRole.ADMIN,
-        totalFines = 42.0,
-        pendingFines = 12.0
-    )
-
     private val users = listOf(
-        currentUser,
+        User("u1", "Jon Stegherr", "JS", "team1", UserRole.ADMIN, 42.0, 12.0),
         User("u2", "Joel Sambola", "JO", "team1", UserRole.PLAYER, 28.0, 5.0),
         User("u3", "Marc Puig", "MP", "team1", UserRole.PLAYER, 55.0, 20.0),
         User("u4", "Pau Ferrer", "PF", "team1", UserRole.PLAYER, 15.0, 0.0),
@@ -42,6 +33,9 @@ object FakeRepository {
         User("u7", "Bernat Mas", "BM", "team1", UserRole.PLAYER, 10.0, 0.0),
         User("u8", "Sara Núñez", "SN", "team1", UserRole.PLAYER, 22.0, 7.0)
     )
+
+    private val _currentUser = MutableStateFlow(users.first { it.role == UserRole.ADMIN })
+    val currentUser: StateFlow<User> = _currentUser.asStateFlow()
 
     // ─── Hardcoded team ───────────────────────────────────────────────────────
 
@@ -258,4 +252,12 @@ object FakeRepository {
 
     fun getPendingFinesForUser(userId: String): List<Fine> =
         _fines.value.filter { it.userId == userId && it.status == FineStatus.PENDING }
+
+    fun loginAsAdmin() {
+        _currentUser.value = users.first { it.role == UserRole.ADMIN }
+    }
+
+    fun loginAsPlayer() {
+        _currentUser.value = users.first { it.role == UserRole.PLAYER }
+    }
 }

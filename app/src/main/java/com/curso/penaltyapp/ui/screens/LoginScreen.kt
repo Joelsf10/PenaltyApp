@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.data.repository.FakeRepository
 
 @Composable
 fun LoginScreen(
@@ -151,12 +152,29 @@ fun LoginScreen(
 
             // Demo quick login
             OutlinedButton(
-                onClick = onLoginSuccess,
+                onClick = {
+                    FakeRepository.loginAsAdmin()
+                    onLoginSuccess()
+                },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = PenaltyGreen)
             ) {
-                Text("Entrar com a demo (Jon Stegherr)", fontWeight = FontWeight.Medium)
+                Text("Entrar como Capitán (DEMO)", fontWeight = FontWeight.Medium)
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = {
+                    FakeRepository.loginAsPlayer()
+                    onLoginSuccess()
+                },
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = PenaltyGray)
+            ) {
+                Text("Entrar como Jugador (DEMO)", fontWeight = FontWeight.Medium)
             }
 
             Spacer(Modifier.height(24.dp))

@@ -2,7 +2,10 @@ package com.curso.penaltyapp.ui.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +23,7 @@ fun PenaltyNavHost(
     modifier: Modifier = Modifier
 ) {
     val startDestination = if (isLoggedIn) Screen.Home.route else Screen.Login.route
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
@@ -122,11 +126,13 @@ fun PenaltyNavHost(
         }
 
         composable(Screen.AddFine.route) {
-            AddFineScreen(
-                finesViewModel = finesViewModel,
-                onFineAdded = { navController.popBackStack() },
-                onNavigateBack = { navController.popBackStack() }
-            )
+            if (currentUser.role.name == "ADMIN") {
+                AddFineScreen(
+                    finesViewModel = finesViewModel,
+                    onFineAdded = { navController.popBackStack() },
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
 
 
