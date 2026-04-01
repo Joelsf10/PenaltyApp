@@ -1,15 +1,26 @@
 package com.curso.penaltyapp.ui.screens
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Groups
+import androidx.compose.material.icons.rounded.Key
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
@@ -17,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.ui.theme.*
 
 // ─── Register Screen ──────────────────────────────────────────────────────────
-
+// ─── REGISTER SCREEN ──────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
@@ -29,171 +40,142 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    val premiumFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.White,
+        unfocusedContainerColor = Color.White.copy(0.03f),
+        focusedContainerColor = Color.White.copy(0.06f),
+        unfocusedBorderColor = Color.White.copy(0.1f),
+        focusedBorderColor = PenaltyGreen,
+        focusedLeadingIconColor = PenaltyGreen,
+        unfocusedLeadingIconColor = PenaltyGreen.copy(0.5f)
+    )
+
     Scaffold(
+        containerColor = Color(0xFF0F1210),
         topBar = {
-            TopAppBar(
-                title = { Text("Registrar-se") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Tornar")
-                    }
-                }
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                title = { Text("REGISTRE", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
+                navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.Rounded.ArrowBackIosNew, null, tint = Color.White, modifier = Modifier.size(20.dp)) } }
             )
         }
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Crea el teu compte",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Uneix-te al teu equip a Penalty",
-                color = PenaltyGray,
-                modifier = Modifier.padding(top = 4.dp, bottom = 32.dp)
-            )
-
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nom complet") },
-                leadingIcon = { Icon(Icons.Default.Person, null) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Correu electrònic") },
-                leadingIcon = { Icon(Icons.Default.Email, null) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Contrasenya") },
-                leadingIcon = { Icon(Icons.Default.Lock, null) },
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            null
-                        )
-                    }
-                },
-                visualTransformation = if (passwordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-            )
-
+            Text("CREA EL TEU COMPTE", style = MaterialTheme.typography.labelSmall, color = PenaltyGreen, letterSpacing = 2.sp)
             Spacer(Modifier.height(32.dp))
+
+            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nom complet") },
+                leadingIcon = { Icon(Icons.Rounded.Person, null) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = premiumFieldColors)
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Correu electrònic") },
+                leadingIcon = { Icon(Icons.Rounded.Email, null) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = premiumFieldColors)
+
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Contrasenya") },
+                leadingIcon = { Icon(Icons.Rounded.Lock, null) },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility, null, tint = Color.Gray) } },
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = premiumFieldColors)
+
+            Spacer(Modifier.height(40.dp))
 
             Button(
                 onClick = onRegisterSuccess,
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
             ) {
-                Text("Crear compte", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("CONTINUAR", fontWeight = FontWeight.Black, color = Color.Black, letterSpacing = 1.sp)
             }
         }
     }
 }
 
-// ─── Team Setup Screen ────────────────────────────────────────────────────────
-
+// ─── TEAM SETUP SCREEN (LA QUE DABA ERROR) ────────────────────────────────────
 @Composable
 fun TeamSetupScreen(onTeamReady: () -> Unit) {
     var inviteCode by remember { mutableStateOf("") }
     var teamName by remember { mutableStateOf("") }
     var selectedTab by remember { mutableIntStateOf(0) }
 
+    val premiumFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.White,
+        unfocusedContainerColor = Color.White.copy(0.03f),
+        focusedContainerColor = Color.White.copy(0.06f),
+        unfocusedBorderColor = Color.White.copy(0.1f),
+        focusedBorderColor = PenaltyGreen
+    )
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)).padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("⚽", fontSize = 48.sp)
         Spacer(Modifier.height(16.dp))
-        Text("Configura el teu equip", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(8.dp))
-        Text("Crea un nou equip o uneix-te a un existent", color = PenaltyGray)
+        Text("CONFIGURA L'EQUIP", style = MaterialTheme.typography.labelSmall, color = Color.White, letterSpacing = 3.sp)
 
         Spacer(Modifier.height(32.dp))
 
-        TabRow(selectedTabIndex = selectedTab, containerColor = MaterialTheme.colorScheme.surface) {
+        // Selector de Tab Estilo Stealth
+        TabRow(
+            selectedTabIndex = selectedTab,
+            containerColor = Color.White.copy(0.05f),
+            contentColor = PenaltyGreen,
+            indicator = { TabRowDefaults.SecondaryIndicator(Modifier.tabIndicatorOffset(it[selectedTab]), color = PenaltyGreen) },
+            divider = {}
+        ) {
             Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) {
-                Text("Unir-se", modifier = Modifier.padding(12.dp))
+                Text("UNIR-SE", modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.labelSmall)
             }
             Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) {
-                Text("Crear equip", modifier = Modifier.padding(12.dp))
-            }
-        }
-
-        Spacer(Modifier.height(24.dp))
-
-        when (selectedTab) {
-            0 -> {
-                OutlinedTextField(
-                    value = inviteCode,
-                    onValueChange = { inviteCode = it.uppercase() },
-                    label = { Text("Codi d'invitació") },
-                    placeholder = { Text("Ex: PEN-2026") },
-                    leadingIcon = { Icon(Icons.Default.Key, null) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-                )
-                Spacer(Modifier.height(8.dp))
-                Text("Demana el codi al capità del teu equip", style = MaterialTheme.typography.bodySmall, color = PenaltyGray)
-            }
-            1 -> {
-                OutlinedTextField(
-                    value = teamName,
-                    onValueChange = { teamName = it },
-                    label = { Text("Nom de l'equip") },
-                    leadingIcon = { Icon(Icons.Default.Groups, null) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen)
-                )
+                Text("CREAR", modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.labelSmall)
             }
         }
 
         Spacer(Modifier.height(32.dp))
+
+        if (selectedTab == 0) {
+            OutlinedTextField(
+                value = inviteCode,
+                onValueChange = { inviteCode = it.uppercase() },
+                label = { Text("Codi d'invitació") },
+                placeholder = { Text("PEN-2026") },
+                leadingIcon = { Icon(Icons.Rounded.Key, null, tint = PenaltyGreen) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = premiumFieldColors
+            )
+        } else {
+            OutlinedTextField(
+                value = teamName,
+                onValueChange = { teamName = it },
+                label = { Text("Nom de l'equip") },
+                leadingIcon = { Icon(Icons.Rounded.Groups, null, tint = PenaltyGreen) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = premiumFieldColors
+            )
+        }
+
+        Spacer(Modifier.height(40.dp))
 
         Button(
             onClick = onTeamReady,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
         ) {
-            Text(
-                text = if (selectedTab == 0) "Unir-se a l'equip" else "Crear equip",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
+            Text(if (selectedTab == 0) "UNIR-SE ARA" else "CREAR EQUIP", fontWeight = FontWeight.Black, color = Color.Black)
         }
     }
 }

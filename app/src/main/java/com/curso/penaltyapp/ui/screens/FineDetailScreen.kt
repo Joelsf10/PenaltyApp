@@ -1,16 +1,24 @@
 package com.curso.penaltyapp.ui.screens
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Event
+import androidx.compose.material.icons.rounded.Nfc
+import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,7 +28,6 @@ import com.curso.penaltyapp.model.UserRole
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FineDetailScreen(
@@ -31,16 +38,14 @@ fun FineDetailScreen(
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
     var commentText by remember { mutableStateOf("") }
-
     val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
     val isAdmin = currentUser.role.name == "ADMIN"
-    val canConfirmPayment = currentUser.role == UserRole.ADMIN
-    // Reload fine on state changes
+
     val currentFine = finesViewModel.getFineById(fineId)
 
     if (currentFine == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Multa no trobada")
+        Box(Modifier.fillMaxSize().background(Color(0xFF0F1210)), contentAlignment = Alignment.Center) {
+            Text("Multa no trobada", color = Color.White)
         }
         return
     }
@@ -48,208 +53,199 @@ fun FineDetailScreen(
     val availableEmojis = listOf("😂", "👎", "🔥", "😡", "🤣", "👏", "😬", "😤")
 
     Scaffold(
+        containerColor = Color(0xFF0F1210),
         topBar = {
-            TopAppBar(
-                title = { Text("Detall de la multa") },
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                title = { Text("DETALL DE LA SANCIÓ", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Tornar")
+                        Icon(Icons.Rounded.ArrowBackIosNew, "Tornar", tint = Color.White, modifier = Modifier.size(20.dp))
                     }
                 }
             )
         }
     ) { padding ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(20.dp, bottom = 120.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // ─── Fine info card ───────────────────────────────────────────────
+            // ─── MAIN INFO CARD ───────────────────────────────────────────────
             item {
-                Card(
+                Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    elevation = CardDefaults.cardElevation(2.dp)
+                    color = Color.White.copy(0.02f),
+                    shape = RoundedCornerShape(24.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
                 ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            UserAvatar(initials = currentFine.userInitials, size = 56)
+                    Column(modifier = Modifier.padding(24.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            UserAvatar(initials = currentFine.userInitials, size = 60, color = PenaltyGreen)
                             Spacer(Modifier.width(16.dp))
                             Column(Modifier.weight(1f)) {
-                                Text(
-                                    text = currentFine.userName,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = currentFine.category.label,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(Modifier.height(4.dp))
-                                FineStatusBadge(currentFine.status)
+                                Text(currentFine.userName, fontWeight = FontWeight.Black, color = Color.White, fontSize = 20.sp)
+                                Text(currentFine.category.label.uppercase(), style = MaterialTheme.typography.labelSmall, color = PenaltyGreen, letterSpacing = 1.sp)
                             }
                             Text(
                                 text = currentFine.formattedAmount(),
                                 fontSize = 28.sp,
-                                fontWeight = FontWeight.ExtraBold,
+                                fontWeight = FontWeight.Black,
                                 color = if (currentFine.status == FineStatus.PAID) PenaltyGreen else PenaltyRed
                             )
                         }
 
+                        Spacer(Modifier.height(20.dp))
+                        HorizontalDivider(color = Color.White.copy(0.05f))
+                        Spacer(Modifier.height(20.dp))
+
+                        Text("MOTIU DE LA SANCIÓ", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(0.4f), letterSpacing = 2.sp)
+                        Spacer(Modifier.height(8.dp))
+                        Text(currentFine.reason, style = MaterialTheme.typography.bodyLarge, color = Color.White)
+
                         Spacer(Modifier.height(16.dp))
-                        HorizontalDivider()
-                        Spacer(Modifier.height(16.dp))
-
-                        Text(
-                            text = "Motiu",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = PenaltyGray,
-                            letterSpacing = 1.sp
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = currentFine.reason,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-
-                        Spacer(Modifier.height(12.dp))
-                        Text(
-                            text = "📅 ${currentFine.formattedDate()}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-
-            // ─── Reactions ────────────────────────────────────────────────────
-            item {
-                Text("Reaccions", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(8.dp))
-                // Existing reactions
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    currentFine.reactions.forEach { (emoji, count) ->
-                        EmojiReactionChip(
-                            emoji = emoji,
-                            count = count,
-                            onClick = { finesViewModel.addReaction(fineId, emoji) }
-                        )
-                    }
-                }
-                Spacer(Modifier.height(8.dp))
-                // Add reactions
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    availableEmojis.filter { it !in currentFine.reactions.keys }.forEach { emoji ->
-                        OutlinedButton(
-                            onClick = { finesViewModel.addReaction(fineId, emoji) },
-                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                            modifier = Modifier.height(36.dp)
-                        ) {
-                            Text(emoji, fontSize = 18.sp)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Rounded.Event, null, tint = Color.White.copy(0.3f), modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text(currentFine.formattedDate(), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(0.3f))
+                            Spacer(Modifier.weight(1f))
+                            FineStatusBadge(currentFine.status)
                         }
                     }
                 }
             }
 
-            // ─── NFC Payment button (if PENDING) ──────────────────────────────
+            // ─── REACTIONS ────────────────────────────────────────────────────
+            // ─── REACTIONS (VERSIÓN ESTABLE) ──────────────────────────────────────────
+            item {
+                Text("REACCIONS", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(0.4f), letterSpacing = 2.sp)
+                Spacer(Modifier.height(12.dp))
+
+                // Usamos Row con scroll horizontal para evitar errores de FlowRow experimental
+                androidx.compose.foundation.lazy.LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    currentFine.reactions.forEach { (emoji, count) ->
+                        item {
+                            Surface(
+                                onClick = { finesViewModel.addReaction(fineId, emoji) },
+                                color = PenaltyGreen.copy(0.05f),
+                                shape = RoundedCornerShape(12.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
+                            ) {
+                                Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Text(emoji, fontSize = 16.sp)
+                                    Spacer(Modifier.width(6.dp))
+                                    Text("$count", color = PenaltyGreen, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                }
+                            }
+                        }
+                    }
+
+                    items(availableEmojis.filter { it !in currentFine.reactions.keys }) { emoji ->
+                        Surface(
+                            onClick = { finesViewModel.addReaction(fineId, emoji) },
+                            color = Color.White.copy(0.03f),
+                            shape = RoundedCornerShape(12.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
+                        ) {
+                            Text(emoji, modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), fontSize = 16.sp)
+                        }
+                    }
+                }
+            }
+
+            // ─── ACTIONS ──────────────────────────────────────────────────────
             if (currentFine.status == FineStatus.PENDING) {
                 item {
-                    Button(
-                        onClick = { onNavigateToNfcPayment(fineId) },
-                        modifier = Modifier.fillMaxWidth().height(52.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
-                    ) {
-                        Icon(Icons.Default.Nfc, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Pagar amb NFC", fontWeight = FontWeight.Bold)
-                    }
-                }
-
-                // Admin can also mark as paid manually
-                if (isAdmin) {
-                    item {
-                        OutlinedButton(
-                            onClick = { finesViewModel.markFineAsPaid(fineId) },
-                            modifier = Modifier.fillMaxWidth().height(52.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = PenaltyGreen)
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Button(
+                            onClick = { onNavigateToNfcPayment(fineId) },
+                            modifier = Modifier.fillMaxWidth().height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
                         ) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text("Marcar com a pagada (Admin)")
+                            Icon(Icons.Rounded.Nfc, null, tint = Color.Black)
+                            Spacer(Modifier.width(12.dp))
+                            Text("PAGAR AMB NFC", fontWeight = FontWeight.Black, color = Color.Black)
+                        }
+
+                        if (isAdmin) {
+                            OutlinedButton(
+                                onClick = { finesViewModel.markFineAsPaid(fineId) },
+                                modifier = Modifier.fillMaxWidth().height(56.dp),
+                                shape = RoundedCornerShape(16.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.1f)),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+                            ) {
+                                Icon(Icons.Rounded.CheckCircle, null, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(12.dp))
+                                Text("MARCAR PAGADA (ADMIN)", style = MaterialTheme.typography.labelSmall)
+                            }
                         }
                     }
                 }
             }
 
-            // ─── Comments section ─────────────────────────────────────────────
+            // ─── COMMENTS SECTION ─────────────────────────────────────────────
             item {
-                SectionHeader(title = "Comentaris (${currentFine.comments.size})")
+                Text("COMENTARIS (${currentFine.comments.size})", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(0.4f), letterSpacing = 2.sp)
             }
 
             if (currentFine.comments.isEmpty()) {
                 item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Sigues el primer a comentar! 💬", color = PenaltyGray)
-                    }
+                    Text("Sense comentaris encara. Sigues el primer! 💬",
+                        color = Color.White.copy(0.2f),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center)
                 }
             } else {
                 items(currentFine.comments, key = { it.id }) { comment ->
-                    CommentItem(comment = comment)
+                    CommentItem(comment = comment) // Asumo que el estilo de CommentItem ya sigue la línea
                 }
             }
 
-            // ─── Add comment ─────────────────────────────────────────────────
+            // ─── ADD COMMENT INPUT ───────────────────────────────────────────
             item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                Surface(
+                    color = Color.White.copy(0.03f),
+                    shape = RoundedCornerShape(24.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
                 ) {
-                    UserAvatar(
-                        initials = finesViewModel.currentUser.value.photoInitials,
-                        size = 36
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    OutlinedTextField(
-                        value = commentText,
-                        onValueChange = { commentText = it },
-                        placeholder = { Text("Afegir comentari...") },
-                        modifier = Modifier.weight(1f),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = PenaltyGreen),
-                        shape = RoundedCornerShape(24.dp)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    IconButton(
-                        onClick = {
-                            if (commentText.isNotBlank()) {
-                                finesViewModel.addComment(fineId, commentText)
-                                commentText = ""
-                            }
-                        }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     ) {
-                        Icon(Icons.Default.Send, contentDescription = "Enviar", tint = PenaltyGreen)
+                        UserAvatar(initials = currentUser.photoInitials, size = 32)
+                        OutlinedTextField(
+                            value = commentText,
+                            onValueChange = { commentText = it },
+                            placeholder = { Text("Escriu un comentari...", color = Color.Gray, fontSize = 14.sp) },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedTextColor = Color.White
+                            )
+                        )
+                        IconButton(
+                            onClick = {
+                                if (commentText.isNotBlank()) {
+                                    finesViewModel.addComment(fineId, commentText)
+                                    commentText = ""
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Rounded.Send, "Enviar", tint = PenaltyGreen)
+                        }
                     }
                 }
             }
-        }
-    }
-
-    // Snackbar messages
-    uiState.successMessage?.let { message ->
-        LaunchedEffect(message) {
-            finesViewModel.clearMessage()
         }
     }
 }
