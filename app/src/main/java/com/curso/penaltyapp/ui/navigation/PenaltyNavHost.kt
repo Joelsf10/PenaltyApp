@@ -135,14 +135,6 @@ fun PenaltyNavHost(
             }
         }
 
-
-
-        composable(Screen.TeamMembers.route) {
-            TeamMembersScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
-
         composable(
             route = Screen.NfcPayment.route,
             arguments = listOf(navArgument("fineId") { type = NavType.StringType })
@@ -152,6 +144,13 @@ fun PenaltyNavHost(
                 fineId = fineId,
                 finesViewModel = finesViewModel,
                 onPaymentComplete = { navController.popBackStack() },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+
+        composable(Screen.TeamMembers.route) {
+            TeamMembersScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

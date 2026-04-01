@@ -1,15 +1,14 @@
 package com.curso.penaltyapp.data.repository
 
 
-import androidx.compose.runtime.mutableStateOf
-import com.curso.penaltyapp.model.Comment
-import com.curso.penaltyapp.model.Fine
-import com.curso.penaltyapp.model.FineCategory
-import com.curso.penaltyapp.model.FineStatus
-import com.curso.penaltyapp.model.RankingEntry
-import com.curso.penaltyapp.model.Team
-import com.curso.penaltyapp.model.User
-import com.curso.penaltyapp.model.UserRole
+import com.curso.penaltyapp.data.model.Comment
+import com.curso.penaltyapp.data.model.Fine
+import com.curso.penaltyapp.data.model.FineCategory
+import com.curso.penaltyapp.data.model.FineStatus
+import com.curso.penaltyapp.data.model.RankingEntry
+import com.curso.penaltyapp.data.model.Team
+import com.curso.penaltyapp.data.model.User
+import com.curso.penaltyapp.data.model.UserRole
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

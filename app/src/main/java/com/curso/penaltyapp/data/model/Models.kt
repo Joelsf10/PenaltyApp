@@ -1,4 +1,4 @@
-package com.curso.penaltyapp.model
+package com.curso.penaltyapp.data.model
 
 
 import java.time.LocalDateTime
