@@ -1,6 +1,5 @@
 package com.curso.penaltyapp.ui.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +17,7 @@ import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.ui.theme.*
 
-// ─── Register Screen ──────────────────────────────────────────────────────────
 // ─── REGISTER SCREEN ──────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,9 +34,9 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
@@ -55,56 +54,120 @@ fun RegisterScreen(
         containerColor = Color(0xFF0F1210),
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
-                title = { Text("REGISTRE", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
-                navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.Rounded.ArrowBackIosNew, null, tint = Color.White, modifier = Modifier.size(20.dp)) } }
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                title = {
+                    Text(
+                        "REGISTRE",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 3.sp,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.Rounded.ArrowBackIosNew,
+                            null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             )
         }
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 32.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("CREA EL TEU COMPTE", style = MaterialTheme.typography.labelSmall, color = PenaltyGreen, letterSpacing = 2.sp)
+            Text(
+                "CREA EL TEU COMPTE",
+                style = MaterialTheme.typography.labelSmall,
+                color = PenaltyGreen,
+                letterSpacing = 2.sp
+            )
             Spacer(Modifier.height(32.dp))
 
-            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nom complet") },
-                leadingIcon = { Icon(Icons.Rounded.Person, null) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = premiumFieldColors)
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nom complet") },
+                leadingIcon = { Icon(Icons.Rounded.Person, null) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = premiumFieldColors
+            )
 
             Spacer(Modifier.height(16.dp))
 
-            OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Correu electrònic") },
-                leadingIcon = { Icon(Icons.Rounded.Email, null) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = premiumFieldColors)
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Correu electrònic") },
+                leadingIcon = { Icon(Icons.Rounded.Email, null) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = premiumFieldColors
+            )
 
             Spacer(Modifier.height(16.dp))
 
-            OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Contrasenya") },
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contrasenya") },
                 leadingIcon = { Icon(Icons.Rounded.Lock, null) },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = { IconButton(onClick = { passwordVisible = !passwordVisible }) { Icon(if (passwordVisible) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility, null, tint = Color.Gray) } },
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = premiumFieldColors)
+                visualTransformation = if (passwordVisible) VisualTransformation.None
+                else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            if (passwordVisible) Icons.Rounded.VisibilityOff
+                            else Icons.Rounded.Visibility,
+                            null,
+                            tint = Color.Gray
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = premiumFieldColors
+            )
 
             Spacer(Modifier.height(40.dp))
 
             Button(
                 onClick = onRegisterSuccess,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
             ) {
-                Text("CONTINUAR", fontWeight = FontWeight.Black, color = Color.Black, letterSpacing = 1.sp)
+                Text(
+                    "CONTINUAR",
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black,
+                    letterSpacing = 1.sp
+                )
             }
         }
     }
 }
 
-// ─── TEAM SETUP SCREEN (LA QUE DABA ERROR) ────────────────────────────────────
+// ─── TEAM SETUP SCREEN ────────────────────────────────────────────────────────
 @Composable
 fun TeamSetupScreen(onTeamReady: () -> Unit) {
-    var inviteCode by remember { mutableStateOf("") }
-    var teamName by remember { mutableStateOf("") }
-    var selectedTab by remember { mutableIntStateOf(0) }
+    // rememberSaveable perquè els camps sobreviuen a la rotació
+    var inviteCode by rememberSaveable { mutableStateOf("") }
+    var teamName by rememberSaveable { mutableStateOf("") }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Color.White,
@@ -116,29 +179,49 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
     )
 
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)).padding(32.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0F1210))
+            .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("⚽", fontSize = 48.sp)
         Spacer(Modifier.height(16.dp))
-        Text("CONFIGURA L'EQUIP", style = MaterialTheme.typography.labelSmall, color = Color.White, letterSpacing = 3.sp)
+        Text(
+            "CONFIGURA L'EQUIP",
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.White,
+            letterSpacing = 3.sp
+        )
 
         Spacer(Modifier.height(32.dp))
 
-        // Selector de Tab Estilo Stealth
         TabRow(
             selectedTabIndex = selectedTab,
             containerColor = Color.White.copy(0.05f),
             contentColor = PenaltyGreen,
-            indicator = { TabRowDefaults.SecondaryIndicator(Modifier.tabIndicatorOffset(it[selectedTab]), color = PenaltyGreen) },
+            indicator = { tabPositions ->
+                TabRowDefaults.SecondaryIndicator(
+                    Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                    color = PenaltyGreen
+                )
+            },
             divider = {}
         ) {
             Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) {
-                Text("UNIR-SE", modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.labelSmall)
+                Text(
+                    "UNIR-SE",
+                    modifier = Modifier.padding(12.dp),
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
             Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) {
-                Text("CREAR", modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.labelSmall)
+                Text(
+                    "CREAR",
+                    modifier = Modifier.padding(12.dp),
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
         }
 
@@ -171,11 +254,17 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
 
         Button(
             onClick = onTeamReady,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
             shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
         ) {
-            Text(if (selectedTab == 0) "UNIR-SE ARA" else "CREAR EQUIP", fontWeight = FontWeight.Black, color = Color.Black)
+            Text(
+                if (selectedTab == 0) "UNIR-SE ARA" else "CREAR EQUIP",
+                fontWeight = FontWeight.Black,
+                color = Color.Black
+            )
         }
     }
 }

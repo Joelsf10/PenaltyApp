@@ -15,6 +15,7 @@ import androidx.compose.material.icons.rounded.Nfc
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -38,7 +39,7 @@ fun NfcPaymentScreen(
     onNavigateBack: () -> Unit
 ) {
     val fine = finesViewModel.getFineById(fineId)
-    var screenState by remember { mutableStateOf(NfcScreenState.SCANNING) }
+    var screenState by rememberSaveable { mutableStateOf(NfcScreenState.SCANNING) }
 
     // Animación de pulso para el Radar NFC
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")

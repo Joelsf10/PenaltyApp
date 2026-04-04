@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,11 +29,11 @@ fun LoginScreen(
     onLoginSuccess: (String) -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var errorMsg by rememberSaveable { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    var errorMsg by remember { mutableStateOf<String?>(null) }
 
     Box(
         modifier = Modifier
@@ -40,14 +41,14 @@ fun LoginScreen(
             .background(
                 Brush.radialGradient(
                     colors = listOf(
-                        Color(0xFF1E2923), // verde muy oscuro
-                        Color(0xFF0F1210)  // Negro profundo
+                        Color(0xFF1E2923),
+                        Color(0xFF0F1210)
                     ),
                     center = Offset(x = 500f, y = 400f),
                     radius = 1500f
                 )
             )
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -55,7 +56,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ─── BRANDING PROFESIONAL ─────────────────────────────────────────
+            // ─── BRANDING ─────────────────────────────────────────────────────
             Box(contentAlignment = Alignment.Center) {
                 Surface(
                     modifier = Modifier.size(100.dp),
@@ -99,12 +100,14 @@ fun LoginScreen(
 
             Spacer(Modifier.height(64.dp))
 
-            // ─── INPUTS ──────────────────────────────────────────
+            // ─── INPUTS ───────────────────────────────────────────────────────
             Text(
                 text = "IDENTIFICA'T PER CONTINUAR",
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White.copy(alpha = 0.4f),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
             )
 
             OutlinedTextField(
@@ -134,7 +137,8 @@ fun LoginScreen(
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
-                            if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            if (passwordVisible) Icons.Default.VisibilityOff
+                            else Icons.Default.Visibility,
                             contentDescription = null,
                             tint = Color.Gray
                         )
@@ -167,7 +171,7 @@ fun LoginScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ─── BOTONES DE ACCIÓN ────────────────────────────────────────────
+            // ─── BOTÓ PRINCIPAL ───────────────────────────────────────────────
             Button(
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
@@ -178,13 +182,18 @@ fun LoginScreen(
                         onLoginSuccess("u1")
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen),
                 enabled = !isLoading
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp))
+                    CircularProgressIndicator(
+                        color = Color.Black,
+                        modifier = Modifier.size(20.dp)
+                    )
                 } else {
                     Text("INICIAR SESSIÓ", fontWeight = FontWeight.Black, letterSpacing = 1.sp)
                 }
@@ -192,11 +201,19 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Demos
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // ─── BOTONS DEMO ──────────────────────────────────────────────────
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 OutlinedButton(
-                    onClick = { FakeRepository.loginAsAdmin(); onLoginSuccess("u1") },
-                    modifier = Modifier.weight(1f).height(48.dp),
+                    onClick = {
+                        FakeRepository.loginAsAdmin()
+                        onLoginSuccess("u1")
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = null,
                     colors = ButtonDefaults.outlinedButtonColors(
@@ -208,8 +225,13 @@ fun LoginScreen(
                 }
 
                 OutlinedButton(
-                    onClick = { FakeRepository.loginAsPlayer(); onLoginSuccess("u2") },
-                    modifier = Modifier.weight(1f).height(48.dp),
+                    onClick = {
+                        FakeRepository.loginAsPlayer()
+                        onLoginSuccess("u2")
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = null,
                     colors = ButtonDefaults.outlinedButtonColors(
@@ -226,7 +248,12 @@ fun LoginScreen(
             TextButton(onClick = onNavigateToRegister) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Encara no tens compte? ", color = Color.Gray, fontSize = 13.sp)
-                    Text("REGISTRA'T", color = PenaltyGreen, fontWeight = FontWeight.Black, fontSize = 13.sp)
+                    Text(
+                        "REGISTRA'T",
+                        color = PenaltyGreen,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 13.sp
+                    )
                 }
             }
         }

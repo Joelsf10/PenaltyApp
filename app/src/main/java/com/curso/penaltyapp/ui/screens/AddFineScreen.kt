@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,17 +28,18 @@ fun AddFineScreen(
     onNavigateBack: () -> Unit
 ) {
     val team = finesViewModel.team
-    var selectedUserId by remember { mutableStateOf(team.members.firstOrNull()?.id ?: "") }
-    var selectedCategory by remember { mutableStateOf(FineCategory.LATE_TRAINING) }
-    var reason by remember { mutableStateOf("") }
-    var customAmount by remember { mutableStateOf("") }
+    var selectedUserId by rememberSaveable { mutableStateOf(team.members.firstOrNull()?.id ?: "") }
+    var selectedCategoryName by rememberSaveable { mutableStateOf(FineCategory.LATE_TRAINING.name) }
+    var reason by rememberSaveable { mutableStateOf("") }
+    var customAmount by rememberSaveable { mutableStateOf("") }
+
     var userExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
+    val selectedCategory = FineCategory.valueOf(selectedCategoryName)
     val selectedUser = team.members.find { it.id == selectedUserId }
     val amount = customAmount.toDoubleOrNull() ?: selectedCategory.defaultAmount
 
-    // Definimos un estilo de colores común para todos los inputs para asegurar visibilidad
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Color.White,
         unfocusedTextColor = Color.White,
@@ -54,7 +56,7 @@ fun AddFineScreen(
     )
 
     Scaffold(
-        containerColor = Color(0xFF0F1210), // Fondo Negro Stealth
+        containerColor = Color(0xFF0F1210),
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -85,7 +87,7 @@ fun AddFineScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(vertical = 20.dp)
         ) {
-            // ─── SELECCIÓN DE MIEMBRO ────────────────────────────────────────
+            // ─── SELECCIÓ DE MEMBRE ───────────────────────────────────────────
             item {
                 Column {
                     Text(
@@ -97,13 +99,18 @@ fun AddFineScreen(
                     Spacer(Modifier.height(12.dp))
                     ExposedDropdownMenuBox(
                         expanded = userExpanded,
-                        onExpandedChange = { userExpanded = it }) {
+                        onExpandedChange = { userExpanded = it }
+                    ) {
                         OutlinedTextField(
                             value = selectedUser?.name ?: "Selecciona un membre",
                             onValueChange = {},
                             readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = userExpanded) },
-                            modifier = Modifier.fillMaxWidth().menuAnchor(),
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = userExpanded)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
                             shape = RoundedCornerShape(16.dp),
                             colors = premiumFieldColors,
                             leadingIcon = { Icon(Icons.Rounded.Person, null) }
@@ -113,11 +120,15 @@ fun AddFineScreen(
                             expanded = userExpanded,
                             onDismissRequest = { userExpanded = false }
                         ) {
-                            team.members.filter { it.id != finesViewModel.currentUser.value.id }
+                            team.members
+                                .filter { it.id != finesViewModel.currentUser.value.id }
                                 .forEach { user ->
                                     DropdownMenuItem(
                                         text = { Text(user.name, color = Color.White) },
-                                        onClick = { selectedUserId = user.id; userExpanded = false }
+                                        onClick = {
+                                            selectedUserId = user.id
+                                            userExpanded = false
+                                        }
                                     )
                                 }
                         }
@@ -125,7 +136,7 @@ fun AddFineScreen(
                 }
             }
 
-            // ─── CATEGORÍA Y MOTIVO ───────────────────────────────────────────
+            // ─── CATEGORIA I MOTIU ────────────────────────────────────────────
             item {
                 Column {
                     Text(
@@ -137,13 +148,18 @@ fun AddFineScreen(
                     Spacer(Modifier.height(12.dp))
                     ExposedDropdownMenuBox(
                         expanded = categoryExpanded,
-                        onExpandedChange = { categoryExpanded = it }) {
+                        onExpandedChange = { categoryExpanded = it }
+                    ) {
                         OutlinedTextField(
                             value = selectedCategory.label,
                             onValueChange = {},
                             readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
-                            modifier = Modifier.fillMaxWidth().menuAnchor(),
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
                             shape = RoundedCornerShape(16.dp),
                             colors = premiumFieldColors,
                             leadingIcon = { Icon(Icons.Rounded.Category, null) }
@@ -161,7 +177,12 @@ fun AddFineScreen(
                                             color = Color.White
                                         )
                                     },
-                                    onClick = { selectedCategory = cat; categoryExpanded = false }
+                                    onClick = {
+                                        // Guardem el name (String) perquè rememberSaveable
+                                        // no sap serialitzar enums directament
+                                        selectedCategoryName = cat.name
+                                        categoryExpanded = false
+                                    }
                                 )
                             }
                         }
@@ -170,7 +191,9 @@ fun AddFineScreen(
                     OutlinedTextField(
                         value = reason,
                         onValueChange = { reason = it },
-                        placeholder = { Text("Breu descripció dels fets...", color = Color.Gray) },
+                        placeholder = {
+                            Text("Breu descripció dels fets...", color = Color.Gray)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
                         colors = premiumFieldColors,
@@ -179,7 +202,7 @@ fun AddFineScreen(
                 }
             }
 
-            // ─── RESUMEN (Glassmorphism) ──────────────────────────────────────
+            // ─── RESUM ────────────────────────────────────────────────────────
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -220,7 +243,7 @@ fun AddFineScreen(
                 }
             }
 
-            // ─── BOTÓN SUBMIT ─────────────────────────────────────────────────
+            // ─── BOTÓ SUBMIT ──────────────────────────────────────────────────
             item {
                 Button(
                     onClick = {
@@ -235,7 +258,9 @@ fun AddFineScreen(
                         }
                     },
                     enabled = selectedUserId.isNotEmpty() && reason.isNotBlank(),
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PenaltyRed,
@@ -247,7 +272,6 @@ fun AddFineScreen(
                         fontWeight = FontWeight.Black,
                         letterSpacing = 2.sp
                     )
-
                 }
             }
         }
