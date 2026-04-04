@@ -25,7 +25,7 @@ import com.curso.penaltyapp.data.repository.FakeRepository
 
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (String) -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
@@ -40,7 +40,7 @@ fun LoginScreen(
             .background(
                 Brush.radialGradient(
                     colors = listOf(
-                        Color(0xFF1E2923), // Un verde muy oscuro, casi negro "bosque"
+                        Color(0xFF1E2923), // verde muy oscuro
                         Color(0xFF0F1210)  // Negro profundo
                     ),
                     center = Offset(x = 500f, y = 400f),
@@ -57,7 +57,6 @@ fun LoginScreen(
         ) {
             // ─── BRANDING PROFESIONAL ─────────────────────────────────────────
             Box(contentAlignment = Alignment.Center) {
-                // Un círculo de luz muy tenue detrás del logo
                 Surface(
                     modifier = Modifier.size(100.dp),
                     color = PenaltyGreen.copy(alpha = 0.05f),
@@ -75,7 +74,7 @@ fun LoginScreen(
             Text(
                 text = "PENALTY",
                 style = MaterialTheme.typography.headlineLarge.copy(
-                    letterSpacing = 6.sp, // Espaciado de marca de lujo
+                    letterSpacing = 6.sp,
                     fontFamily = FontFamily.SansSerif
                 ),
                 color = Color.White,
@@ -100,7 +99,7 @@ fun LoginScreen(
 
             Spacer(Modifier.height(64.dp))
 
-            // ─── INPUTS MINIMALISTAS ──────────────────────────────────────────
+            // ─── INPUTS ──────────────────────────────────────────
             Text(
                 text = "IDENTIFICA'T PER CONTINUAR",
                 style = MaterialTheme.typography.labelSmall,
@@ -175,7 +174,8 @@ fun LoginScreen(
                         errorMsg = "Camps obligatoris"
                     } else {
                         isLoading = true
-                        onLoginSuccess()
+                        FakeRepository.loginAsAdmin()
+                        onLoginSuccess("u1")
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -192,10 +192,10 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Demos con estilo más discreto
+            // Demos
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(
-                    onClick = { FakeRepository.loginAsAdmin(); onLoginSuccess() },
+                    onClick = { FakeRepository.loginAsAdmin(); onLoginSuccess("u1") },
                     modifier = Modifier.weight(1f).height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = null,
@@ -208,7 +208,7 @@ fun LoginScreen(
                 }
 
                 OutlinedButton(
-                    onClick = { FakeRepository.loginAsPlayer(); onLoginSuccess() },
+                    onClick = { FakeRepository.loginAsPlayer(); onLoginSuccess("u2") },
                     modifier = Modifier.weight(1f).height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = null,
