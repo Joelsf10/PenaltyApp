@@ -34,7 +34,8 @@ fun PenaltyNavHost(
         // ─── Auth flow ────────────────────────────────────────────────────────
         composable(Screen.Login.route) {
             LoginScreen(
-                onLoginSuccess = {
+                onLoginSuccess = { userId ->
+                    settingsViewModel.login(userId)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -105,7 +106,12 @@ fun PenaltyNavHost(
         composable(Screen.Settings.route) {
             SettingsScreen(
                 settingsViewModel = settingsViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onLogout = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
