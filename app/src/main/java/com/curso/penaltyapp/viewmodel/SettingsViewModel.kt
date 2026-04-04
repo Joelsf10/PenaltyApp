@@ -23,6 +23,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         application.userPreferencesDataStore
     )
 
+    init {
+        viewModelScope.launch {
+            prefsRepo.setLoggedIn(false)
+        }
+    }
+
     val uiState: StateFlow<SettingsUiState> = combine(
         prefsRepo.theme,
         prefsRepo.notificationsEnabled,
