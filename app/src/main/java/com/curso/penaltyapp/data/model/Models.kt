@@ -4,7 +4,7 @@ package com.curso.penaltyapp.data.model
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-// ─── User model ───────────────────────────────────────────────────────────────
+// ─── USER ─────────────────────────────────────────────────────────────────────
 
 data class User(
     val id: String,
@@ -17,11 +17,12 @@ data class User(
 )
 
 enum class UserRole {
-    ADMIN,      // Capità / Tresorer
-    PLAYER      // Jugador normal
+    ADMIN,   // Capità / tresorer: pot crear multes i confirmar pagaments manualment
+    PLAYER   // Jugador normal: pot veure multes, comentar, reaccionar i pagar les seves
 }
 
-// ─── Team model ───────────────────────────────────────────────────────────────
+
+// ─── TEAM ─────────────────────────────────────────────────────────────────────
 
 data class Team(
     val id: String,
@@ -32,7 +33,7 @@ data class Team(
     val members: List<User> = emptyList()
 )
 
-// ─── Fine model ───────────────────────────────────────────────────────────────
+// ─── FINE ─────────────────────────────────────────────────────────────────────
 
 data class Fine(
     val id: String,
@@ -52,9 +53,9 @@ data class Fine(
 }
 
 enum class FineStatus {
-    PENDING,    // Pendent de pagament
-    PAID,       // Pagada (validada per NFC o manualment per admin)
-    DISPUTED    // En disputa
+    PENDING,   // Pendent de pagament: es mostra en vermell
+    PAID,      // Pagada i validada: es mostra en verd, compta al pot
+    DISPUTED   // En disputa: el jugador ha protestat la multa
 }
 
 enum class FineCategory(val label: String, val defaultAmount: Double) {
@@ -70,7 +71,7 @@ enum class FineCategory(val label: String, val defaultAmount: Double) {
     CUSTOM("Personalitzada", 0.0)
 }
 
-// ─── Comment model ────────────────────────────────────────────────────────────
+// ─── COMMENT ──────────────────────────────────────────────────────────────────
 
 data class Comment(
     val id: String,
@@ -83,7 +84,7 @@ data class Comment(
     fun formattedDate(): String = date.format(DateTimeFormatter.ofPattern("dd/MM HH:mm"))
 }
 
-// ─── NFC Payment Event ────────────────────────────────────────────────────────
+// ─── NFC PAYMENT EVENT ────────────────────────────────────────────────────────
 
 data class NfcPaymentEvent(
     val fineId: String,
@@ -91,7 +92,7 @@ data class NfcPaymentEvent(
     val timestamp: LocalDateTime = LocalDateTime.now()
 )
 
-// ─── Ranking Entry ────────────────────────────────────────────────────────────
+// ─── RANKING ENTRY ────────────────────────────────────────────────────────────
 
 data class RankingEntry(
     val user: User,

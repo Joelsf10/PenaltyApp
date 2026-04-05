@@ -7,19 +7,19 @@ package com.curso.penaltyapp.ui.navigation
  */
 sealed class Screen(val route: String) {
 
-    // ─── Auth ─────────────────────────────────────────────────────────────────
+    // ─── Flux d'autenticació ──────────────────────────────────────────────────
     data object Login : Screen("login")
     data object Register : Screen("register")
     data object TeamSetup : Screen("team_setup")
 
-    // ─── Main ─────────────────────────────────────────────────────────────────
+    // ─── Pantalles principals (bottom nav) ────────────────────────────────────
     data object Home : Screen("home")
     data object Fines : Screen("fines")
     data object Ranking : Screen("ranking")
     data object Profile : Screen("profile")
     data object Settings : Screen("settings")
 
-    // ─── Detail screens ───────────────────────────────────────────────────────
+    // ─── Pantalles de detall (reben arguments per navegació) ─────────────────
     data object FineDetail : Screen("fine_detail/{fineId}") {
         fun createRoute(fineId: String) = "fine_detail/$fineId"
     }
@@ -31,7 +31,8 @@ sealed class Screen(val route: String) {
 }
 
 /**
- * Bottom navigation items shown in the main scaffold
+ * Model de dades per als elements de la barra de navegació inferior.
+ * Agrupa la destinació, l'etiqueta i la icona de cada pestanya.
  */
 data class BottomNavItem(
     val screen: Screen,

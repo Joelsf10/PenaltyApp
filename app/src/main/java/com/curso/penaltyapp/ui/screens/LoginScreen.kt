@@ -86,7 +86,8 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ─── BRANDING ─────────────────────────────────────────────────────
+            // ─── MARCA ─────────────────────────────────────────────────────
+            // Icona de l'app amb un halo verd molt subtil al darrere
             Image(
                 painter = painterResource(id = R.mipmap.ic_launcher),
                 contentDescription = "Penalty logo",
@@ -106,6 +107,7 @@ fun LoginScreen(
                 fontSize = 32.sp
             )
 
+            // Badge de subtítol amb fons verd semi-transparent
             Surface(
                 color = PenaltyGreen.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(4.dp),
@@ -194,7 +196,9 @@ fun LoginScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ─── BOTÓ PRINCIPAL ───────────────────────────────────────────────
+            // ─── BOTONS D'ACCIÓ ───────────────────────────────────────────────
+
+            // Botó principal: valida que els camps no estiguin buits abans de fer login
             Button(
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
@@ -224,7 +228,8 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // ─── BOTONS DEMO ──────────────────────────────────────────────────
+            // Botons de demo per provar l'app sense credencials.
+            // S'eliminaran quan s'integri Firebase Authentication.
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)

@@ -55,7 +55,7 @@ fun HomeScreen(
                 .padding(padding),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
-            // ─── HEADER: EL FOCO DE LUZ Y POT ────────────────────────────────
+            // ─── HEADER: POT TOTAL ────────────────────────────────────────────
             item {
                 Box(
                     modifier = Modifier
@@ -74,7 +74,7 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        // Badge del equipo con estilo minimalista
+                        // Badge del nom de l'equip
                         Surface(
                             color = Color.White.copy(alpha = 0.05f),
                             shape = RoundedCornerShape(50.dp),
@@ -99,7 +99,7 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(8.dp))
 
-                        // Cifra con fuente Monospace y look premium
+                        // Import del pot
                         Text(
                             text = "${String.format("%.2f", team.totalPot)} €",
                             fontSize = 62.sp,
@@ -111,7 +111,7 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(16.dp))
 
-                        // Indicador de multas activas (Estilo píldora moderna)
+                        // Indicador amb el comptador de multes pendents actives
                         Surface(
                             color = PenaltyGreen.copy(alpha = 0.08f),
                             shape = RoundedCornerShape(12.dp),
@@ -140,7 +140,8 @@ fun HomeScreen(
                 }
             }
 
-            // ─── ACCIONES RÁPIDAS: LOOK DARK STEALTH ─────────────────────────
+            // ─── ACCIONS RÀPIDES ──────────────────────────────────────────────
+            // El botó "MULTAR" només apareix si l'usuari és ADMIN.
             item {
                 Row(
                     modifier = Modifier
@@ -176,7 +177,9 @@ fun HomeScreen(
                 }
             }
 
-            // ─── MIS ESTADÍSTICAS (SURFACES NEGRAS) ──────────────────────────
+            // ─── RESUM PERSONAL ───────────────────────────────────────────────
+            // Dues targetes que mostren l'import pendent i el total acumulat
+            // de l'usuari amb sessió activa
             item {
                 Spacer(Modifier.height(48.dp))
                 Column(modifier = Modifier.padding(horizontal = 24.dp)) {
@@ -206,7 +209,8 @@ fun HomeScreen(
                 }
             }
 
-            // ─── LISTADO RECIENTE ────────────────────────────────────────────
+            // ─── MULTES RECENTS ───────────────────────────────────────────────
+            // Capçalera amb el títol i l'enllaç "VEURE TOTES"
             item {
                 Spacer(Modifier.height(48.dp))
                 Row(
@@ -243,7 +247,7 @@ fun HomeScreen(
     }
 }
 
-// ─── COMPONENTES REDISEÑADOS CON ESTILO PROFESIONAL ──────────────────────────
+// ─── COMPONENTS PRIVATS DE LA HOME ───────────────────────────────────────────
 
 @Composable
 fun QuickActionButton(

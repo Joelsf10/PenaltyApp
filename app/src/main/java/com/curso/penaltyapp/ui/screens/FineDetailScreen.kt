@@ -41,6 +41,7 @@ fun FineDetailScreen(
 
     var commentText by rememberSaveable { mutableStateOf("") }
 
+    // Cerca defensiva: si la multa no existeix, es mostra error i es retorna
     val currentFine = finesViewModel.getFineById(fineId)
 
     if (currentFine == null) {
@@ -125,6 +126,7 @@ fun FineDetailScreen(
                                     letterSpacing = 1.sp
                                 )
                             }
+                            // L'import canvia de color segons l'estat de la multa
                             Text(
                                 text = currentFine.formattedAmount(),
                                 fontSize = 28.sp,
@@ -234,7 +236,9 @@ fun FineDetailScreen(
                 }
             }
 
-            // ─── ACCIONS ──────────────────────────────────────────────────────
+            // ─── ACCIONS DE PAGAMENT ──────────────────────────────────────────
+            // Només visibles si la multa és PENDING. El botó de confirmació
+            // manual d'admin és una segona opció per als casos sense NFC.
             if (currentFine.status == FineStatus.PENDING) {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -255,6 +259,7 @@ fun FineDetailScreen(
                             )
                         }
 
+                        // Botó de confirmació manual: només visible per a l'ADMIN
                         if (isAdmin) {
                             OutlinedButton(
                                 onClick = { finesViewModel.markFineAsPaid(fineId) },

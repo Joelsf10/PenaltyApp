@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 
-// ─── Penalty Brand Colors ─────────────────────────────────────────────────────
+// ─── COLORS DE MARCA ──────────────────────────────────────────────────────────
 
 val PenaltyGreen = Color(0xFF1DB954)         // Main brand color (football green)
 val PenaltyGreenDark = Color(0xFF158A3C)     // Darker variant
@@ -27,7 +27,7 @@ val PenaltyDarkSurface = Color(0xFF1E1E1E)  // Dark surface
 val PenaltyGray = Color(0xFF9E9E9E)          // Muted text
 val PenaltyCardDark = Color(0xFF2C2C2C)     // Cards in dark mode
 
-// ─── Color Schemes ────────────────────────────────────────────────────────────
+// ─── ESQUEMES DE COLOR ────────────────────────────────────────────────────────
 
 private val DarkColorScheme = darkColorScheme(
     primary = PenaltyGreen,
@@ -63,7 +63,7 @@ private val LightColorScheme = lightColorScheme(
     outline = Color(0xFFCCCCCC)
 )
 
-// ─── Typography ───────────────────────────────────────────────────────────────
+// ─── TIPOGRAFIA ───────────────────────────────────────────────────────────────
 
 val PenaltyTypography = Typography(
     headlineLarge = TextStyle(
@@ -102,7 +102,7 @@ val PenaltyTypography = Typography(
     )
 )
 
-// ─── Theme Composable ─────────────────────────────────────────────────────────
+// ─── COMPOSABLE DEL TEMA ──────────────────────────────────────────────────────
 
 @Composable
 fun PenaltyTheme(

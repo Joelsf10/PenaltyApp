@@ -36,8 +36,10 @@ fun AddFineScreen(
     var userExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
+    // Reconstruïm els objectes a partir dels valors guardats
     val selectedCategory = FineCategory.valueOf(selectedCategoryName)
     val selectedUser = team.members.find { it.id == selectedUserId }
+    // Si l'admin ha introduït un import personalitzat s'usa; si no, el de la categoria
     val amount = customAmount.toDoubleOrNull() ?: selectedCategory.defaultAmount
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
@@ -202,7 +204,7 @@ fun AddFineScreen(
                 }
             }
 
-            // ─── RESUM ────────────────────────────────────────────────────────
+            // ─── RESUM DE LA SANCIÓ ───────────────────────────────────────────
             item {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -243,7 +245,7 @@ fun AddFineScreen(
                 }
             }
 
-            // ─── BOTÓ SUBMIT ──────────────────────────────────────────────────
+            // ─── BOTÓ DE CONFIRMACIÓ ──────────────────────────────────────────
             item {
                 Button(
                     onClick = {

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.ui.theme.*
 
-// ─── REGISTER SCREEN ──────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
@@ -161,10 +160,9 @@ fun RegisterScreen(
     }
 }
 
-// ─── TEAM SETUP SCREEN ────────────────────────────────────────────────────────
+// ─── CONFIGURACIÓ D'EQUIP ────────────────────────────────────────────────────────
 @Composable
 fun TeamSetupScreen(onTeamReady: () -> Unit) {
-    // rememberSaveable perquè els camps sobreviuen a la rotació
     var inviteCode by rememberSaveable { mutableStateOf("") }
     var teamName by rememberSaveable { mutableStateOf("") }
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }

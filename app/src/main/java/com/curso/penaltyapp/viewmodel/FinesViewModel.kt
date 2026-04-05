@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
 
+// Estat complet de la UI relacionada amb les multes.
 data class FinesUiState(
     val fines: List<Fine> = emptyList(),
     val isLoading: Boolean = false,
@@ -21,6 +22,7 @@ data class FinesUiState(
     val successMessage: String? = null
 )
 
+// Gestiona tota la lògica de negoci relacionada amb les multes.
 class FinesViewModel : ViewModel() {
 
     private val repo = FakeRepository
@@ -33,7 +35,6 @@ class FinesViewModel : ViewModel() {
     val ranking = repo.ranking
 
     init {
-        // Observe fines from repository
         viewModelScope.launch {
             repo.fines.collect { allFines ->
                 _uiState.update { state ->
@@ -46,7 +47,7 @@ class FinesViewModel : ViewModel() {
         }
     }
 
-    // ─── Computed props ───────────────────────────────────────────────────────
+    // ─── PROPIETATS CALCULADES ────────────────────────────────────────────────
 
     val totalPot: Double get() = team.totalPot
 
@@ -59,8 +60,8 @@ class FinesViewModel : ViewModel() {
     fun getFineById(fineId: String): Fine? =
         repo.fines.value.find { it.id == fineId }
 
-    // ─── Actions ──────────────────────────────────────────────────────────────
-
+    // ─── ACCIONS ──────────────────────────────────────────────────────────────
+    // Aplica un filtre per estat. Si status és null, es mostren totes les multes.
     fun setFilter(status: FineStatus?) {
         _uiState.update { state ->
             state.copy(
@@ -131,18 +132,8 @@ class FinesViewModel : ViewModel() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
     }
 
-    // ─── Private helpers ──────────────────────────────────────────────────────
+    // ─── HELPERS PRIVATS ──────────────────────────────────────────────────────
 
     private fun filterFines(fines: List<Fine>, status: FineStatus?): List<Fine> =
         if (status == null) fines else fines.filter { it.status == status }
-
-    // ─── Login / Switch User (Para pruebas) ──────────────────────────────────
-
-    fun loginAsAdmin() {
-        FakeRepository.loginAsAdmin()
-    }
-
-    fun loginAsPlayer() {
-        FakeRepository.loginAsPlayer()
-    }
 }

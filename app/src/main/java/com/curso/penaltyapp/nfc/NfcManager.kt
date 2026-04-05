@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * NfcManager — handles NFC operations for payment validation.
- * Follows Android best practices: foreground dispatch + NDEF messages.
- */
+// Gestiona totes les operacions NFC de l'app per a la validació de pagaments.
 class NfcManager(private val activity: Activity) {
 
     companion object {
@@ -25,15 +22,17 @@ class NfcManager(private val activity: Activity) {
         const val PAYLOAD_PAYMENT_PREFIX = "PENALTY_PAYMENT:"
     }
 
+    // `getDefaultAdapter` retorna null si el dispositiu no té NFC
     private val nfcAdapter: NfcAdapter? = NfcAdapter.getDefaultAdapter(activity)
 
+    // Estat intern del NFC exposat com a StateFlow de només lectura
     private val _nfcState = MutableStateFlow<NfcState>(NfcState.Idle)
     val nfcState: StateFlow<NfcState> = _nfcState.asStateFlow()
 
     val isNfcAvailable: Boolean get() = nfcAdapter != null
     val isNfcEnabled: Boolean get() = nfcAdapter?.isEnabled == true
 
-    // ─── Enable foreground dispatch ───────────────────────────────────────────
+    // ─── ACTIVACIÓ I DESACTIVACIÓ ─────────────────────────────────────────────
 
     fun enableForegroundDispatch() {
         if (!isNfcAvailable) {
@@ -68,7 +67,7 @@ class NfcManager(private val activity: Activity) {
         }
     }
 
-    // ─── Process incoming NFC intent ──────────────────────────────────────────
+    // ─── PROCESSAMENT D'INTENTS NFC ───────────────────────────────────────────
 
     fun processIntent(intent: Intent): NfcPaymentResult? {
         if (intent.action != NfcAdapter.ACTION_NDEF_DISCOVERED &&
@@ -76,7 +75,6 @@ class NfcManager(private val activity: Activity) {
 
         val messages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
         if (messages.isNullOrEmpty()) {
-            // Simulate payment for skeleton (real NFC tag not present)
             return NfcPaymentResult.SimulatedPayment
         }
 
@@ -94,7 +92,7 @@ class NfcManager(private val activity: Activity) {
         }
     }
 
-    // ─── Write NFC tag (for tresorer) ─────────────────────────────────────────
+    // ─── ESCRIPTURA DE TAGS NFC ───────────────────────────────────────────────
 
     fun writePaymentTag(tag: Tag, fineId: String): Boolean {
         return try {
@@ -112,7 +110,7 @@ class NfcManager(private val activity: Activity) {
         }
     }
 
-    // ─── Simulate NFC for testing (skeleton mode) ─────────────────────────────
+    // ─── SIMULACIÓ PER A PROVES ───────────────────────────────────────────────
 
     fun simulateNfcPayment(fineId: String) {
         _nfcState.value = NfcState.PaymentDetected(fineId)
@@ -125,20 +123,20 @@ class NfcManager(private val activity: Activity) {
     }
 }
 
-// ─── State and Result sealed classes ──────────────────────────────────────────
+// ─── SEALED CLASSES D'ESTAT I RESULTAT ───────────────────────────────────────
 
 sealed class NfcState {
-    data object Idle : NfcState()
-    data object Scanning : NfcState()
-    data object NotAvailable : NfcState()
-    data object Disabled : NfcState()
-    data class PaymentDetected(val fineId: String) : NfcState()
-    data class Error(val message: String) : NfcState()
+    data object Idle : NfcState()                          // Estat inicial, cap operació activa
+    data object Scanning : NfcState()                      // Esperant un tag NFC
+    data object NotAvailable : NfcState()                  // El dispositiu no té hardware NFC
+    data object Disabled : NfcState()                      // NFC desactivat a la configuració
+    data class PaymentDetected(val fineId: String) : NfcState() // Tag llegit amb èxit
+    data class Error(val message: String) : NfcState()     // Error durant l'operació
 }
 
 sealed class NfcPaymentResult {
-    data class Success(val fineId: String) : NfcPaymentResult()
-    data object SimulatedPayment : NfcPaymentResult()
-    data object InvalidTag : NfcPaymentResult()
-    data class Error(val message: String) : NfcPaymentResult()
+    data class Success(val fineId: String) : NfcPaymentResult()  // Tag vàlid amb fineId
+    data object SimulatedPayment : NfcPaymentResult()             // Fallback sense tag real
+    data object InvalidTag : NfcPaymentResult()                   // Tag sense payload vàlid
+    data class Error(val message: String) : NfcPaymentResult()    // Error de lectura
 }

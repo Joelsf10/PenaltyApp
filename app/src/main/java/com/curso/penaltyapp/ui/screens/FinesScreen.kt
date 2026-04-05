@@ -49,6 +49,7 @@ fun FinesScreen(
                 }
             )
         },
+        // El FAB només es mostra per als admins
         floatingActionButton = {
             if (currentUser.role == UserRole.ADMIN) {
                 FloatingActionButton(
@@ -63,7 +64,7 @@ fun FinesScreen(
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
 
-            // ─── FILTROS ESTILO TAB ──────────────────────────────────────────
+            // ─── FILTRES ──────────────────────────────────────────────────────
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -91,7 +92,7 @@ fun FinesScreen(
                 }
             }
 
-            // ─── LISTADO DE MULTAS ───────────────────────────────────────────
+            // ─── LLISTA DE MULTES ─────────────────────────────────────────────
             if (uiState.isLoading) {
                 PenaltyLoadingIndicator()
             } else {

@@ -26,8 +26,6 @@ import com.curso.penaltyapp.viewmodel.FinesViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
 
 class MainActivity : ComponentActivity() {
-
-    // ViewModels created at Activity scope for lifecycle awareness
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +42,7 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
     val settings by settingsViewModel.uiState.collectAsStateWithLifecycle()
     val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
 
-    // FinesViewModel shared across screens
+    // FinesViewModel compartit entre totes les pantalles de multes
     val finesViewModel: FinesViewModel = viewModel()
 
     PenaltyTheme(themePreference = settings.theme) {
@@ -52,13 +50,13 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        // Screens that show bottom navigation bar
+        // La bottom nav només apareix a les quatre pantalles principals
         val bottomNavScreens = listOf(
             Screen.Home, Screen.Fines, Screen.Ranking, Screen.Profile
         )
         val showBottomBar = currentDestination?.route in bottomNavScreens.map { it.route }
 
-        // Bottom nav items definition
+        // Definició dels elements de la bottom nav: destinació, etiqueta i icona
         val bottomNavItems = listOf(
             Triple(Screen.Home, "Inici", Icons.Default.Home),
             Triple(Screen.Fines, "Multes", Icons.Default.Receipt),
@@ -82,11 +80,16 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
                                 selected = selected,
                                 onClick = {
                                     navController.navigate(screen.route) {
-                                        // Pop up to start destination to avoid stack buildup
+                                        // `popUpTo` evita acumular destinacions al back stack
+                                        // en navegar entre pestanyes repetidament
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
                                         }
+                                        // `launchSingleTop` evita crear múltiples còpies
+                                        // de la mateixa pantalla al stack
                                         launchSingleTop = true
+                                        // `restoreState` recupera l'estat de la pantalla
+                                        // si ja s'havia visitat anteriorment
                                         restoreState = true
                                     }
                                 },

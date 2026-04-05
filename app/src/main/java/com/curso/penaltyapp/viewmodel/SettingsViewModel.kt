@@ -52,6 +52,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val theme: Flow<String> = prefsRepo.theme
     val isLoggedIn: Flow<Boolean> = prefsRepo.isLoggedIn
 
+    // ─── ACTUALITZACIÓ DE PREFERÈNCIES ───────────────────────────────────────
     fun setTheme(theme: String) {
         viewModelScope.launch { prefsRepo.setTheme(theme) }
     }
@@ -72,6 +73,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { prefsRepo.setShowPaidFines(show) }
     }
 
+    // ─── GESTIÓ DE LA SESSIÓ ──────────────────────────────────────────────────
     fun login(userId: String) {
         viewModelScope.launch { prefsRepo.setLoggedIn(true, userId) }
     }
