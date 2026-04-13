@@ -24,12 +24,23 @@ import com.curso.penaltyapp.ui.navigation.Screen
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
+import com.google.firebase.BuildConfig
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Emulador Firebase
+        if (BuildConfig.DEBUG) {
+            Firebase.auth.useEmulator("10.0.2.2", 9099)
+            Firebase.firestore.useEmulator("10.0.2.2", 8080)
+        }
+
         setContent {
             PenaltyApp(settingsViewModel = settingsViewModel)
         }
