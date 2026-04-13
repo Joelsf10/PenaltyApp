@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -13,7 +13,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.curso.myapplication"
+        applicationId = "com.curso.penaltyapp"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -55,15 +55,23 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended")
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.6")
-// ViewModel + Lifecycle
+    // ViewModel + Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-// DataStore Preferences
+    // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-// Coroutines
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     // Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
+    //Firebase Auth
+    implementation("com.google.firebase:firebase-auth")
+    //Cloud Firestore
+    implementation("com.google.firebase:firebase-firestore")
+    //Notificaciones Push
+    implementation("com.google.firebase:firebase-messaging")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

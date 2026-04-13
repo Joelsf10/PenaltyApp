@@ -31,18 +31,18 @@ fun PenaltyNavHost(
         modifier = modifier
     ) {
 
-        // ─── Auth flow ────────────────────────────────────────────────────────
+        // ─── FLUX D'AUTENTICACIÓ ──────────────────────────────────────────────
         composable(Screen.Login.route) {
             LoginScreen(
-                onLoginSuccess = { userId ->
-                    settingsViewModel.login(userId)
+                onLoginSuccess = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 },
                 onNavigateToRegister = {
                     navController.navigate(Screen.Register.route)
-                }
+                },
+                settingsViewModel = settingsViewModel
             )
         }
 
@@ -53,7 +53,8 @@ fun PenaltyNavHost(
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                settingsViewModel = settingsViewModel
             )
         }
 
@@ -67,7 +68,7 @@ fun PenaltyNavHost(
             )
         }
 
-        // ─── Main screens ─────────────────────────────────────────────────────
+        // ─── PANTALLES PRINCIPALS ─────────────────────────────────────────────
         composable(Screen.Home.route) {
             HomeScreen(
                 finesViewModel = finesViewModel,
@@ -115,7 +116,9 @@ fun PenaltyNavHost(
             )
         }
 
-        // ─── Detail screens ───────────────────────────────────────────────────
+        // ─── PANTALLES DE DETALL ──────────────────────────────────────────────
+        // Les pantalles amb arguments declaren `{fineId}` a la ruta i el
+        // recuperen de `backStackEntry.arguments` per passar-lo al Composable.
         composable(
             route = Screen.FineDetail.route,
             arguments = listOf(navArgument("fineId") { type = NavType.StringType })
@@ -131,6 +134,9 @@ fun PenaltyNavHost(
             )
         }
 
+        // Protecció de ruta: AddFine només és accessible si l'usuari és ADMIN.
+        // Tot i que la UI ja amaga el botó per als jugadors normals, aquesta
+        // comprovació evita que s'hi pugui accedir per altres vies.
         composable(Screen.AddFine.route) {
             if (currentUser.role.name == "ADMIN") {
                 AddFineScreen(

@@ -68,6 +68,7 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // Número de posició amb zero inicial per als tres primers (ex: "01", "02")
                         Text(
                             text = if (entry.position <= 3) "0${entry.position}" else "${entry.position}",
                             fontWeight = FontWeight.Black,
@@ -84,6 +85,7 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
                             Text(entry.user.name, fontWeight = FontWeight.Bold, color = Color.White)
                             Text("${entry.fineCount} multes", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                         }
+                        // Import total en color de podi per als tres primers
                         Text(
                             text = "${String.format("%.2f", entry.totalAmount)}€",
                             fontWeight = FontWeight.Black,
@@ -96,6 +98,7 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
     }
 }
 
+// ─── PROFILE SCREEN ───────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -104,6 +107,7 @@ fun ProfileScreen(
 ) {
     val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
     val myFines = finesViewModel.myFines
+    // Comptem les multes per estat per mostrar les estadístiques
     val pendingCount = myFines.count { it.status.name == "PENDING" }
     val paidCount = myFines.count { it.status.name == "PAID" }
 
@@ -111,6 +115,7 @@ fun ProfileScreen(
         modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)),
         contentPadding = PaddingValues(bottom = 100.dp)
     ) {
+        // ─── CAPÇALERA DE PERFIL ──────────────────────────────────────────────
         item {
             Box(
                 modifier = Modifier.fillMaxWidth().padding(top = 40.dp, bottom = 24.dp),
@@ -121,6 +126,7 @@ fun ProfileScreen(
                     Spacer(Modifier.height(16.dp))
                     Text(currentUser.name.uppercase(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = Color.White, letterSpacing = 2.sp)
                     Spacer(Modifier.height(8.dp))
+                    // Badge de rol: "CAPITÀ" per a ADMIN, "JUGADOR" per a PLAYER
                     Surface(
                         color = PenaltyGreen.copy(0.1f),
                         shape = RoundedCornerShape(8.dp),
@@ -138,6 +144,7 @@ fun ProfileScreen(
             }
         }
 
+        // ─── ESTADÍSTIQUES PERSONALS ──────────────────────────────────────────
         item {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
@@ -148,6 +155,7 @@ fun ProfileScreen(
             }
         }
 
+        // ─── ACCÉS A LA CONFIGURACIÓ ──────────────────────────────────────────
         item {
             Spacer(Modifier.height(24.dp))
             Surface(
@@ -174,6 +182,7 @@ fun ProfileScreen(
     }
 }
 
+// ─── TEAM MEMBERS SCREEN ──────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamMembersScreen(onNavigateBack: () -> Unit) {
@@ -219,6 +228,7 @@ fun TeamMembersScreen(onNavigateBack: () -> Unit) {
                             Text(if (member.role.name == "ADMIN") "Capità" else "Jugador", color = Color.Gray, style = MaterialTheme.typography.labelSmall)
                         }
                         Column(horizontalAlignment = Alignment.End) {
+                            // Import en vermell si hi ha deute, verd si està al dia
                             Text("${String.format("%.2f", member.pendingFines)}€", color = if (member.pendingFines > 0) PenaltyRed else PenaltyGreen, fontWeight = FontWeight.Black)
                             Text("deute", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                         }

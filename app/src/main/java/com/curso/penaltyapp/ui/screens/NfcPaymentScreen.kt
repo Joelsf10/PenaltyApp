@@ -1,10 +1,26 @@
 package com.curso.penaltyapp.ui.screens
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,9 +29,24 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Nfc
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -24,11 +55,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
-import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.ui.theme.PenaltyGreen
+import com.curso.penaltyapp.ui.theme.PenaltyRed
+import com.curso.penaltyapp.ui.theme.PenaltyYellow
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import kotlinx.coroutines.delay
 
-enum class NfcScreenState { SCANNING, SUCCESS, ERROR, NO_NFC }
+/**
+ * Estats possibles de la pantalla de pagament NFC.
+ * Controlen quin contingut es mostra a la zona central de la pantalla.
+ */
+enum class NfcScreenState {
+    SCANNING,  // Animació de radar: esperant la lectura del tag NFC
+    SUCCESS,   // Pagament completat: mostra confirmació i torna automàticament
+    ERROR,     // Error de lectura: ofereix reintentar l'escaneig
+    NO_NFC     // Dispositiu sense NFC: ofereix confirmació manual com alternativa
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +83,7 @@ fun NfcPaymentScreen(
     val fine = finesViewModel.getFineById(fineId)
     var screenState by rememberSaveable { mutableStateOf(NfcScreenState.SCANNING) }
 
-    // Animación de pulso para el Radar NFC
+    // Animació del Radar NFC
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -62,7 +104,7 @@ fun NfcPaymentScreen(
         label = "opacity"
     )
 
-    // Simulación de lectura NFC
+    // Simulació de lectura NFC
     LaunchedEffect(Unit) {
         delay(3000)
         screenState = NfcScreenState.SUCCESS
@@ -76,10 +118,22 @@ fun NfcPaymentScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
-                title = { Text("PAGAMENT NFC", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
+                title = {
+                    Text(
+                        "PAGAMENT NFC",
+                        style = MaterialTheme.typography.labelSmall,
+                        letterSpacing = 3.sp,
+                        color = Color.White
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Rounded.ArrowBackIosNew, null, tint = Color.White, modifier = Modifier.size(20.dp))
+                        Icon(
+                            Icons.Rounded.ArrowBackIosNew,
+                            null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             )
@@ -94,18 +148,26 @@ fun NfcPaymentScreen(
             verticalArrangement = Arrangement.Center
         ) {
             fine?.let {
-                // Tarjeta de información de la multa
+                // Targeta superior amb l'import i la categoria de la multa
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.White.copy(alpha = 0.03f),
                     shape = RoundedCornerShape(24.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        Color.White.copy(alpha = 0.05f)
+                    )
                 ) {
                     Column(
                         modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("IMPORT A PAGAR", style = MaterialTheme.typography.labelSmall, color = Color.Gray, letterSpacing = 2.sp)
+                        Text(
+                            "IMPORT A PAGAR",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray,
+                            letterSpacing = 2.sp
+                        )
                         Text(
                             text = it.formattedAmount(),
                             fontSize = 42.sp,
@@ -130,12 +192,14 @@ fun NfcPaymentScreen(
                 Spacer(Modifier.height(60.dp))
             }
 
+            // ─── CONTINGUT CENTRAL ANIMAT ─────────────────────────────────────
             AnimatedContent(
                 targetState = screenState,
                 transitionSpec = { fadeIn(tween(500)) togetherWith fadeOut(tween(500)) },
                 label = "nfc_state"
             ) { state ->
                 when (state) {
+                    // Estat d'escaneig: animació de radar
                     NfcScreenState.SCANNING -> {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Box(contentAlignment = Alignment.Center) {
@@ -177,6 +241,7 @@ fun NfcPaymentScreen(
                         }
                     }
 
+                    // Estat d'èxit: icona de confirmació i missatge de pagament completat
                     NfcScreenState.SUCCESS -> {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
@@ -201,6 +266,8 @@ fun NfcPaymentScreen(
                         }
                     }
 
+                    // Estats d'error i NO_NFC: icones i missatges diferenciats.
+                    // NO_NFC ofereix confirmació manual; ERROR ofereix reintentar.
                     else -> {
                         val isNoNfc = state == NfcScreenState.NO_NFC
                         Column(
@@ -238,20 +305,35 @@ fun NfcPaymentScreen(
                                         finesViewModel.markFineAsPaid(fineId)
                                         onPaymentComplete()
                                     },
-                                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
                                     shape = RoundedCornerShape(16.dp),
                                     colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
                                 ) {
-                                    Text("CONFIRMAR MANUALMENT", fontWeight = FontWeight.Black, color = Color.Black)
+                                    Text(
+                                        "CONFIRMAR MANUALMENT",
+                                        fontWeight = FontWeight.Black,
+                                        color = Color.Black
+                                    )
                                 }
                             } else {
                                 OutlinedButton(
                                     onClick = { screenState = NfcScreenState.SCANNING },
-                                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
                                     shape = RoundedCornerShape(16.dp),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        1.dp,
+                                        Color.White.copy(alpha = 0.1f)
+                                    )
                                 ) {
-                                    Text("REINTENTAR ESCANEIG", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "REINTENTAR ESCANEIG",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }

@@ -9,15 +9,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import androidx.datastore.preferences.core.Preferences
 
-// Extension property to create a single DataStore instance
+// Propietat d'extensió sobre Context que crea la instància única del DataStore.
 val Context.userPreferencesDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "penalty_user_preferences"
 )
 
-/**
- * UserPreferencesRepository — manages user preferences with Jetpack DataStore.
- * Covers: theme (dark/light/system), notifications, language, NFC enabled.
- */
 class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
 
     companion object {
@@ -30,7 +26,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val KEY_SHOW_PAID_FINES = booleanPreferencesKey("show_paid_fines")
     }
 
-    // ─── Flows ────────────────────────────────────────────────────────────────
+    // ─── FLOWS DE LECTURA ─────────────────────────────────────────────────────
 
     val theme: Flow<String> = dataStore.data.map { prefs: Preferences ->
         prefs[KEY_THEME] ?: "system"
@@ -60,7 +56,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         prefs[KEY_SHOW_PAID_FINES] ?: true
     }
 
-    // ─── Setters ──────────────────────────────────────────────────────────────
+    // ─── SETTERS ──────────────────────────────────────────────────────────────
 
     suspend fun setTheme(theme: String) {
         dataStore.edit { prefs -> prefs[KEY_THEME] = theme }

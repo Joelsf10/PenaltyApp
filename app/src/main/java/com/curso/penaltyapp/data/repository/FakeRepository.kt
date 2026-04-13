@@ -14,13 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDateTime
 
-/**x
- * FakeRepository — simulates a backend (Firebase) with hardcoded data.
- * In the next delivery this will be replaced by real Firebase calls.
- */
+//Simula el backend (Firebase) amb dades hardcodejades.
 object FakeRepository {
 
-    // ─── Hardcoded users ──────────────────────────────────────────────────────
+    // ─── DADES HARDCODEJADES ──────────────────────────────────────────────────
 
     private val users = listOf(
         User("u1", "Jon Stegherr", "JS", "team1", UserRole.ADMIN, 42.0, 12.0),
@@ -36,7 +33,7 @@ object FakeRepository {
     private val _currentUser = MutableStateFlow(users.first { it.role == UserRole.ADMIN })
     val currentUser: StateFlow<User> = _currentUser.asStateFlow()
 
-    // ─── Hardcoded team ───────────────────────────────────────────────────────
+    // ─── EQUIP HARDCODEJAT ───────────────────────────────────────────────────────
 
     val team = Team(
         id = "team1",
@@ -47,7 +44,7 @@ object FakeRepository {
         members = users
     )
 
-    // ─── Hardcoded fines ──────────────────────────────────────────────────────
+    // ─── FINES HARDCODEJADES ──────────────────────────────────────────────────────
 
     private val _fines = MutableStateFlow(
         listOf(
@@ -203,7 +200,7 @@ object FakeRepository {
 
     val fines: StateFlow<List<Fine>> = _fines.asStateFlow()
 
-    // ─── Ranking ──────────────────────────────────────────────────────────────
+    // ─── RÀNQUING ─────────────────────────────────────────────────────────────
 
     val ranking: List<RankingEntry> get() {
         return users
@@ -218,7 +215,7 @@ object FakeRepository {
             }
     }
 
-    // ─── Operations (simulated) ────────────────────────────────────────────────
+    // ─── OPERACIONS SIMULADES ─────────────────────────────────────────────────
 
     fun addFine(fine: Fine) {
         _fines.value = listOf(fine) + _fines.value
@@ -252,6 +249,7 @@ object FakeRepository {
     fun getPendingFinesForUser(userId: String): List<Fine> =
         _fines.value.filter { it.userId == userId && it.status == FineStatus.PENDING }
 
+    // ─── LOGIN DE DEMO ────────────────────────────────────────────────────────
     fun loginAsAdmin() {
         _currentUser.value = users.first { it.role == UserRole.ADMIN }
     }

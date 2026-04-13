@@ -1,5 +1,6 @@
 package com.curso.penaltyapp.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,19 +26,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.viewmodel.SettingsViewModel
 
-// ─── REGISTER SCREEN ──────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    settingsViewModel: SettingsViewModel
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val authError by settingsViewModel.authError.collectAsStateWithLifecycle()
+    val isLoading by settingsViewModel.isAuthLoading.collectAsStateWithLifecycle()
+    val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) onRegisterSuccess()
+    }
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Color.White,
@@ -123,6 +133,8 @@ fun RegisterScreen(
                 onValueChange = { password = it },
                 label = { Text("Contrasenya") },
                 leadingIcon = { Icon(Icons.Rounded.Lock, null) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = if (passwordVisible) VisualTransformation.None
                 else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -142,29 +154,41 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(40.dp))
 
-            Button(
-                onClick = onRegisterSuccess,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
-            ) {
+            AnimatedVisibility(visible = authError != null) {
                 Text(
-                    "CONTINUAR",
-                    fontWeight = FontWeight.Black,
-                    color = Color.Black,
-                    letterSpacing = 1.sp
+                    text = authError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
+            }
+
+            Button(
+                onClick = {
+                    when {
+                        name.isBlank() || email.isBlank() || password.isBlank() ->
+                            settingsViewModel.clearAuthError()
+                        else -> settingsViewModel.register(email, password)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen),
+                enabled = !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp))
+                } else {
+                    Text("CONTINUAR", fontWeight = FontWeight.Black, color = Color.Black)
+                }
             }
         }
     }
 }
 
-// ─── TEAM SETUP SCREEN ────────────────────────────────────────────────────────
+// ─── CONFIGURACIÓ D'EQUIP ────────────────────────────────────────────────────────
 @Composable
 fun TeamSetupScreen(onTeamReady: () -> Unit) {
-    // rememberSaveable perquè els camps sobreviuen a la rotació
     var inviteCode by rememberSaveable { mutableStateOf("") }
     var teamName by rememberSaveable { mutableStateOf("") }
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }

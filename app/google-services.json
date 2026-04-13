@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1009233754330",
+    "project_id": "penaltyapp-e5fc2",
+    "storage_bucket": "penaltyapp-e5fc2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009233754330:android:ff2d13d8989ce190d7cde3",
+        "android_client_info": {
+          "package_name": "com.curso.penaltyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASXkHWAL-7MxhuLfZPiw6qmMJ2GqBpJ-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

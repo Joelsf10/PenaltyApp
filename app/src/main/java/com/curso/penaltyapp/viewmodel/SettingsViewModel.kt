@@ -1,9 +1,9 @@
 package com.curso.penaltyapp.viewmodel
 
-
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.curso.penaltyapp.data.repository.AuthRepository
 import com.curso.penaltyapp.data.repository.UserPreferencesRepository
 import com.curso.penaltyapp.data.repository.userPreferencesDataStore
 import kotlinx.coroutines.flow.*
@@ -23,9 +23,19 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         application.userPreferencesDataStore
     )
 
+    private val _authError = MutableStateFlow<String?>(null)
+    val authError: StateFlow<String?> = _authError.asStateFlow()
+
+    private val _isAuthLoading = MutableStateFlow(false)
+    val isAuthLoading: StateFlow<Boolean> = _isAuthLoading.asStateFlow()
+
     init {
         viewModelScope.launch {
-            prefsRepo.setLoggedIn(false)
+            if (AuthRepository.isLoggedIn) {
+                prefsRepo.setLoggedIn(true, AuthRepository.currentFirebaseUser?.uid ?: "")
+            } else {
+                prefsRepo.setLoggedIn(false)
+            }
         }
     }
 
@@ -52,6 +62,64 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val theme: Flow<String> = prefsRepo.theme
     val isLoggedIn: Flow<Boolean> = prefsRepo.isLoggedIn
 
+    // ─── AUTH ─────────────────────────────────────────────────────────────────
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _isAuthLoading.value = true
+            _authError.value = null
+            val result = AuthRepository.login(email, password)
+            result.onSuccess { firebaseUser ->
+                prefsRepo.setLoggedIn(true, firebaseUser.uid)
+            }
+            result.onFailure { error ->
+                _authError.value = mapFirebaseError(error.message)
+            }
+            _isAuthLoading.value = false
+        }
+    }
+
+    fun register(email: String, password: String) {
+        viewModelScope.launch {
+            _isAuthLoading.value = true
+            _authError.value = null
+            val result = AuthRepository.register(email, password)
+            result.onSuccess { firebaseUser ->
+                prefsRepo.setLoggedIn(true, firebaseUser.uid)
+            }
+            result.onFailure { error ->
+                _authError.value = mapFirebaseError(error.message)
+            }
+            _isAuthLoading.value = false
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            AuthRepository.logout()
+            prefsRepo.setLoggedIn(false)
+        }
+    }
+
+    fun clearAuthError() {
+        _authError.value = null
+    }
+
+    private fun mapFirebaseError(message: String?): String {
+        return when {
+            message == null -> "Error desconegut"
+            "no user record" in message -> "No existeix cap compte amb aquest correu"
+            "password is invalid" in message -> "Contrasenya incorrecta"
+            "email address is already in use" in message -> "Aquest correu ja està registrat"
+            "badly formatted" in message -> "Format de correu incorrecte"
+            "password should be at least" in message -> "La contrasenya ha de tenir mínim 6 caràcters"
+            "network error" in message.lowercase() -> "Error de connexió. Comprova la xarxa"
+            else -> "Error d'autenticació. Torna-ho a intentar"
+        }
+    }
+
+    // ─── PREFERÈNCIES ────────────────────────────────────────────────────────
+
     fun setTheme(theme: String) {
         viewModelScope.launch { prefsRepo.setTheme(theme) }
     }
@@ -70,13 +138,5 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun setShowPaidFines(show: Boolean) {
         viewModelScope.launch { prefsRepo.setShowPaidFines(show) }
-    }
-
-    fun login(userId: String) {
-        viewModelScope.launch { prefsRepo.setLoggedIn(true, userId) }
-    }
-
-    fun logout() {
-        viewModelScope.launch { prefsRepo.setLoggedIn(false) }
     }
 }

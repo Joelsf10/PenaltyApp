@@ -31,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,21 +50,30 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.R
 import com.curso.penaltyapp.data.repository.FakeRepository
 import com.curso.penaltyapp.ui.theme.PenaltyGreen
 import com.curso.penaltyapp.ui.theme.PenaltyGreenLight
+import com.curso.penaltyapp.viewmodel.SettingsViewModel
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: (String) -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    settingsViewModel: SettingsViewModel
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var errorMsg by rememberSaveable { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
+    val authError by settingsViewModel.authError.collectAsStateWithLifecycle()
+    val isLoading by settingsViewModel.isAuthLoading.collectAsStateWithLifecycle()
+    val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) onLoginSuccess("")
+    }
 
     Box(
         modifier = Modifier
@@ -86,7 +96,8 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ─── BRANDING ─────────────────────────────────────────────────────
+            // ─── MARCA ─────────────────────────────────────────────────────
+            // Icona de l'app amb un halo verd molt subtil al darrere
             Image(
                 painter = painterResource(id = R.mipmap.ic_launcher),
                 contentDescription = "Penalty logo",
@@ -106,6 +117,7 @@ fun LoginScreen(
                 fontSize = 32.sp
             )
 
+            // Badge de subtítol amb fons verd semi-transparent
             Surface(
                 color = PenaltyGreen.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(4.dp),
@@ -194,76 +206,36 @@ fun LoginScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ─── BOTÓ PRINCIPAL ───────────────────────────────────────────────
+            // ─── BOTONS D'ACCIÓ ───────────────────────────────────────────────
+
+            // Botó principal: valida que els camps no estiguin buits abans de fer login
             Button(
                 onClick = {
-                    if (email.isBlank() || password.isBlank()) {
-                        errorMsg = "Camps obligatoris"
-                    } else {
-                        isLoading = true
-                        FakeRepository.loginAsAdmin()
-                        onLoginSuccess("u1")
+                    when {
+                        email.isBlank() || password.isBlank() ->
+                            settingsViewModel.clearAuthError()
+                        else -> settingsViewModel.login(email, password)
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen),
                 enabled = !isLoading
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(
-                        color = Color.Black,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp))
                 } else {
                     Text("INICIAR SESSIÓ", fontWeight = FontWeight.Black, letterSpacing = 1.sp)
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
-
-            // ─── BOTONS DEMO ──────────────────────────────────────────────────
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedButton(
-                    onClick = {
-                        FakeRepository.loginAsAdmin()
-                        onLoginSuccess("u1")
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    border = null,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color.White.copy(alpha = 0.05f),
-                        contentColor = Color.LightGray
-                    )
-                ) {
-                    Text("DEMO CAPITÀ", style = MaterialTheme.typography.labelSmall)
-                }
-
-                OutlinedButton(
-                    onClick = {
-                        FakeRepository.loginAsPlayer()
-                        onLoginSuccess("u2")
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    border = null,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color.White.copy(alpha = 0.05f),
-                        contentColor = Color.LightGray
-                    )
-                ) {
-                    Text("DEMO JUGADOR", style = MaterialTheme.typography.labelSmall)
-                }
+            AnimatedVisibility(visible = authError != null) {
+                Text(
+                    text = authError ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
 
             Spacer(Modifier.height(48.dp))

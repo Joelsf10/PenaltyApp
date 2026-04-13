@@ -22,7 +22,7 @@ import com.curso.penaltyapp.data.model.Fine
 import com.curso.penaltyapp.data.model.FineStatus
 import com.curso.penaltyapp.ui.theme.*
 
-// ─── User Avatar ──────────────────────────────────────────────────────────────
+// ─── USER AVATAR ──────────────────────────────────────────────────────────────
 
 @Composable
 fun UserAvatar(
@@ -47,7 +47,7 @@ fun UserAvatar(
     }
 }
 
-// ─── Fine Status Badge ────────────────────────────────────────────────────────
+// ─── FINE STATUS BADGE ────────────────────────────────────────────────────────
 
 @Composable
 fun FineStatusBadge(status: FineStatus) {
@@ -70,7 +70,7 @@ fun FineStatusBadge(status: FineStatus) {
     }
 }
 
-// ─── Fine Card ────────────────────────────────────────────────────────────────
+// ─── FINE CARD ────────────────────────────────────────────────────────────────
 
 @Composable
 fun FineCard(
@@ -123,6 +123,7 @@ fun FineCard(
             }
 
             Spacer(Modifier.height(10.dp))
+            // maxLines = 2 evita que targetes molt llargues dominin la llista
             Text(
                 text = fine.reason,
                 style = MaterialTheme.typography.bodyMedium,
@@ -130,7 +131,7 @@ fun FineCard(
                 maxLines = 2
             )
 
-            // Reactions row
+            // Reaccions: només visibles si n'hi ha almenys una
             if (fine.reactions.isNotEmpty()) {
                 Spacer(Modifier.height(10.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -140,7 +141,7 @@ fun FineCard(
                 }
             }
 
-            // Footer: date + comments count
+            // Footer: data a l'esquerra, comptador de comentaris a la dreta
             Spacer(Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -173,7 +174,7 @@ fun FineCard(
     }
 }
 
-// ─── Emoji Reaction Chip ──────────────────────────────────────────────────────
+// ─── EMOJI REACTION CHIP ──────────────────────────────────────────────────────
 
 @Composable
 fun EmojiReactionChip(emoji: String, count: Int, onClick: (() -> Unit)? = null) {
@@ -199,77 +200,7 @@ fun EmojiReactionChip(emoji: String, count: Int, onClick: (() -> Unit)? = null) 
     }
 }
 
-// ─── Stats Card ───────────────────────────────────────────────────────────────
-
-@Composable
-fun StatsCard(
-    title: String,
-    value: String,
-    subtitle: String? = null,
-    icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
-    color: Color = PenaltyGreen,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f)),
-        elevation = CardDefaults.cardElevation(0.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                icon?.let {
-                    Icon(it, null, tint = color, modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(6.dp))
-                }
-                Text(text = title, style = MaterialTheme.typography.labelSmall, color = color)
-            }
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.ExtraBold,
-                color = color
-            )
-            subtitle?.let {
-                Text(text = it, style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-    }
-}
-
-// ─── Section Header ───────────────────────────────────────────────────────────
-
-@Composable
-fun SectionHeader(
-    title: String,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        if (actionLabel != null && onAction != null) {
-            TextButton(onClick = onAction) {
-                Text(actionLabel, color = PenaltyGreen)
-            }
-        }
-    }
-}
-
-// ─── Comment Item ─────────────────────────────────────────────────────────────
+// ─── COMMENT ITEM ─────────────────────────────────────────────────────────────
 
 @Composable
 fun CommentItem(comment: Comment) {
@@ -314,7 +245,7 @@ fun CommentItem(comment: Comment) {
     }
 }
 
-// ─── Loading indicator ────────────────────────────────────────────────────────
+// ─── LOADING INDICATOR ────────────────────────────────────────────────────────
 
 @Composable
 fun PenaltyLoadingIndicator() {

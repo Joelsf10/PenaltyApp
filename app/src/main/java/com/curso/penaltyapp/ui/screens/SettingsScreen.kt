@@ -67,6 +67,7 @@ fun SettingsScreen(
     val settings by settingsViewModel.uiState.collectAsStateWithLifecycle()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    // ─── DIÀLEG DE CONFIRMACIÓ DE LOGOUT ─────────────────────────────────────
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
@@ -104,7 +105,7 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFF0F1210), // Negro Stealth
+        containerColor = Color(0xFF0F1210),
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -141,7 +142,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            // ─── APARIENCIA ───────────────────────────────────────────────────
+            // ─── APARENÇA ───────────────────────────────────────────────────
             item { SettingsSectionHeader("APARENÇA") }
             item {
                 var showThemeDialog by remember { mutableStateOf(false) }
@@ -171,7 +172,7 @@ fun SettingsScreen(
                 }
             }
 
-            // ─── NOTIFICACIONES ──────────────────────────────────────────────
+            // ─── NOTIFICACIONS ──────────────────────────────────────────────
             item { SettingsSectionHeader("XARXA I NOTIFICACIONS") }
             item {
                 SettingsSwitchItem(
@@ -192,7 +193,7 @@ fun SettingsScreen(
                 )
             }
 
-            // ─── PAGOS ────────────────────────────────────────────────────────
+            // ─── PAGAMENTS ────────────────────────────────────────────────────────
             item { SettingsSectionHeader("PAGAMENTS") }
             item {
                 SettingsSwitchItem(
@@ -297,7 +298,7 @@ fun SettingsScreen(
     }
 }
 
-// ─── COMPONENTES DE ESTILO DARK STEALTH ───────────────────────────────────────
+// ─── COMPONENTS PRIVATS DEL SETTINGS ─────────────────────────────────────────
 
 @Composable
 private fun SettingsSectionHeader(title: String) {
