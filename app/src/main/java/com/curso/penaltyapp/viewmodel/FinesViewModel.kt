@@ -1,6 +1,5 @@
 package com.curso.penaltyapp.viewmodel
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.curso.penaltyapp.data.repository.FakeRepository
@@ -16,8 +15,10 @@ import java.util.UUID
 // Estat complet de la UI relacionada amb les multes.
 data class FinesUiState(
     val fines: List<Fine> = emptyList(),
+    val myFines: List<Fine> = emptyList(),
+    val pendingFines: List<Fine> = emptyList(),
     val isLoading: Boolean = false,
-    val filterStatus: FineStatus? = null,    // null = all
+    val filterStatus: FineStatus? = null,
     val errorMessage: String? = null,
     val successMessage: String? = null
 )
@@ -38,8 +39,15 @@ class FinesViewModel : ViewModel() {
         viewModelScope.launch {
             repo.fines.collect { allFines ->
                 _uiState.update { state ->
+
+                    val filtered = filterFines(allFines, state.filterStatus)
+                    val my = allFines.filter { it.userId == currentUser.value.id }
+                    val pending = allFines.filter { it.status == FineStatus.PENDING }
+
                     state.copy(
-                        fines = filterFines(allFines, state.filterStatus),
+                        fines = filtered,
+                        myFines = my,
+                        pendingFines = pending,
                         isLoading = false
                     )
                 }
@@ -51,17 +59,11 @@ class FinesViewModel : ViewModel() {
 
     val totalPot: Double get() = team.totalPot
 
-    val pendingFines: List<Fine>
-        get() = repo.fines.value.filter { it.status == FineStatus.PENDING }
-
-    val myFines: List<Fine>
-        get() = repo.fines.value.filter { it.userId == currentUser.value.id }
-
     fun getFineById(fineId: String): Fine? =
         repo.fines.value.find { it.id == fineId }
 
     // ─── ACCIONS ──────────────────────────────────────────────────────────────
-    // Aplica un filtre per estat. Si status és null, es mostren totes les multes.
+
     fun setFilter(status: FineStatus?) {
         _uiState.update { state ->
             state.copy(
