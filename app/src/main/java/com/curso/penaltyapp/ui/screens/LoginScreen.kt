@@ -55,22 +55,21 @@ import com.curso.penaltyapp.R
 import com.curso.penaltyapp.data.repository.FakeRepository
 import com.curso.penaltyapp.ui.theme.PenaltyGreen
 import com.curso.penaltyapp.ui.theme.PenaltyGreenLight
+import com.curso.penaltyapp.viewmodel.LoginViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: (String) -> Unit,
     onNavigateToRegister: () -> Unit,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var errorMsg by rememberSaveable { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
     val authError by settingsViewModel.authError.collectAsStateWithLifecycle()
     val isLoading by settingsViewModel.isAuthLoading.collectAsStateWithLifecycle()
     val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
-
+    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) onLoginSuccess("")
     }
@@ -146,8 +145,8 @@ fun LoginScreen(
             )
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it; errorMsg = null },
+                value = uiState.email,
+                onValueChange = loginViewModel::onPasswordChanged,
                 placeholder = { Text("Correu electrònic", color = Color.Gray) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
@@ -166,8 +165,8 @@ fun LoginScreen(
             Spacer(Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it; errorMsg = null },
+                value = uiState.password,
+                onValueChange = loginViewModel::onPasswordChanged,
                 placeholder = { Text("Contrasenya", color = Color.Gray) },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -195,9 +194,9 @@ fun LoginScreen(
                 )
             )
 
-            AnimatedVisibility(visible = errorMsg != null) {
+            AnimatedVisibility(visible = authError != null) {
                 Text(
-                    text = errorMsg ?: "",
+                    text = authError ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 8.dp)
@@ -212,9 +211,9 @@ fun LoginScreen(
             Button(
                 onClick = {
                     when {
-                        email.isBlank() || password.isBlank() ->
+                        uiState.email.isBlank() || uiState.password.isBlank() ->
                             settingsViewModel.clearAuthError()
-                        else -> settingsViewModel.login(email, password)
+                        else -> settingsViewModel.login(uiState.email, uiState.password)
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
