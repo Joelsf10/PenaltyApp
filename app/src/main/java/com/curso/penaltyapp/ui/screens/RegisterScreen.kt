@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.viewmodel.RegisterViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,15 +36,14 @@ import com.curso.penaltyapp.viewmodel.SettingsViewModel
 fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateBack: () -> Unit,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    registerViewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
     val authError by settingsViewModel.authError.collectAsStateWithLifecycle()
     val isLoading by settingsViewModel.isAuthLoading.collectAsStateWithLifecycle()
     val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
+    val uiState by registerViewModel.uiState.collectAsStateWithLifecycle()
+    var passwordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) onRegisterSuccess()
@@ -105,8 +105,8 @@ fun RegisterScreen(
             Spacer(Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = uiState.name,
+                onValueChange = registerViewModel::onNameChanged,
                 label = { Text("Nom complet") },
                 leadingIcon = { Icon(Icons.Rounded.Person, null) },
                 modifier = Modifier.fillMaxWidth(),
@@ -117,8 +117,8 @@ fun RegisterScreen(
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = uiState.email,
+                onValueChange = registerViewModel::onEmailChanged,
                 label = { Text("Correu electrònic") },
                 leadingIcon = { Icon(Icons.Rounded.Email, null) },
                 modifier = Modifier.fillMaxWidth(),
@@ -129,8 +129,8 @@ fun RegisterScreen(
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = uiState.password,
+                onValueChange = registerViewModel::onPasswordChanged,
                 label = { Text("Contrasenya") },
                 leadingIcon = { Icon(Icons.Rounded.Lock, null) },
                 singleLine = true,
@@ -166,9 +166,9 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     when {
-                        name.isBlank() || email.isBlank() || password.isBlank() ->
+                        uiState.name.isBlank() || uiState.email.isBlank() || uiState.password.isBlank() ->
                             settingsViewModel.clearAuthError()
-                        else -> settingsViewModel.register(email, password)
+                        else -> settingsViewModel.register(uiState.email, uiState.password)
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),

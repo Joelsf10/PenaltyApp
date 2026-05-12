@@ -90,18 +90,29 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
                             NavigationBarItem(
                                 selected = selected,
                                 onClick = {
-                                    navController.navigate(screen.route) {
-                                        // `popUpTo` evita acumular destinacions al back stack
-                                        // en navegar entre pestanyes repetidament
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+
+                                    if (screen == Screen.Home) {
+
+                                        navController.navigate(screen.route) {
+
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                inclusive = false
+                                            }
+
+                                            launchSingleTop = true
                                         }
-                                        // `launchSingleTop` evita crear múltiples còpies
-                                        // de la mateixa pantalla al stack
-                                        launchSingleTop = true
-                                        // `restoreState` recupera l'estat de la pantalla
-                                        // si ja s'havia visitat anteriorment
-                                        restoreState = true
+
+                                    } else {
+
+                                        navController.navigate(screen.route) {
+
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
                                     }
                                 },
                                 icon = {
