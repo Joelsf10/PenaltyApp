@@ -19,28 +19,28 @@ import androidx.compose.ui.unit.sp
 import com.curso.penaltyapp.data.model.FineCategory
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.curso.penaltyapp.viewmodel.AddFineViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFineScreen(
     finesViewModel: FinesViewModel,
     onFineAdded: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    addFineViewModel: AddFineViewModel = viewModel()
 ) {
     val team = finesViewModel.team
-    var selectedUserId by rememberSaveable { mutableStateOf(team.members.firstOrNull()?.id ?: "") }
-    var selectedCategoryName by rememberSaveable { mutableStateOf(FineCategory.LATE_TRAINING.name) }
-    var reason by rememberSaveable { mutableStateOf("") }
-    var customAmount by rememberSaveable { mutableStateOf("") }
-
+    val uiState by addFineViewModel.uiState.collectAsStateWithLifecycle()
     var userExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
     // Reconstruïm els objectes a partir dels valors guardats
-    val selectedCategory = FineCategory.valueOf(selectedCategoryName)
-    val selectedUser = team.members.find { it.id == selectedUserId }
+    val selectedCategory = FineCategory.valueOf(uiState.selectedCategoryName)
+    val selectedUser = team.members.find { it.id == uiState.selectedUserId }
     // Si l'admin ha introduït un import personalitzat s'usa; si no, el de la categoria
-    val amount = customAmount.toDoubleOrNull() ?: selectedCategory.defaultAmount
+    val amount = uiState.customAmount.toDoubleOrNull() ?: selectedCategory.defaultAmount
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Color.White,
@@ -128,7 +128,7 @@ fun AddFineScreen(
                                     DropdownMenuItem(
                                         text = { Text(user.name, color = Color.White) },
                                         onClick = {
-                                            selectedUserId = user.id
+                                            addFineViewModel.onUserSelected(user.id)
                                             userExpanded = false
                                         }
                                     )
@@ -180,9 +180,7 @@ fun AddFineScreen(
                                         )
                                     },
                                     onClick = {
-                                        // Guardem el name (String) perquè rememberSaveable
-                                        // no sap serialitzar enums directament
-                                        selectedCategoryName = cat.name
+                                        addFineViewModel.onCategorySelected(cat)
                                         categoryExpanded = false
                                     }
                                 )
@@ -191,8 +189,8 @@ fun AddFineScreen(
                     }
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
-                        value = reason,
-                        onValueChange = { reason = it },
+                        value = uiState.reason,
+                        onValueChange = addFineViewModel::onReasonChanged,
                         placeholder = {
                             Text("Breu descripció dels fets...", color = Color.Gray)
                         },
@@ -249,17 +247,17 @@ fun AddFineScreen(
             item {
                 Button(
                     onClick = {
-                        if (selectedUserId.isNotEmpty() && reason.isNotBlank()) {
+                        if (uiState.selectedUserId.isNotEmpty() && uiState.reason.isNotBlank()) {
                             finesViewModel.addFine(
-                                selectedUserId,
+                                uiState.selectedUserId,
                                 selectedCategory,
-                                reason,
-                                customAmount.toDoubleOrNull()
+                                uiState.reason,
+                                uiState.customAmount.toDoubleOrNull()
                             )
                             onFineAdded()
                         }
                     },
-                    enabled = selectedUserId.isNotEmpty() && reason.isNotBlank(),
+                    enabled = uiState.selectedUserId.isNotEmpty() && uiState.reason.isNotBlank(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),

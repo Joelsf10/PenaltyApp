@@ -1,4 +1,4 @@
-package com.curso.penaltyapp.viewmodel
+package com.curso.penaltyapp.ui.state
 
 data class RegisterUiState(
     val name: String = "",

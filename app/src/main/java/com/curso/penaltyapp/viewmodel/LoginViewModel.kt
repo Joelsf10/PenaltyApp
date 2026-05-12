@@ -1,6 +1,7 @@
 package com.curso.penaltyapp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.curso.penaltyapp.ui.state.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
