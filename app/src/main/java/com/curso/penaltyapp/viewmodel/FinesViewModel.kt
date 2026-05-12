@@ -49,34 +49,13 @@ class FinesViewModel : ViewModel() {
 
     // ─── PROPIETATS CALCULADES ────────────────────────────────────────────────
 
-    val totalPot: Double
-        get() = team.totalPot
+    val totalPot: Double get() = team.totalPot
 
-    val pendingFines: StateFlow<List<Fine>> =
-        repo.fines
-            .map { fines ->
-                fines.filter { it.status == FineStatus.PENDING }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyList()
-            )
+    val pendingFines: List<Fine>
+        get() = repo.fines.value.filter { it.status == FineStatus.PENDING }
 
-    val myFines: StateFlow<List<Fine>> =
-        combine(
-            repo.fines,
-            currentUser
-        ) { fines, user ->
-
-            fines.filter {
-                it.userId == user.id
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    val myFines: List<Fine>
+        get() = repo.fines.value.filter { it.userId == currentUser.value.id }
 
     fun getFineById(fineId: String): Fine? =
         repo.fines.value.find { it.id == fineId }
