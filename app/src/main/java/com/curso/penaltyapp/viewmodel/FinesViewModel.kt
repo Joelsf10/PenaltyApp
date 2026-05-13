@@ -1,42 +1,79 @@
 package com.curso.penaltyapp.viewmodel
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.curso.penaltyapp.data.repository.FakeRepository
-import com.curso.penaltyapp.data.model.Comment
-import com.curso.penaltyapp.data.model.Fine
-import com.curso.penaltyapp.data.model.FineCategory
-import com.curso.penaltyapp.data.model.FineStatus
+import com.curso.penaltyapp.data.model.*
+import com.curso.penaltyapp.data.repository.AuthRepository
+import com.curso.penaltyapp.data.repository.FirestoreRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
 
-// Estat complet de la UI relacionada amb les multes.
 data class FinesUiState(
     val fines: List<Fine> = emptyList(),
     val isLoading: Boolean = false,
-    val filterStatus: FineStatus? = null,    // null = all
+    val filterStatus: FineStatus? = null,
     val errorMessage: String? = null,
     val successMessage: String? = null
 )
 
-// Gestiona tota la lògica de negoci relacionada amb les multes.
 class FinesViewModel : ViewModel() {
-
-    private val repo = FakeRepository
 
     private val _uiState = MutableStateFlow(FinesUiState(isLoading = true))
     val uiState: StateFlow<FinesUiState> = _uiState.asStateFlow()
 
-    val currentUser = repo.currentUser
-    val team = repo.team
-    val ranking = repo.ranking
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
+
+    private val _users = MutableStateFlow<List<User>>(emptyList())
+    val users: StateFlow<List<User>> = _users.asStateFlow()
+
+    private val _allFines = MutableStateFlow<List<Fine>>(emptyList())
+
+    val ranking: List<RankingEntry>
+        get() = _users.value
+            .sortedByDescending { it.totalFines }
+            .mapIndexed { idx, user ->
+                RankingEntry(
+                    user = user,
+                    position = idx + 1,
+                    totalAmount = user.totalFines,
+                    fineCount = _allFines.value.count { it.userId == user.id }
+                )
+            }
+
+    val pendingFines: List<Fine>
+        get() = _allFines.value.filter { it.status == FineStatus.PENDING }
+
+    val myFines: List<Fine>
+        get() = _allFines.value.filter { it.userId == currentUser.value?.id }
+
+    val totalPot: Double
+        get() = _allFines.value
+            .filter { it.status == FineStatus.PAID }
+            .sumOf { it.amount }
 
     init {
+        loadCurrentUser()
+        loadFines()
+    }
+
+    private fun loadCurrentUser() {
         viewModelScope.launch {
-            repo.fines.collect { allFines ->
+            val uid = AuthRepository.currentFirebaseUser?.uid ?: return@launch
+            val user = FirestoreRepository.getUserById(uid)
+            _currentUser.value = user
+            user?.teamId?.let { teamId ->
+                FirestoreRepository.getUsersFlow(teamId).collect { _users.value = it }
+            }
+        }
+    }
+
+    private fun loadFines() {
+        viewModelScope.launch {
+            FirestoreRepository.getFinesFlow().collect { allFines ->
+                _allFines.value = allFines
                 _uiState.update { state ->
                     state.copy(
                         fines = filterFines(allFines, state.filterStatus),
@@ -47,26 +84,17 @@ class FinesViewModel : ViewModel() {
         }
     }
 
-    // ─── PROPIETATS CALCULADES ────────────────────────────────────────────────
-
-    val totalPot: Double get() = team.totalPot
-
-    val pendingFines: List<Fine>
-        get() = repo.fines.value.filter { it.status == FineStatus.PENDING }
-
-    val myFines: List<Fine>
-        get() = repo.fines.value.filter { it.userId == currentUser.value.id }
-
     fun getFineById(fineId: String): Fine? =
-        repo.fines.value.find { it.id == fineId }
+        _allFines.value.find { it.id == fineId }
 
-    // ─── ACCIONS ──────────────────────────────────────────────────────────────
-    // Aplica un filtre per estat. Si status és null, es mostren totes les multes.
+    fun getCommentsFlow(fineId: String) =
+        FirestoreRepository.getCommentsFlow(fineId)
+
     fun setFilter(status: FineStatus?) {
         _uiState.update { state ->
             state.copy(
                 filterStatus = status,
-                fines = filterFines(repo.fines.value, status)
+                fines = filterFines(_allFines.value, status)
             )
         }
     }
@@ -78,9 +106,8 @@ class FinesViewModel : ViewModel() {
         customAmount: Double? = null
     ) {
         viewModelScope.launch {
-            val user = repo.getUserById(targetUserId) ?: return@launch
+            val user = FirestoreRepository.getUserById(targetUserId) ?: return@launch
             val amount = customAmount ?: category.defaultAmount
-
             val newFine = Fine(
                 id = UUID.randomUUID().toString(),
                 userId = targetUserId,
@@ -94,14 +121,14 @@ class FinesViewModel : ViewModel() {
                 comments = emptyList(),
                 reactions = emptyMap()
             )
-            repo.addFine(newFine)
+            FirestoreRepository.addFine(newFine)
             _uiState.update { it.copy(successMessage = "Multa afegida correctament!") }
         }
     }
 
     fun markFineAsPaid(fineId: String, viaNfc: Boolean = false) {
         viewModelScope.launch {
-            repo.markAsPaid(fineId)
+            FirestoreRepository.markAsPaid(fineId)
             val msg = if (viaNfc) "Pagament validat via NFC ✓" else "Multa marcada com a pagada"
             _uiState.update { it.copy(successMessage = msg) }
         }
@@ -110,29 +137,28 @@ class FinesViewModel : ViewModel() {
     fun addComment(fineId: String, text: String) {
         viewModelScope.launch {
             if (text.isBlank()) return@launch
+            val user = currentUser.value ?: return@launch
             val comment = Comment(
                 id = UUID.randomUUID().toString(),
-                userId = currentUser.value.id,
-                userName = currentUser.value.name,
-                userInitials = currentUser.value.photoInitials,
+                userId = user.id,
+                userName = user.name,
+                userInitials = user.photoInitials,
                 text = text,
                 date = LocalDateTime.now()
             )
-            repo.addComment(fineId, comment)
+            FirestoreRepository.addComment(fineId, comment)
         }
     }
 
     fun addReaction(fineId: String, emoji: String) {
         viewModelScope.launch {
-            repo.addReaction(fineId, emoji)
+            FirestoreRepository.addReaction(fineId, emoji)
         }
     }
 
     fun clearMessage() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
     }
-
-    // ─── HELPERS PRIVATS ──────────────────────────────────────────────────────
 
     private fun filterFines(fines: List<Fine>, status: FineStatus?): List<Fine> =
         if (status == null) fines else fines.filter { it.status == status }
