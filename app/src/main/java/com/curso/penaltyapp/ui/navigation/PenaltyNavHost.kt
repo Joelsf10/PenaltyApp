@@ -48,8 +48,7 @@ fun PenaltyNavHost(
         composable(Screen.Register.route) {
             RegisterScreen(
                 onRegisterSuccess = {
-                    finesViewModel.reload()
-                    navController.navigate(Screen.Home.route) {
+                    navController.navigate(Screen.TeamSetup.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 },
@@ -61,6 +60,7 @@ fun PenaltyNavHost(
         composable(Screen.TeamSetup.route) {
             TeamSetupScreen(
                 onTeamReady = {
+                    finesViewModel.reload()
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.TeamSetup.route) { inclusive = true }
                     }

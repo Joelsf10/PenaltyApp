@@ -31,6 +31,8 @@ class FinesViewModel : ViewModel() {
 
     private val _allFines = MutableStateFlow<List<Fine>>(emptyList())
 
+    private val _team = MutableStateFlow<Team?>(null)
+    val team: StateFlow<Team?> = _team.asStateFlow()
     val ranking: List<RankingEntry>
         get() = _users.value
             .sortedByDescending { it.totalFines }
@@ -66,6 +68,8 @@ class FinesViewModel : ViewModel() {
                 val user = FirestoreRepository.getUserById(uid)
                 _currentUser.value = user
                 user?.teamId?.let { teamId ->
+                    val teamData = FirestoreRepository.getTeamById(teamId)
+                    _team.value = teamData
                     FirestoreRepository.getUsersFlow(teamId).collect { _users.value = it }
                 }
             } catch (e: Exception) {
@@ -175,4 +179,14 @@ class FinesViewModel : ViewModel() {
 
     private fun filterFines(fines: List<Fine>, status: FineStatus?): List<Fine> =
         if (status == null) fines else fines.filter { it.status == status }
+
+    fun updateInviteCode(newCode: String) {
+        viewModelScope.launch {
+            val teamId = currentUser.value?.teamId ?: return@launch
+            FirestoreRepository.updateInviteCode(teamId, newCode)
+            // Recarregar l'equip
+            val updated = FirestoreRepository.getTeamById(teamId)
+            _team.value = updated
+        }
+    }
 }

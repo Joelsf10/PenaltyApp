@@ -85,28 +85,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun register(email: String, password: String, name: String) {
+    fun register(email: String, password: String) {
         viewModelScope.launch {
             _isAuthLoading.value = true
             _authError.value = null
             val result = AuthRepository.register(email, password)
             result.onSuccess { firebaseUser ->
-                val initials = name.split(" ")
-                    .take(2)
-                    .mapNotNull { it.firstOrNull()?.uppercaseChar() }
-                    .joinToString("")
-                val user = User(
-                    id = firebaseUser.uid,
-                    name = name,
-                    photoInitials = initials,
-                    teamId = "team1",
-                    role = UserRole.PLAYER,
-                    totalFines = 0.0,
-                    pendingFines = 0.0
-                )
-                FirestoreRepository.saveUser(user)
                 prefsRepo.setLoggedIn(true, firebaseUser.uid)
-                _registerSuccess.value = true  // ← señal directa
+                _registerSuccess.value = true
             }
             result.onFailure { error ->
                 _authError.value = mapFirebaseError(error.message)

@@ -165,4 +165,66 @@ object FirestoreRepository {
             }
         awaitClose { listener.remove() }
     }
+
+    // ─── TEAMS ───────────────────────────────────────────────────────────────────
+
+    suspend fun getTeamByInviteCode(code: String): Team? {
+        return try {
+            val snapshot = db.collection("teams")
+                .whereEqualTo("inviteCode", code.uppercase())
+                .get().await()
+            if (snapshot.isEmpty) return null
+            val doc = snapshot.documents.first()
+            Team(
+                id = doc.id,
+                name = doc.getString("name") ?: "",
+                sport = doc.getString("sport") ?: "",
+                totalPot = doc.getDouble("totalPot") ?: 0.0,
+                inviteCode = doc.getString("inviteCode") ?: ""
+            )
+        } catch (e: Exception) { null }
+    }
+
+    suspend fun createTeam(name: String, adminId: String): Team {
+        val inviteCode = generateInviteCode()
+        val data = hashMapOf(
+            "name" to name,
+            "sport" to "Futbol",
+            "totalPot" to 0.0,
+            "inviteCode" to inviteCode,
+            "adminId" to adminId
+        )
+        val ref = db.collection("teams").add(data).await()
+        return Team(
+            id = ref.id,
+            name = name,
+            sport = "Futbol",
+            totalPot = 0.0,
+            inviteCode = inviteCode
+        )
+    }
+
+    private fun generateInviteCode(): String {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return "PEN-" + (1..4).map { chars.random() }.joinToString("")
+    }
+
+    suspend fun getTeamById(teamId: String): Team? {
+        return try {
+            val doc = db.collection("teams").document(teamId).get().await()
+            if (!doc.exists()) return null
+            Team(
+                id = doc.id,
+                name = doc.getString("name") ?: "",
+                sport = doc.getString("sport") ?: "",
+                totalPot = doc.getDouble("totalPot") ?: 0.0,
+                inviteCode = doc.getString("inviteCode") ?: ""
+            )
+        } catch (e: Exception) { null }
+    }
+
+    suspend fun updateInviteCode(teamId: String, newCode: String) {
+        db.collection("teams").document(teamId)
+            .update("inviteCode", newCode.uppercase()).await()
+    }
 }

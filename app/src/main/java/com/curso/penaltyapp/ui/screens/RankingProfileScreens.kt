@@ -105,6 +105,8 @@ fun ProfileScreen(
     val myFines = finesViewModel.myFines
     val pendingCount = myFines.count { it.status.name == "PENDING" }
     val paidCount = myFines.count { it.status.name == "PAID" }
+    val team by finesViewModel.team.collectAsStateWithLifecycle()
+    val isAdmin = currentUser?.role?.name == "ADMIN"
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)),
@@ -156,6 +158,85 @@ fun ProfileScreen(
             ) {
                 StatsCard("PENDENTS", "$pendingCount", icon = Icons.Default.Warning, color = PenaltyRed, modifier = Modifier.weight(1f))
                 StatsCard("PAGADES", "$paidCount", icon = Icons.Default.CheckCircle, color = PenaltyGreen, modifier = Modifier.weight(1f))
+                if (isAdmin) {
+                    var showChangeCode by remember { mutableStateOf(false) }
+                    var newCode by remember { mutableStateOf("") }
+
+                    Spacer(Modifier.height(16.dp))
+                    Surface(
+                        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                        color = PenaltyGreen.copy(0.05f),
+                        shape = RoundedCornerShape(20.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Text(
+                                "CODI D'INVITACIÓ",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PenaltyGreen.copy(0.6f),
+                                letterSpacing = 2.sp
+                            )
+                            Text(
+                                team?.inviteCode ?: "...",
+                                fontWeight = FontWeight.Black,
+                                fontSize = 28.sp,
+                                color = PenaltyGreen,
+                                letterSpacing = 4.sp
+                            )
+                            Spacer(Modifier.height(8.dp))
+
+                            if (showChangeCode) {
+                                OutlinedTextField(
+                                    value = newCode,
+                                    onValueChange = { newCode = it.uppercase() },
+                                    placeholder = { Text("Nou codi (ex: PEN-XXXX)") },
+                                    singleLine = true,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        focusedBorderColor = PenaltyGreen,
+                                        unfocusedBorderColor = Color.White.copy(0.2f),
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    )
+                                )
+                                Spacer(Modifier.height(8.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    OutlinedButton(
+                                        onClick = { showChangeCode = false },
+                                        modifier = Modifier.weight(1f),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.2f))
+                                    ) {
+                                        Text("CANCEL·LAR", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                                    }
+                                    Button(
+                                        onClick = {
+                                            if (newCode.isNotBlank()) {
+                                                finesViewModel.updateInviteCode(newCode)
+                                                showChangeCode = false
+                                                newCode = ""
+                                            }
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
+                                    ) {
+                                        Text("GUARDAR", color = Color.Black, style = MaterialTheme.typography.labelSmall)
+                                    }
+                                }
+                            } else {
+                                TextButton(onClick = { showChangeCode = true }) {
+                                    Text(
+                                        "CANVIAR CODI",
+                                        color = PenaltyGreen,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
