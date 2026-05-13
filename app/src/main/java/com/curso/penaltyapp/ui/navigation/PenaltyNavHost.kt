@@ -1,8 +1,6 @@
 package com.curso.penaltyapp.ui.navigation
 
-
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -92,9 +90,7 @@ fun PenaltyNavHost(
         }
 
         composable(Screen.Ranking.route) {
-            RankingScreen(
-                finesViewModel = finesViewModel
-            )
+            RankingScreen(finesViewModel = finesViewModel)
         }
 
         composable(Screen.Profile.route) {
@@ -117,8 +113,6 @@ fun PenaltyNavHost(
         }
 
         // ─── PANTALLES DE DETALL ──────────────────────────────────────────────
-        // Les pantalles amb arguments declaren `{fineId}` a la ruta i el
-        // recuperen de `backStackEntry.arguments` per passar-lo al Composable.
         composable(
             route = Screen.FineDetail.route,
             arguments = listOf(navArgument("fineId") { type = NavType.StringType })
@@ -135,10 +129,8 @@ fun PenaltyNavHost(
         }
 
         // Protecció de ruta: AddFine només és accessible si l'usuari és ADMIN.
-        // Tot i que la UI ja amaga el botó per als jugadors normals, aquesta
-        // comprovació evita que s'hi pugui accedir per altres vies.
         composable(Screen.AddFine.route) {
-            if (currentUser.role.name == "ADMIN") {
+            if (currentUser?.role?.name == "ADMIN") {
                 AddFineScreen(
                     finesViewModel = finesViewModel,
                     onFineAdded = { navController.popBackStack() },
@@ -160,9 +152,9 @@ fun PenaltyNavHost(
             )
         }
 
-
         composable(Screen.TeamMembers.route) {
             TeamMembersScreen(
+                finesViewModel = finesViewModel,
                 onNavigateBack = { navController.popBackStack() }
             )
         }

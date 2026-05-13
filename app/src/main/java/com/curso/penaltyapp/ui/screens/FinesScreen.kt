@@ -1,6 +1,5 @@
 package com.curso.penaltyapp.ui.screens
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,14 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.data.model.FineStatus
 import com.curso.penaltyapp.data.model.UserRole
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
-import androidx.compose.ui.unit.sp
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,9 +36,12 @@ fun FinesScreen(
         containerColor = Color(0xFF0F1210),
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 title = {
-                    Text("REGISTRE GENERAL",
+                    Text(
+                        "REGISTRE GENERAL",
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 4.sp,
                         color = Color.White,
@@ -51,19 +52,27 @@ fun FinesScreen(
         },
         // El FAB només es mostra per als admins
         floatingActionButton = {
-            if (currentUser.role == UserRole.ADMIN) {
+            if (currentUser?.role == UserRole.ADMIN) {
                 FloatingActionButton(
                     onClick = onNavigateToAddFine,
                     containerColor = PenaltyGreen,
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Icon(Icons.Rounded.Add, contentDescription = null, tint = Color.Black, modifier = Modifier.size(30.dp))
+                    Icon(
+                        Icons.Rounded.Add,
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier.size(30.dp)
+                    )
                 }
             }
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             // ─── FILTRES ──────────────────────────────────────────────────────
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
@@ -80,7 +89,10 @@ fun FinesScreen(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.height(36.dp)
                     ) {
-                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        ) {
                             Text(
                                 text = labels[index],
                                 style = MaterialTheme.typography.labelSmall,
@@ -97,21 +109,39 @@ fun FinesScreen(
                 PenaltyLoadingIndicator()
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 100.dp),
+                    contentPadding = PaddingValues(
+                        start = 24.dp,
+                        end = 24.dp,
+                        top = 12.dp,
+                        bottom = 100.dp
+                    ),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     if (uiState.fines.isEmpty()) {
                         item {
-                            Box(modifier = Modifier.fillMaxWidth().padding(top = 100.dp), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 100.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text("🛡️", fontSize = 40.sp)
-                                    Text("HISTORIAL NET", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(0.3f), letterSpacing = 2.sp)
+                                    Text(
+                                        "HISTORIAL NET",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Color.White.copy(0.3f),
+                                        letterSpacing = 2.sp
+                                    )
                                 }
                             }
                         }
                     } else {
                         items(uiState.fines, key = { it.id }) { fine ->
-                            FineCard(fine = fine, onClick = { onNavigateToFineDetail(fine.id) })
+                            FineCard(
+                                fine = fine,
+                                onClick = { onNavigateToFineDetail(fine.id) }
+                            )
                         }
                     }
                 }

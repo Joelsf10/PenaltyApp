@@ -1,7 +1,18 @@
 package com.curso.penaltyapp.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,9 +22,26 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.Nfc
 import androidx.compose.material.icons.rounded.Send
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,8 +51,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.data.model.FineStatus
-import com.curso.penaltyapp.ui.components.*
-import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.ui.components.CommentItem
+import com.curso.penaltyapp.ui.components.FineStatusBadge
+import com.curso.penaltyapp.ui.components.UserAvatar
+import com.curso.penaltyapp.ui.theme.PenaltyGreen
+import com.curso.penaltyapp.ui.theme.PenaltyRed
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,11 +68,14 @@ fun FineDetailScreen(
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
     val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
-    val isAdmin = currentUser.role.name == "ADMIN"
+    val isAdmin = currentUser?.role?.name == "ADMIN"
+
+    // Comentaris en temps real des de Firestore
+    val comments by finesViewModel.getCommentsFlow(fineId)
+        .collectAsStateWithLifecycle(initialValue = emptyList())
 
     var commentText by rememberSaveable { mutableStateOf("") }
 
-    // Cerca defensiva: si la multa no existeix, es mostra error i es retorna
     val currentFine = finesViewModel.getFineById(fineId)
 
     if (currentFine == null) {
@@ -126,7 +160,6 @@ fun FineDetailScreen(
                                     letterSpacing = 1.sp
                                 )
                             }
-                            // L'import canvia de color segons l'estat de la multa
                             Text(
                                 text = currentFine.formattedAmount(),
                                 fontSize = 28.sp,
@@ -237,8 +270,6 @@ fun FineDetailScreen(
             }
 
             // ─── ACCIONS DE PAGAMENT ──────────────────────────────────────────
-            // Només visibles si la multa és PENDING. El botó de confirmació
-            // manual d'admin és una segona opció per als casos sense NFC.
             if (currentFine.status == FineStatus.PENDING) {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -259,7 +290,6 @@ fun FineDetailScreen(
                             )
                         }
 
-                        // Botó de confirmació manual: només visible per a l'ADMIN
                         if (isAdmin) {
                             OutlinedButton(
                                 onClick = { finesViewModel.markFineAsPaid(fineId) },
@@ -271,9 +301,7 @@ fun FineDetailScreen(
                                     1.dp,
                                     Color.White.copy(0.1f)
                                 ),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color.White
-                                )
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
                             ) {
                                 Icon(
                                     Icons.Rounded.CheckCircle,
@@ -294,14 +322,14 @@ fun FineDetailScreen(
             // ─── COMENTARIS ───────────────────────────────────────────────────
             item {
                 Text(
-                    "COMENTARIS (${currentFine.comments.size})",
+                    "COMENTARIS (${comments.size})",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(0.4f),
                     letterSpacing = 2.sp
                 )
             }
 
-            if (currentFine.comments.isEmpty()) {
+            if (comments.isEmpty()) {
                 item {
                     Text(
                         "Sense comentaris encara. Sigues el primer! 💬",
@@ -314,7 +342,7 @@ fun FineDetailScreen(
                     )
                 }
             } else {
-                items(currentFine.comments, key = { it.id }) { comment ->
+                items(comments, key = { it.id }) { comment ->
                     CommentItem(comment = comment)
                 }
             }
@@ -324,25 +352,18 @@ fun FineDetailScreen(
                 Surface(
                     color = Color.White.copy(0.03f),
                     shape = RoundedCornerShape(24.dp),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        Color.White.copy(0.05f)
-                    )
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     ) {
-                        UserAvatar(initials = currentUser.photoInitials, size = 32)
+                        UserAvatar(initials = currentUser?.photoInitials ?: "?", size = 32)
                         OutlinedTextField(
                             value = commentText,
                             onValueChange = { commentText = it },
                             placeholder = {
-                                Text(
-                                    "Escriu un comentari...",
-                                    color = Color.Gray,
-                                    fontSize = 14.sp
-                                )
+                                Text("Escriu un comentari...", color = Color.Gray, fontSize = 14.sp)
                             },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
