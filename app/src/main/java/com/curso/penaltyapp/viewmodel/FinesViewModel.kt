@@ -61,11 +61,15 @@ class FinesViewModel : ViewModel() {
 
     private fun loadCurrentUser() {
         viewModelScope.launch {
-            val uid = AuthRepository.currentFirebaseUser?.uid ?: return@launch
-            val user = FirestoreRepository.getUserById(uid)
-            _currentUser.value = user
-            user?.teamId?.let { teamId ->
-                FirestoreRepository.getUsersFlow(teamId).collect { _users.value = it }
+            try {
+                val uid = AuthRepository.currentFirebaseUser?.uid ?: return@launch
+                val user = FirestoreRepository.getUserById(uid)
+                _currentUser.value = user
+                user?.teamId?.let { teamId ->
+                    FirestoreRepository.getUsersFlow(teamId).collect { _users.value = it }
+                }
+            } catch (e: Exception) {
+                _currentUser.value = null
             }
         }
     }
@@ -82,6 +86,15 @@ class FinesViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    fun reload() {
+        _currentUser.value = null
+        _users.value = emptyList()
+        _allFines.value = emptyList()
+        _uiState.value = FinesUiState(isLoading = true)
+        loadCurrentUser()
+        loadFines()
     }
 
     fun getFineById(fineId: String): Fine? =

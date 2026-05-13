@@ -62,12 +62,16 @@ object FirestoreRepository {
     }
 
     suspend fun addReaction(fineId: String, emoji: String) {
-        val doc = db.collection("fines").document(fineId).get().await()
-        val reactions = (doc.get("reactions") as? Map<String, Long>)
-            ?.mapValues { it.value.toInt() }?.toMutableMap() ?: mutableMapOf()
-        reactions[emoji] = (reactions[emoji] ?: 0) + 1
-        db.collection("fines").document(fineId)
-            .update("reactions", reactions).await()
+        try {
+            val doc = db.collection("fines").document(fineId).get().await()
+            val reactions = (doc.get("reactions") as? Map<String, Long>)
+                ?.mapValues { it.value.toInt() }?.toMutableMap() ?: mutableMapOf()
+            reactions[emoji] = (reactions[emoji] ?: 0) + 1
+            db.collection("fines").document(fineId)
+                .update("reactions", reactions).await()
+        } catch (e: Exception) {
+            // Ignorar si no hay conexión
+        }
     }
 
     // ─── COMMENTS ────────────────────────────────────────────────────────────
@@ -122,17 +126,21 @@ object FirestoreRepository {
     }
 
     suspend fun getUserById(userId: String): User? {
-        val doc = db.collection("users").document(userId).get().await()
-        if (!doc.exists()) return null
-        return User(
-            id = doc.id,
-            name = doc.getString("name") ?: "",
-            photoInitials = doc.getString("photoInitials") ?: "",
-            teamId = doc.getString("teamId") ?: "",
-            role = UserRole.valueOf(doc.getString("role") ?: "PLAYER"),
-            totalFines = doc.getDouble("totalFines") ?: 0.0,
-            pendingFines = doc.getDouble("pendingFines") ?: 0.0
-        )
+        return try {
+            val doc = db.collection("users").document(userId).get().await()
+            if (!doc.exists()) return null
+            User(
+                id = doc.id,
+                name = doc.getString("name") ?: "",
+                photoInitials = doc.getString("photoInitials") ?: "",
+                teamId = doc.getString("teamId") ?: "",
+                role = UserRole.valueOf(doc.getString("role") ?: "PLAYER"),
+                totalFines = doc.getDouble("totalFines") ?: 0.0,
+                pendingFines = doc.getDouble("pendingFines") ?: 0.0
+            )
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun getUsersFlow(teamId: String): Flow<List<User>> = callbackFlow {

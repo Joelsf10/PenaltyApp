@@ -44,9 +44,13 @@ fun RegisterScreen(
     val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
     val uiState by registerViewModel.uiState.collectAsStateWithLifecycle()
     var passwordVisible by remember { mutableStateOf(false) }
+    val registerSuccess by settingsViewModel.registerSuccess.collectAsStateWithLifecycle()
 
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) onRegisterSuccess()
+    LaunchedEffect(registerSuccess) {
+        if (registerSuccess) {
+            settingsViewModel.clearRegisterSuccess()
+            onRegisterSuccess()
+        }
     }
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
@@ -168,7 +172,7 @@ fun RegisterScreen(
                     when {
                         uiState.name.isBlank() || uiState.email.isBlank() || uiState.password.isBlank() ->
                             settingsViewModel.clearAuthError()
-                        else -> settingsViewModel.register(uiState.email, uiState.password)
+                        else -> settingsViewModel.register(uiState.email, uiState.password, uiState.name)
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),

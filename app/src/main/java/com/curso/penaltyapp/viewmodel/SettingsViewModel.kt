@@ -3,7 +3,10 @@ package com.curso.penaltyapp.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.curso.penaltyapp.data.model.User
+import com.curso.penaltyapp.data.model.UserRole
 import com.curso.penaltyapp.data.repository.AuthRepository
+import com.curso.penaltyapp.data.repository.FirestoreRepository
 import com.curso.penaltyapp.data.repository.UserPreferencesRepository
 import com.curso.penaltyapp.data.repository.userPreferencesDataStore
 import kotlinx.coroutines.flow.*
@@ -28,6 +31,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     private val _isAuthLoading = MutableStateFlow(false)
     val isAuthLoading: StateFlow<Boolean> = _isAuthLoading.asStateFlow()
+
+    private val _registerSuccess = MutableStateFlow(false)
+    val registerSuccess: StateFlow<Boolean> = _registerSuccess.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -79,13 +85,28 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun register(email: String, password: String) {
+    fun register(email: String, password: String, name: String) {
         viewModelScope.launch {
             _isAuthLoading.value = true
             _authError.value = null
             val result = AuthRepository.register(email, password)
             result.onSuccess { firebaseUser ->
+                val initials = name.split(" ")
+                    .take(2)
+                    .mapNotNull { it.firstOrNull()?.uppercaseChar() }
+                    .joinToString("")
+                val user = User(
+                    id = firebaseUser.uid,
+                    name = name,
+                    photoInitials = initials,
+                    teamId = "team1",
+                    role = UserRole.PLAYER,
+                    totalFines = 0.0,
+                    pendingFines = 0.0
+                )
+                FirestoreRepository.saveUser(user)
                 prefsRepo.setLoggedIn(true, firebaseUser.uid)
+                _registerSuccess.value = true  // ← señal directa
             }
             result.onFailure { error ->
                 _authError.value = mapFirebaseError(error.message)
@@ -103,6 +124,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun clearAuthError() {
         _authError.value = null
+    }
+
+    fun clearRegisterSuccess() {
+        _registerSuccess.value = false
     }
 
     private fun mapFirebaseError(message: String?): String {
