@@ -11,7 +11,6 @@
     <string name="multas_recientes">MULTAS RECIENTES</string>
     <string name="ver_multas">VER TODAS</string>
     <string name="fine_description">Breve descripción del incidente...</string>
-
     <string name="historial">HISTORIAL</string>
     <string name="ranking">RANKING</string>
     <string name="personal_summary">RESUMEN PERSONAL</string>
@@ -29,4 +28,14 @@
     <string name="dress_code">Equipación incorrecta</string>
     <string name="custom">Personalizada</string>
     <string name="categoria_i_motiu">Categoria y motivo</string>
+    <string name="subtitle">EL VESTUARIO DIGITAL</string>
+    <string name="identificate">IDENTIFICATE PARA CONTINUAR</string>
+    <string name="correu">Correo electrónico</string>
+    <string name="contrasenya">Contraseña</string>
+    <string name="sensecompte">¿Todavía no tienes cuenta?</string>
+
+
+
+
+
 </resources>

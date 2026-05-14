@@ -43,6 +43,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -123,7 +124,7 @@ fun LoginScreen(
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 Text(
-                    text = "EL VESTIDOR DIGITAL",
+                    text = stringResource(R.string.subtitle),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                     style = MaterialTheme.typography.labelSmall,
                     color = PenaltyGreenLight,
@@ -136,7 +137,7 @@ fun LoginScreen(
 
             // ─── INPUTS ───────────────────────────────────────────────────────
             Text(
-                text = "IDENTIFICA'T PER CONTINUAR",
+                text = stringResource(R.string.identificate),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White.copy(alpha = 0.4f),
                 modifier = Modifier
@@ -147,7 +148,12 @@ fun LoginScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = loginViewModel::onPasswordChanged,
-                placeholder = { Text("Correu electrònic", color = Color.Gray) },
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.correu),
+                        color = Color.Gray
+                    )
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
@@ -167,8 +173,12 @@ fun LoginScreen(
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = loginViewModel::onPasswordChanged,
-                placeholder = { Text("Contrasenya", color = Color.Gray) },
-                trailingIcon = {
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.contrasenya),
+                        color = Color.Gray
+                    )
+                },                trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
                             if (passwordVisible) Icons.Default.VisibilityOff
@@ -224,7 +234,11 @@ fun LoginScreen(
                 if (isLoading) {
                     CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp))
                 } else {
-                    Text("INICIAR SESSIÓ", fontWeight = FontWeight.Black, letterSpacing = 1.sp)
+                    Text(
+                        text = stringResource(R.string.login_title),
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.sp
+                    )
                 }
             }
 
@@ -241,9 +255,9 @@ fun LoginScreen(
 
             TextButton(onClick = onNavigateToRegister) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Encara no tens compte? ", color = Color.Gray, fontSize = 13.sp)
+                    Text(text = stringResource(R.string.sensecompte), color = Color.Gray, fontSize = 13.sp)
                     Text(
-                        "REGISTRA'T",
+                        text = stringResource(R.string.register_title),
                         color = PenaltyGreen,
                         fontWeight = FontWeight.Black,
                         fontSize = 13.sp

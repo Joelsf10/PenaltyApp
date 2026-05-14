@@ -18,7 +18,6 @@
     <string name="personal_pendiente">PENDENT</string>
     <string name="personal_total">TOTAL</string>
     <string name="fine_description">Breu descripció del incident...</string>
-    //multes
     <string name="late_at_training">Retard entrenament</string>
     <string name="late_at_match">Retard partit</string>
     <string name="no_training">Falta entrenament</string>
@@ -29,4 +28,12 @@
     <string name="red_card">Tarjeta vermella</string>
     <string name="dress_code">Equipació incorrecta</string>
     <string name="custom">Personalitzada</string>
+    <string name="subtitle">EL VESTIDOR DIGITAL</string>
+    <string name="identificate">IDENTIFICAT PER CONTINUAR</string>
+    <string name="correu">Correu electrònic</string>
+    <string name="contrasenya">Contrasenya</string>
+    <string name="sensecompte">Encara no tens compte?</string>
+
+
+
 </resources>
