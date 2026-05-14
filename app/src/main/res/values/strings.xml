@@ -2,13 +2,22 @@
     <string name="app_name">PenaltyApp</string>
     <string name="login_title">Iniciar sessió</string>
     <string name="register_title">Registre</string>
-
-
-
-
-
-
-
+    <string name="nomina_sancions">NÒMINA DE SANCIONS</string>
+    <string name="membre_sancionat">Membre sancionat</string>
+    <string name="membre_seleccion">Selecciona un membre</string>
+    <string name="categoria_i_motiu">Categoria i motiu</string>
+    <string name="importe_sancion">Import de la sanció</string>
+    <string name="multar">MULTAR</string>
+    <string name="bote">El pot total</string>
+    <string name="multas_activas">MULTES ACTIVES</string>
+    <string name="multas_recientes">MULTES RECENTS</string>
+    <string name="ver_multas">VEURE TOTES</string>
+    <string name="historial">HISTORIAL</string>
+    <string name="ranking">RÀNQUING</string>
+    <string name="personal_summary">RESUM PERSONAL</string>
+    <string name="personal_pendiente">PENDENT</string>
+    <string name="personal_total">TOTAL</string>
+    <string name="fine_description">Breu descripció del incident...</string>
     //multes
     <string name="late_at_training">Retard entrenament</string>
     <string name="late_at_match">Retard partit</string>

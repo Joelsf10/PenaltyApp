@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.curso.penaltyapp.viewmodel.AddFineViewModel
 import androidx.compose.ui.res.stringResource
+import com.curso.penaltyapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +69,7 @@ fun AddFineScreen(
                 ),
                 title = {
                     Text(
-                        "NÒMINA DE SANCIONS",
+                        text = stringResource(R.string.nomina_sancions).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         fontWeight = FontWeight.Black
@@ -94,7 +95,7 @@ fun AddFineScreen(
             item {
                 Column {
                     Text(
-                        "MEMBRE SANCIONAT",
+                        text = stringResource(R.string.membre_sancionat),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(0.4f),
                         letterSpacing = 2.sp
@@ -105,7 +106,7 @@ fun AddFineScreen(
                         onExpandedChange = { userExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = selectedUser?.name ?: "Selecciona un membre",
+                            value = selectedUser?.name ?: stringResource(R.string.membre_seleccion),
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
@@ -143,7 +144,7 @@ fun AddFineScreen(
             item {
                 Column {
                     Text(
-                        "CATEGORIA I MOTIU",
+                        stringResource(R.string.categoria_i_motiu).uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(0.4f),
                         letterSpacing = 2.sp
@@ -193,7 +194,10 @@ fun AddFineScreen(
                         value = uiState.reason,
                         onValueChange = addFineViewModel::onReasonChanged,
                         placeholder = {
-                            Text("Breu descripció dels fets...", color = Color.Gray)
+                            Text(
+                                text = stringResource(R.string.fine_description),
+                                color = Color.Gray
+                            )
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
@@ -221,7 +225,7 @@ fun AddFineScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "IMPORT DE LA SANCIÓ",
+                                stringResource(R.string.importe_sancion),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = PenaltyRed.copy(0.6f),
                                 letterSpacing = 1.sp
@@ -269,7 +273,7 @@ fun AddFineScreen(
                     )
                 ) {
                     Text(
-                        "MULTAR A ${selectedUser?.name}",
+                        text = stringResource(R.string.multar) + " " + (selectedUser?.name ?: ""),
                         fontWeight = FontWeight.Black,
                         letterSpacing = 2.sp
                     )

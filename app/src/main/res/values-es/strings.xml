@@ -2,14 +2,31 @@
     <string name="app_name">PenaltyApp</string>
     <string name="login_title">Iniciar sesión</string>
     <string name="register_title">Registrarse</string>
+    <string name="nomina_sancions">NÒMINA DE SANCIONES</string>
+    <string name="membre_sancionat">Miembro sancionado</string>
+    <string name="membre_seleccion">Selecciona un miembro</string>
+    <string name="importe_sancion">Importe de la sanción</string>
+    <string name="multar">MULTAR</string>
+    <string name="multas_activas">MULTAS ACTIVAS</string>
+    <string name="multas_recientes">MULTAS RECIENTES</string>
+    <string name="ver_multas">VER TODAS</string>
+    <string name="fine_description">Breve descripción del incidente...</string>
+
+    <string name="historial">HISTORIAL</string>
+    <string name="ranking">RANKING</string>
+    <string name="personal_summary">RESUMEN PERSONAL</string>
+    <string name="personal_pendiente">PENDIENTE</string>
+    <string name="personal_total">TOTAL</string>
+    <string name="bote">El bote total</string>
     <string name="late_at_training">Retraso entrenamiento</string>
     <string name="late_at_match">Retraso partido</string>
     <string name="no_training">Falta entrenamiento</string>
     <string name="no_match">Falta partido</string>
     <string name="bad_attitude">Mala actitud</string>
-    <string name="mobile_training">Movil en entrenamiento</string>
+    <string name="mobile_training">Móvil en entrenamiento</string>
     <string name="yellow_card">Tarjeta amarilla</string>
     <string name="red_card">Tarjeta roja</string>
     <string name="dress_code">Equipación incorrecta</string>
     <string name="custom">Personalizada</string>
+    <string name="categoria_i_motiu">Categoria y motivo</string>
 </resources>
