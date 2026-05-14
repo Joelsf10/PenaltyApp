@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PenaltyApp</string>
+    <string name="login_title">Iniciar sesión</string>
+    <string name="register_title">Registrarse</string>
+    <string name="late_at_training">Retraso entrenamiento</string>
+    <string name="late_at_match">Retraso partido</string>
+    <string name="no_training">Falta entrenamiento</string>
+    <string name="no_match">Falta partido</string>
+    <string name="bad_attitude">Mala actitud</string>
+    <string name="mobile_training">Movil en entrenamiento</string>
+    <string name="yellow_card">Tarjeta amarilla</string>
+    <string name="red_card">Tarjeta roja</string>
+    <string name="dress_code">Equipación incorrecta</string>
+    <string name="custom">Personalizada</string>
+</resources>

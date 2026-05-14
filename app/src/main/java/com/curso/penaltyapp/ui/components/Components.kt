@@ -1,6 +1,7 @@
 package com.curso.penaltyapp.ui.components
 
 
+import android.R.attr.category
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,6 +22,7 @@ import com.curso.penaltyapp.data.model.Comment
 import com.curso.penaltyapp.data.model.Fine
 import com.curso.penaltyapp.data.model.FineStatus
 import com.curso.penaltyapp.ui.theme.*
+import androidx.compose.ui.res.stringResource
 
 // ─── USER AVATAR ──────────────────────────────────────────────────────────────
 
@@ -104,7 +106,7 @@ fun FineCard(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = fine.category.label,
+                            text = stringResource(fine.category.label),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

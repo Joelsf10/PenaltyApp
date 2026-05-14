@@ -22,6 +22,7 @@ import com.curso.penaltyapp.viewmodel.FinesViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.curso.penaltyapp.viewmodel.AddFineViewModel
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -153,7 +154,7 @@ fun AddFineScreen(
                         onExpandedChange = { categoryExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = selectedCategory.label,
+                            value = stringResource(selectedCategory.label),
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {

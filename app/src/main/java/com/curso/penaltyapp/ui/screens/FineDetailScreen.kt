@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -120,7 +121,7 @@ fun FineDetailScreen(
                                     fontSize = 20.sp
                                 )
                                 Text(
-                                    currentFine.category.label.uppercase(),
+                                    stringResource(currentFine.category.label).uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = PenaltyGreen,
                                     letterSpacing = 1.sp
