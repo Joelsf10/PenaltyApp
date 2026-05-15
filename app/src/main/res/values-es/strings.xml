@@ -2,7 +2,7 @@
     <string name="app_name">PenaltyApp</string>
     <string name="login_title">Iniciar sesión</string>
     <string name="register_title">Registrarse</string>
-    <string name="nomina_sancions">NÒMINA DE SANCIONES</string>
+    <string name="nomina_sancions">NÓMINA DE SANCIONES</string>
     <string name="membre_sancionat">Miembro sancionado</string>
     <string name="membre_seleccion">Selecciona un miembro</string>
     <string name="importe_sancion">Importe de la sanción</string>
@@ -66,7 +66,52 @@
     <string name="configura_equip">CONFIGURA EL EQUIPO</string>
     <string name="unir_equip">UNIRSE</string>
     <string name="crear_equip">CREAR</string>
-
+    <string name="invitecode">Código de Invitación</string>
+    <string name="codigo">PEN-2026</string>
+    <string name="teamname">Nombre del equipo</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_confirm">¿Estás seguro que quieres salir?</string>
+    <string name="exit">Salir</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="config">CONFIGURACIÓN</string>
+    <string name="apariencia">APARIENCIA</string>
+    <string name="theme">Tema de la app</string>
+    <string name="dark">Oscuro</string>
+    <string name="light">Claro</string>
+    <string name="follow_system">Seguir configuración del sistema</string>
+    <string name="select_theme">Selecciona el tema</string>
+    <string name="xx_i_not">Red y notificaciones</string>
+    <string name="notificacions">Notificaciones de multas</string>
+    <string name="noti_sub">Avisar cuando te multen</string>
+    <string name="mostrar_multes">Mostrar multas pagadas</string>
+    <string name="inclou_hist">Incluye el historial completo</string>
+    <string name="pagos">PAGOS</string>
+    <string name="NFC_validation">Validación NFC</string>
+    <string name="NFC_check">Confirmación de pagos</string>
+    <string name="idioma">Idioma</string>
+    <string name="app_idioma">Idioma de la app</string>
+    <string name="idioma_select">Selecciona el idioma</string>
+    <string name="session">Sesión</string>
+    <string name="logout_check">Saldràs de la cuenta actual</string>
+    <string name="info">INFORMACIÓN</string>
+    <string name="version">Versión de la aplicación</string>
+    <string name="version_subtitle">Penalty v1.0.0. Fase Elaboración.</string>
+    <string name="desenvolupadors">Desarrolladores</string>
+    <string name="multa_afegida">Multa añadida correctamente</string>
+    <string name="NFC_validado">Pago validado vía NFC</string>
+    <string name="multa_pag_manual">Marcar como multa pagada</string>
+    <string name="FBError">Error desconocido</string>
+    <string name="FB1">No existe ninguna cuenta con este correo</string>
+    <string name="FB2">Contraseña incorrecta</string>
+    <string name="FB3">Este correo ya está registrado</string>
+    <string name="FB4">Formato de correo incorrecto</string>
+    <string name="FB5">La contraseña debe ser mínim de 6 carácteres</string>
+    <string name="FB6">Error de conexión. Comprueba la señal</string>
+    <string name="FB7">Error de autenticación. Vuelve a intentar</string>
+    <string name="inicio">Inicio</string>
+    <string name="multas">Multas</string>
+    <string name="ranking2">Ranking</string>
+    <string name="perfil">Perfil</string>
 
 
 

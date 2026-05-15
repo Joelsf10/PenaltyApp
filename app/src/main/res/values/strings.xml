@@ -68,10 +68,51 @@
     <string name="configura_equip">CONFIGURA EL EQUIP</string>
     <string name="unir_equip">UNIR-SE</string>
     <string name="crear_equip">CREAR</string>
-
-
-
-
-
+    <string name="invitecode">Codi de Invitació</string>
+    <string name="codigo">PEN-2026</string>
+    <string name="teamname">Nom del equip</string>
+    <string name="logout">Tancar sessió</string>
+    <string name="logout_confirm">Estàs segur que vols sortir?</string>
+    <string name="exit">Sortir</string>
+    <string name="cancelar">Cancel·lar</string>
+    <string name="config">CONFIGURACIÓ</string>
+    <string name="apariencia">APARENÇA</string>
+    <string name="theme">Tema de la app</string>
+    <string name="dark">Fosc</string>
+    <string name="light">Clar</string>
+    <string name="follow_system">Seguir configuració del sistema</string>
+    <string name="select_theme">Selecciona el tema</string>
+    <string name="xx_i_not">Xarxa i notificacions</string>
+    <string name="notificacions">Notificacions de multes</string>
+    <string name="noti_sub">Avisar quan et multin</string>
+    <string name="mostrar_multes">Mostrar multes pagades</string>
+    <string name="inclou_hist">Inclou el historial complert</string>
+    <string name="pagos">PAGAMENTS</string>
+    <string name="NFC_validation">Validació NFC</string>
+    <string name="NFC_check">Confirmació de pagaments</string>
+    <string name="idioma">Idioma</string>
+    <string name="app_idioma">Idioma de la app</string>
+    <string name="idioma_select">Selecciona el idioma</string>
+    <string name="session">Sessió</string>
+    <string name="logout_check">Sortiràs del compte actual</string>
+    <string name="info">INFORMACIÓ</string>
+    <string name="version">Versió de la aplicació</string>
+    <string name="version_subtitle">Penalty v1.0.0. Fase Elaboració.</string>
+    <string name="desenvolupadors">Desenvolupadors</string>
+    <string name="multa_afegida">Multa afegida correctament</string>
+    <string name="NFC_validado">Pagament validat vía NFC</string>
+    <string name="multa_pag_manual">Marcar com multa pagada</string>
+    <string name="FBError">Error desconegut</string>
+    <string name="FB1">No existeix ningun compte amb aquest correu</string>
+    <string name="FB2">Contrasenya incorrecta</string>
+    <string name="FB3">Aquest correu ja està registrat</string>
+    <string name="FB4">Format de correu incorrecte</string>
+    <string name="FB5">La contrasenya ha de ser mínim de 6 caràcters</string>
+    <string name="FB6">Error de conexió. Comprova la senyal</string>
+    <string name="FB7">Error de autenticació. Torna-ho a intentar</string>
+    <string name="inicio">Inici</string>
+    <string name="multas">Multes</string>
+    <string name="ranking2">Rànquing</string>
+    <string name="perfil">Perfil</string>
 
 </resources>

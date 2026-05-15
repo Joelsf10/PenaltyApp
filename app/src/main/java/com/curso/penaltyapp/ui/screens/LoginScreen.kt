@@ -205,12 +205,14 @@ fun LoginScreen(
             )
 
             AnimatedVisibility(visible = authError != null) {
-                Text(
-                    text = authError ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                authError?.let {
+                    Text(
+                        text = stringResource(it),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
             }
 
             Spacer(Modifier.height(32.dp))
@@ -243,12 +245,14 @@ fun LoginScreen(
             }
 
             AnimatedVisibility(visible = authError != null) {
-                Text(
-                    text = authError ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                authError?.let {
+                    Text(
+                        text = stringResource(it),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
             }
 
             Spacer(Modifier.height(48.dp))

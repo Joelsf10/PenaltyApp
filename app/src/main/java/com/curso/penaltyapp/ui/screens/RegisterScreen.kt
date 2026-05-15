@@ -157,12 +157,14 @@ fun RegisterScreen(
             Spacer(Modifier.height(40.dp))
 
             AnimatedVisibility(visible = authError != null) {
-                Text(
-                    text = authError ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                authError?.let {
+                    Text(
+                        text = stringResource(it),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
             }
 
             Button(
@@ -257,8 +259,8 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
             OutlinedTextField(
                 value = inviteCode,
                 onValueChange = { inviteCode = it.uppercase() },
-                label = { Text("Codi d'invitació") },
-                placeholder = { Text("PEN-2026") },
+                label = { Text(stringResource(R.string.invitecode)) },
+                placeholder = { Text(stringResource(R.string.codigo)) },
                 leadingIcon = { Icon(Icons.Rounded.Key, null, tint = PenaltyGreen) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -268,7 +270,7 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
             OutlinedTextField(
                 value = teamName,
                 onValueChange = { teamName = it },
-                label = { Text("Nom de l'equip") },
+                label = { Text(stringResource(R.string.teamname)) },
                 leadingIcon = { Icon(Icons.Rounded.Groups, null, tint = PenaltyGreen) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -287,7 +289,7 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
             colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
         ) {
             Text(
-                if (selectedTab == 0) "UNIR-SE ARA" else "CREAR EQUIP",
+                if (selectedTab == 0) stringResource(R.string.unir_equip) else stringResource(R.string.crear_equip),
                 fontWeight = FontWeight.Black,
                 color = Color.Black
             )

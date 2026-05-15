@@ -1,8 +1,10 @@
 package com.curso.penaltyapp.viewmodel
 
 
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.curso.penaltyapp.R
 import com.curso.penaltyapp.data.repository.FakeRepository
 import com.curso.penaltyapp.data.model.Comment
 import com.curso.penaltyapp.data.model.Fine
@@ -19,7 +21,7 @@ data class FinesUiState(
     val isLoading: Boolean = false,
     val filterStatus: FineStatus? = null,    // null = all
     val errorMessage: String? = null,
-    val successMessage: String? = null
+    val successMessage: Int? = null
 )
 
 // Gestiona tota la lògica de negoci relacionada amb les multes.
@@ -95,14 +97,14 @@ class FinesViewModel : ViewModel() {
                 reactions = emptyMap()
             )
             repo.addFine(newFine)
-            _uiState.update { it.copy(successMessage = "Multa afegida correctament!") }
+            _uiState.update { it.copy(successMessage = (R.string.multa_afegida))}
         }
     }
 
     fun markFineAsPaid(fineId: String, viaNfc: Boolean = false) {
         viewModelScope.launch {
             repo.markAsPaid(fineId)
-            val msg = if (viaNfc) "Pagament validat via NFC ✓" else "Multa marcada com a pagada"
+            val msg = if (viaNfc) (R.string.NFC_validado) else (R.string.multa_pag_manual)
             _uiState.update { it.copy(successMessage = msg) }
         }
     }
