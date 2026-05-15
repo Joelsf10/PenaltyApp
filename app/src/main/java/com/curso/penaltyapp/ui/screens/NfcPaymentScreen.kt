@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,6 +61,8 @@ import com.curso.penaltyapp.ui.theme.PenaltyRed
 import com.curso.penaltyapp.ui.theme.PenaltyYellow
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 import kotlinx.coroutines.delay
+import com.curso.penaltyapp.R
+
 
 /**
  * Estats possibles de la pantalla de pagament NFC.
@@ -120,7 +123,7 @@ fun NfcPaymentScreen(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
                 title = {
                     Text(
-                        "PAGAMENT NFC",
+                        stringResource(R.string.NFC_pay),
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         color = Color.White
@@ -163,7 +166,7 @@ fun NfcPaymentScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "IMPORT A PAGAR",
+                            stringResource(R.string.multa_importe),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.Gray,
                             letterSpacing = 2.sp
@@ -227,14 +230,14 @@ fun NfcPaymentScreen(
 
                             Spacer(Modifier.height(48.dp))
                             Text(
-                                text = "APROPA EL DISPOSITIU",
+                                text = stringResource(R.string.NFC_disp),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 1.sp
                             )
                             Text(
-                                text = "Escanejant sensor NFC...",
+                                text = stringResource(R.string.NFC_scan),
                                 color = Color.Gray,
                                 modifier = Modifier.padding(top = 8.dp)
                             )
@@ -252,13 +255,13 @@ fun NfcPaymentScreen(
                             )
                             Spacer(Modifier.height(24.dp))
                             Text(
-                                text = "PAGAMENT COMPLETAT",
+                                text = stringResource(R.string.NFC_payment),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White
                             )
                             Text(
-                                text = "La multa s'ha marcat com a pagada.",
+                                text = stringResource(R.string.NFC_confirm),
                                 textAlign = TextAlign.Center,
                                 color = Color.Gray,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -282,16 +285,16 @@ fun NfcPaymentScreen(
                             )
                             Spacer(Modifier.height(24.dp))
                             Text(
-                                text = if (isNoNfc) "NFC NO DISPONIBLE" else "ERROR DE LECTURA",
+                                text = if (isNoNfc) stringResource(R.string.NFC_nodisponible) else stringResource(R.string.NFC_error),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White
                             )
                             Text(
                                 text = if (isNoNfc)
-                                    "Aquest dispositiu no suporta pagaments físics."
+                                    stringResource(R.string.NFC_nosupp)
                                 else
-                                    "No s'ha pogut completar l'escaneig.",
+                                    stringResource(R.string.NFC_nopay),
                                 color = Color.Gray,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -312,7 +315,7 @@ fun NfcPaymentScreen(
                                     colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
                                 ) {
                                     Text(
-                                        "CONFIRMAR MANUALMENT",
+                                        stringResource(R.string.NFC_manual),
                                         fontWeight = FontWeight.Black,
                                         color = Color.Black
                                     )
@@ -330,7 +333,7 @@ fun NfcPaymentScreen(
                                     )
                                 ) {
                                     Text(
-                                        "REINTENTAR ESCANEIG",
+                                        stringResource(R.string.NFC_intentar),
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold
                                     )

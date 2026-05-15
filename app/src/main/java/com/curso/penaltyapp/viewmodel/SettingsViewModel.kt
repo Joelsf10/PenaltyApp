@@ -1,6 +1,7 @@
 package com.curso.penaltyapp.viewmodel
 
 import android.app.Application
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.curso.penaltyapp.data.model.User
@@ -11,6 +12,7 @@ import com.curso.penaltyapp.data.repository.UserPreferencesRepository
 import com.curso.penaltyapp.data.repository.userPreferencesDataStore
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.curso.penaltyapp.R
 
 data class SettingsUiState(
     val theme: String = "system",
@@ -26,8 +28,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         application.userPreferencesDataStore
     )
 
-    private val _authError = MutableStateFlow<String?>(null)
-    val authError: StateFlow<String?> = _authError.asStateFlow()
+    private val _authError = MutableStateFlow<Int?>(null)
+    val authError: StateFlow<Int?> = _authError.asStateFlow()
 
     private val _isAuthLoading = MutableStateFlow(false)
     val isAuthLoading: StateFlow<Boolean> = _isAuthLoading.asStateFlow()
@@ -116,16 +118,16 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         _registerSuccess.value = false
     }
 
-    private fun mapFirebaseError(message: String?): String {
+    private fun mapFirebaseError(message: String?): Int {
         return when {
-            message == null -> "Error desconegut"
-            "no user record" in message -> "No existeix cap compte amb aquest correu"
-            "password is invalid" in message -> "Contrasenya incorrecta"
-            "email address is already in use" in message -> "Aquest correu ja està registrat"
-            "badly formatted" in message -> "Format de correu incorrecte"
-            "password should be at least" in message -> "La contrasenya ha de tenir mínim 6 caràcters"
-            "network error" in message.lowercase() -> "Error de connexió. Comprova la xarxa"
-            else -> "Error d'autenticació. Torna-ho a intentar"
+            message == null -> R.string.FBError
+            "no user record" in message -> R.string.FB1
+            "password is invalid" in message -> R.string.FB2
+            "email address is already in use" in message -> R.string.FB3
+            "badly formatted" in message -> R.string.FB4
+            "password should be at least" in message -> R.string.FB5
+            "network error" in message.lowercase() -> R.string.FB6
+            else -> R.string.FB7
         }
     }
 
