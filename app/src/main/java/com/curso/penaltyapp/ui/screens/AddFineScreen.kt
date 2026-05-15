@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,11 +15,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.curso.penaltyapp.data.model.FineCategory
-import com.curso.penaltyapp.ui.theme.*
-import com.curso.penaltyapp.viewmodel.FinesViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.curso.penaltyapp.data.model.FineCategory
+import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.AddFineViewModel
 import androidx.compose.ui.res.stringResource
 import com.curso.penaltyapp.R
@@ -33,15 +31,14 @@ fun AddFineScreen(
     onNavigateBack: () -> Unit,
     addFineViewModel: AddFineViewModel = viewModel()
 ) {
-    val team = finesViewModel.team
+    val users by finesViewModel.users.collectAsStateWithLifecycle()
+    val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
     val uiState by addFineViewModel.uiState.collectAsStateWithLifecycle()
     var userExpanded by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
-    // Reconstruïm els objectes a partir dels valors guardats
     val selectedCategory = FineCategory.valueOf(uiState.selectedCategoryName)
-    val selectedUser = team.members.find { it.id == uiState.selectedUserId }
-    // Si l'admin ha introduït un import personalitzat s'usa; si no, el de la categoria
+    val selectedUser = users.find { it.id == uiState.selectedUserId }
     val amount = uiState.customAmount.toDoubleOrNull() ?: selectedCategory.defaultAmount
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
@@ -112,9 +109,7 @@ fun AddFineScreen(
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = userExpanded)
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
+                            modifier = Modifier.fillMaxWidth().menuAnchor(),
                             shape = RoundedCornerShape(16.dp),
                             colors = premiumFieldColors,
                             leadingIcon = { Icon(Icons.Rounded.Person, null) }
@@ -124,8 +119,8 @@ fun AddFineScreen(
                             expanded = userExpanded,
                             onDismissRequest = { userExpanded = false }
                         ) {
-                            team.members
-                                .filter { it.id != finesViewModel.currentUser.value.id }
+                            users
+                                .filter { it.id != currentUser?.id }
                                 .forEach { user ->
                                     DropdownMenuItem(
                                         text = { Text(user.name, color = Color.White) },
@@ -161,9 +156,7 @@ fun AddFineScreen(
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded)
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
+                            modifier = Modifier.fillMaxWidth().menuAnchor(),
                             shape = RoundedCornerShape(16.dp),
                             colors = premiumFieldColors,
                             leadingIcon = { Icon(Icons.Rounded.Category, null) }
@@ -213,10 +206,7 @@ fun AddFineScreen(
                     modifier = Modifier.fillMaxWidth(),
                     color = PenaltyRed.copy(alpha = 0.05f),
                     shape = RoundedCornerShape(24.dp),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        PenaltyRed.copy(alpha = 0.2f)
-                    )
+                    border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyRed.copy(alpha = 0.2f))
                 ) {
                     Row(
                         modifier = Modifier.padding(24.dp),
@@ -238,12 +228,7 @@ fun AddFineScreen(
                                 color = Color.White
                             )
                         }
-                        Icon(
-                            Icons.Rounded.Gavel,
-                            null,
-                            tint = PenaltyRed,
-                            modifier = Modifier.size(40.dp)
-                        )
+                        Icon(Icons.Rounded.Gavel, null, tint = PenaltyRed, modifier = Modifier.size(40.dp))
                     }
                 }
             }
@@ -263,9 +248,7 @@ fun AddFineScreen(
                         }
                     },
                     enabled = uiState.selectedUserId.isNotEmpty() && uiState.reason.isNotBlank(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp),
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PenaltyRed,

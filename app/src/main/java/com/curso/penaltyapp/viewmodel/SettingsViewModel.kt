@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.curso.penaltyapp.R
 import com.curso.penaltyapp.data.repository.AuthRepository
+import com.curso.penaltyapp.data.repository.FirestoreRepository
 import com.curso.penaltyapp.data.repository.UserPreferencesRepository
 import com.curso.penaltyapp.data.repository.userPreferencesDataStore
 import kotlinx.coroutines.flow.*
@@ -28,6 +29,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val authError: StateFlow<Int?> = _authError.asStateFlow()
     private val _isAuthLoading = MutableStateFlow(false)
     val isAuthLoading: StateFlow<Boolean> = _isAuthLoading.asStateFlow()
+
+    private val _registerSuccess = MutableStateFlow(false)
+    val registerSuccess: StateFlow<Boolean> = _registerSuccess.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -86,6 +90,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val result = AuthRepository.register(email, password)
             result.onSuccess { firebaseUser ->
                 prefsRepo.setLoggedIn(true, firebaseUser.uid)
+                _registerSuccess.value = true
             }
             result.onFailure { error ->
                 _authError.value = mapFirebaseError(error.message)

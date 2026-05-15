@@ -32,6 +32,9 @@ import com.curso.penaltyapp.R
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.RegisterViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
+import com.curso.penaltyapp.viewmodel.TeamViewModel
+
+// ─── REGISTER SCREEN ─────────────────────────────────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,16 +42,19 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateBack: () -> Unit,
     settingsViewModel: SettingsViewModel,
-    registerViewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    registerViewModel: RegisterViewModel = viewModel()
 ) {
     val authError by settingsViewModel.authError.collectAsStateWithLifecycle()
     val isLoading by settingsViewModel.isAuthLoading.collectAsStateWithLifecycle()
-    val isLoggedIn by settingsViewModel.isLoggedIn.collectAsStateWithLifecycle(false)
+    val registerSuccess by settingsViewModel.registerSuccess.collectAsStateWithLifecycle()
     val uiState by registerViewModel.uiState.collectAsStateWithLifecycle()
     var passwordVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) onRegisterSuccess()
+    LaunchedEffect(registerSuccess) {
+        if (registerSuccess) {
+            settingsViewModel.clearRegisterSuccess()
+            onRegisterSuccess()
+        }
     }
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
@@ -123,6 +129,8 @@ fun RegisterScreen(
                 onValueChange = registerViewModel::onEmailChanged,
                 label = { Text(stringResource(R.string.correu)) },
                 leadingIcon = { Icon(Icons.Rounded.Email, null) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = premiumFieldColors
@@ -190,12 +198,24 @@ fun RegisterScreen(
     }
 }
 
-// ─── CONFIGURACIÓ D'EQUIP ────────────────────────────────────────────────────────
+// ─── TEAM SETUP SCREEN ───────────────────────────────────────────────────────
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeamSetupScreen(onTeamReady: () -> Unit) {
+fun TeamSetupScreen(
+    onTeamReady: () -> Unit,
+    teamViewModel: TeamViewModel = viewModel()
+) {
     var inviteCode by rememberSaveable { mutableStateOf("") }
     var teamName by rememberSaveable { mutableStateOf("") }
+    var userName by rememberSaveable { mutableStateOf("") }
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+
+    val uiState by teamViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.success) {
+        if (uiState.success) onTeamReady()
+    }
 
     val premiumFieldColors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Color.White,
@@ -203,7 +223,9 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
         unfocusedContainerColor = Color.White.copy(0.03f),
         focusedContainerColor = Color.White.copy(0.06f),
         unfocusedBorderColor = Color.White.copy(0.1f),
-        focusedBorderColor = PenaltyGreen
+        focusedBorderColor = PenaltyGreen,
+        focusedLeadingIconColor = PenaltyGreen,
+        unfocusedLeadingIconColor = PenaltyGreen.copy(0.5f)
     )
 
     Column(
@@ -224,6 +246,18 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
         )
 
         Spacer(Modifier.height(32.dp))
+
+        OutlinedTextField(
+            value = userName,
+            onValueChange = { userName = it },
+            label = { Text("El teu nom") },
+            leadingIcon = { Icon(Icons.Rounded.Person, null, tint = PenaltyGreen) },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = premiumFieldColors
+        )
+
+        Spacer(Modifier.height(16.dp))
 
         TabRow(
             selectedTabIndex = selectedTab,
@@ -278,10 +312,70 @@ fun TeamSetupScreen(onTeamReady: () -> Unit) {
             )
         }
 
-        Spacer(Modifier.height(40.dp))
+        Spacer(Modifier.height(16.dp))
+
+        // ─── MISSATGE D'ERROR ─────────────────────────────────────────────────
+        AnimatedVisibility(visible = uiState.error != null) {
+            Text(
+                text = uiState.error ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
+        // ─── CODI DE L'EQUIP CREAT ────────────────────────────────────────────
+        AnimatedVisibility(visible = uiState.inviteCode != null) {
+            Surface(
+                color = PenaltyGreen.copy(0.1f),
+                shape = RoundedCornerShape(12.dp),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    PenaltyGreen.copy(0.3f)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        "CODI DE L'EQUIP",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = PenaltyGreen.copy(0.6f)
+                    )
+                    Text(
+                        uiState.inviteCode ?: "",
+                        fontWeight = FontWeight.Black,
+                        fontSize = 24.sp,
+                        color = PenaltyGreen,
+                        letterSpacing = 4.sp
+                    )
+                    Text(
+                        "Comparteix aquest codi amb els teus jugadors",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(0.4f)
+                    )
+                }
+            }
+        }
 
         Button(
-            onClick = onTeamReady,
+            onClick = {
+                val initials = userName.split(" ")
+                    .take(2)
+                    .mapNotNull { it.firstOrNull()?.uppercaseChar() }
+                    .joinToString("")
+                if (selectedTab == 0) {
+                    teamViewModel.joinTeam(inviteCode, userName, initials)
+                } else {
+                    teamViewModel.createTeam(teamName, userName, initials)
+                }
+            },
+            enabled = !uiState.isLoading && userName.isNotBlank() &&
+                    (if (selectedTab == 0) inviteCode.isNotBlank() else teamName.isNotBlank()),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

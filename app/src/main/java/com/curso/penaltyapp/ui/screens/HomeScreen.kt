@@ -1,20 +1,36 @@
 package com.curso.penaltyapp.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.Receipt
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -27,8 +43,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.curso.penaltyapp.ui.components.*
-import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.ui.components.FineCard
+import com.curso.penaltyapp.ui.theme.PenaltyGreen
+import com.curso.penaltyapp.ui.theme.PenaltyGreenLight
+import com.curso.penaltyapp.ui.theme.PenaltyRed
+import com.curso.penaltyapp.ui.theme.PenaltyYellow
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 import com.curso.penaltyapp.R
 import androidx.compose.ui.res.stringResource
@@ -45,10 +64,10 @@ fun HomeScreen(
 ) {
     val uiState by finesViewModel.uiState.collectAsStateWithLifecycle()
     val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
-    val isAdmin = currentUser.role.name == "ADMIN"
-    val team = finesViewModel.team
+    val isAdmin = currentUser?.role?.name == "ADMIN"
     val pendingFines = finesViewModel.pendingFines
     val recentFines = uiState.fines.take(3)
+    val totalPot = finesViewModel.totalPot
 
     Scaffold(
         containerColor = Color(0xFF0F1210)
@@ -84,7 +103,7 @@ fun HomeScreen(
                             modifier = Modifier.padding(bottom = 24.dp)
                         ) {
                             Text(
-                                text = team.name.uppercase(),
+                                text = "FC PENALTY",
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = PenaltyGreenLight,
@@ -102,9 +121,8 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(8.dp))
 
-                        // Import del pot
                         Text(
-                            text = "${String.format("%.2f", team.totalPot)} €",
+                            text = "${String.format("%.2f", totalPot)} €",
                             fontSize = 62.sp,
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.ExtraBold,
@@ -114,11 +132,13 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(16.dp))
 
-                        // Indicador amb el comptador de multes pendents actives
                         Surface(
                             color = PenaltyGreen.copy(alpha = 0.08f),
                             shape = RoundedCornerShape(12.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(alpha = 0.2f))
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                PenaltyGreen.copy(alpha = 0.2f)
+                            )
                         ) {
                             Row(
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
@@ -147,7 +167,6 @@ fun HomeScreen(
             }
 
             // ─── ACCIONS RÀPIDES ──────────────────────────────────────────────
-            // El botó "MULTAR" només apareix si l'usuari és ADMIN.
             item {
                 Row(
                     modifier = Modifier
@@ -155,7 +174,9 @@ fun HomeScreen(
                         .padding(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    val actionModifier = Modifier.weight(1f).height(100.dp)
+                    val actionModifier = Modifier
+                        .weight(1f)
+                        .height(100.dp)
 
                     if (isAdmin) {
                         QuickActionButton(
@@ -184,8 +205,6 @@ fun HomeScreen(
             }
 
             // ─── RESUM PERSONAL ───────────────────────────────────────────────
-            // Dues targetes que mostren l'import pendent i el total acumulat
-            // de l'usuari amb sessió activa
             item {
                 Spacer(Modifier.height(48.dp))
                 Column(modifier = Modifier.padding(horizontal = 24.dp)) {
@@ -216,11 +235,12 @@ fun HomeScreen(
             }
 
             // ─── MULTES RECENTS ───────────────────────────────────────────────
-            // Capçalera amb el títol i l'enllaç "VEURE TOTES"
             item {
                 Spacer(Modifier.height(48.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {

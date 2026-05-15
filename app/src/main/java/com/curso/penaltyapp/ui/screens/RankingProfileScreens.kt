@@ -1,6 +1,5 @@
 package com.curso.penaltyapp.ui.screens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -70,7 +69,6 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Número de posició amb zero inicial per als tres primers (ex: "01", "02")
                         Text(
                             text = if (entry.position <= 3) "0${entry.position}" else "${entry.position}",
                             fontWeight = FontWeight.Black,
@@ -87,7 +85,6 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
                             Text(entry.user.name, fontWeight = FontWeight.Bold, color = Color.White)
                             Text("${entry.fineCount} multes", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                         }
-                        // Import total en color de podi per als tres primers
                         Text(
                             text = "${String.format("%.2f", entry.totalAmount)}€",
                             fontWeight = FontWeight.Black,
@@ -124,11 +121,20 @@ fun ProfileScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    UserAvatar(initials = currentUser.photoInitials, size = 100, color = PenaltyGreen)
+                    UserAvatar(
+                        initials = currentUser?.photoInitials ?: "?",
+                        size = 100,
+                        color = PenaltyGreen
+                    )
                     Spacer(Modifier.height(16.dp))
-                    Text(currentUser.name.uppercase(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = Color.White, letterSpacing = 2.sp)
+                    Text(
+                        (currentUser?.name ?: "").uppercase(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        letterSpacing = 2.sp
+                    )
                     Spacer(Modifier.height(8.dp))
-                    // Badge de rol: "CAPITÀ" per a ADMIN, "JUGADOR" per a PLAYER
                     Surface(
                         color = PenaltyGreen.copy(0.1f),
                         shape = RoundedCornerShape(8.dp),
@@ -154,6 +160,85 @@ fun ProfileScreen(
             ) {
                 StatsCard("PENDENTS", "$pendingCount", icon = Icons.Default.Warning, color = PenaltyRed, modifier = Modifier.weight(1f))
                 StatsCard("PAGADES", "$paidCount", icon = Icons.Default.CheckCircle, color = PenaltyGreen, modifier = Modifier.weight(1f))
+                if (isAdmin) {
+                    var showChangeCode by remember { mutableStateOf(false) }
+                    var newCode by remember { mutableStateOf("") }
+
+                    Spacer(Modifier.height(16.dp))
+                    Surface(
+                        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                        color = PenaltyGreen.copy(0.05f),
+                        shape = RoundedCornerShape(20.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Text(
+                                "CODI D'INVITACIÓ",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = PenaltyGreen.copy(0.6f),
+                                letterSpacing = 2.sp
+                            )
+                            Text(
+                                team?.inviteCode ?: "...",
+                                fontWeight = FontWeight.Black,
+                                fontSize = 28.sp,
+                                color = PenaltyGreen,
+                                letterSpacing = 4.sp
+                            )
+                            Spacer(Modifier.height(8.dp))
+
+                            if (showChangeCode) {
+                                OutlinedTextField(
+                                    value = newCode,
+                                    onValueChange = { newCode = it.uppercase() },
+                                    placeholder = { Text("Nou codi (ex: PEN-XXXX)") },
+                                    singleLine = true,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        focusedBorderColor = PenaltyGreen,
+                                        unfocusedBorderColor = Color.White.copy(0.2f),
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent
+                                    )
+                                )
+                                Spacer(Modifier.height(8.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    OutlinedButton(
+                                        onClick = { showChangeCode = false },
+                                        modifier = Modifier.weight(1f),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.2f))
+                                    ) {
+                                        Text("CANCEL·LAR", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                                    }
+                                    Button(
+                                        onClick = {
+                                            if (newCode.isNotBlank()) {
+                                                finesViewModel.updateInviteCode(newCode)
+                                                showChangeCode = false
+                                                newCode = ""
+                                            }
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
+                                    ) {
+                                        Text("GUARDAR", color = Color.Black, style = MaterialTheme.typography.labelSmall)
+                                    }
+                                }
+                            } else {
+                                TextButton(onClick = { showChangeCode = true }) {
+                                    Text(
+                                        "CANVIAR CODI",
+                                        color = PenaltyGreen,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -187,8 +272,11 @@ fun ProfileScreen(
 // ─── TEAM MEMBERS SCREEN ──────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeamMembersScreen(onNavigateBack: () -> Unit) {
-    val team = FakeRepository.team
+fun TeamMembersScreen(
+    finesViewModel: FinesViewModel,
+    onNavigateBack: () -> Unit
+) {
+    val users by finesViewModel.users.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = Color(0xFF0F1210),
@@ -207,13 +295,13 @@ fun TeamMembersScreen(onNavigateBack: () -> Unit) {
         ) {
             item {
                 Text(
-                    "${team.name.uppercase()} · ${team.members.size} MEMBRES",
+                    "FC PENALTY · ${users.size} MEMBRES",
                     style = MaterialTheme.typography.labelSmall,
                     color = PenaltyGreen,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
-            itemsIndexed(team.members) { _, member ->
+            itemsIndexed(users) { _, member ->
                 Surface(
                     color = Color.White.copy(0.02f),
                     shape = RoundedCornerShape(16.dp),
@@ -230,8 +318,11 @@ fun TeamMembersScreen(onNavigateBack: () -> Unit) {
                             Text(if (member.role.name == "ADMIN") "Capità" else "Jugador", color = Color.Gray, style = MaterialTheme.typography.labelSmall)
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            // Import en vermell si hi ha deute, verd si està al dia
-                            Text("${String.format("%.2f", member.pendingFines)}€", color = if (member.pendingFines > 0) PenaltyRed else PenaltyGreen, fontWeight = FontWeight.Black)
+                            Text(
+                                "${String.format("%.2f", member.pendingFines)}€",
+                                color = if (member.pendingFines > 0) PenaltyRed else PenaltyGreen,
+                                fontWeight = FontWeight.Black
+                            )
                             Text("deute", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
                         }
                     }

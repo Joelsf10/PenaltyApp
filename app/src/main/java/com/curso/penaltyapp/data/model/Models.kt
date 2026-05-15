@@ -1,7 +1,9 @@
 package com.curso.penaltyapp.data.model
 
-
+import com.google.firebase.Timestamp
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.ui.res.stringResource
 import com.curso.penaltyapp.R
@@ -102,3 +104,11 @@ data class RankingEntry(
     val totalAmount: Double,
     val fineCount: Int
 )
+
+// ─── FIREBASE TIMESTAMP CONVERTERS ───────────────────────────────────────────
+
+fun LocalDateTime.toTimestamp(): Timestamp =
+    Timestamp(this.atZone(ZoneId.systemDefault()).toEpochSecond(), 0)
+
+fun Timestamp.toLocalDateTime(): LocalDateTime =
+    LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.systemDefault())
