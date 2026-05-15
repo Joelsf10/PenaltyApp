@@ -45,13 +45,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.curso.penaltyapp.R
 import com.curso.penaltyapp.data.model.FineStatus
 import com.curso.penaltyapp.ui.components.CommentItem
 import com.curso.penaltyapp.ui.components.FineStatusBadge
@@ -87,7 +85,7 @@ fun FineDetailScreen(
                 .background(Color(0xFF0F1210)),
             contentAlignment = Alignment.Center
         ) {
-            Text(stringResource(R.string.error_multa), color = Color.White)
+            Text("Multa no trobada", color = Color.White)
         }
         return
     }
@@ -103,7 +101,7 @@ fun FineDetailScreen(
                 ),
                 title = {
                     Text(
-                        stringResource(R.string.multa_details),
+                        "DETALL DE LA SANCIÓ",
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         color = Color.White
@@ -113,7 +111,7 @@ fun FineDetailScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.Rounded.ArrowBackIosNew,
-                            stringResource(R.string.back),
+                            "Tornar",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -156,7 +154,7 @@ fun FineDetailScreen(
                                     fontSize = 20.sp
                                 )
                                 Text(
-                                    stringResource(currentFine.category.label).uppercase(),
+                                    currentFine.category.label.uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = PenaltyGreen,
                                     letterSpacing = 1.sp
@@ -176,7 +174,7 @@ fun FineDetailScreen(
                         Spacer(Modifier.height(20.dp))
 
                         Text(
-                            stringResource(R.string.multa_why),
+                            "MOTIU DE LA SANCIÓ",
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White.copy(0.4f),
                             letterSpacing = 2.sp
@@ -212,7 +210,7 @@ fun FineDetailScreen(
             // ─── REACCIONS ────────────────────────────────────────────────────
             item {
                 Text(
-                    stringResource(R.string.reactions),
+                    "REACCIONS",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(0.4f),
                     letterSpacing = 2.sp
@@ -286,7 +284,7 @@ fun FineDetailScreen(
                             Icon(Icons.Rounded.Nfc, null, tint = Color.Black)
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                stringResource(R.string.NFC_pay),
+                                "PAGAR AMB NFC",
                                 fontWeight = FontWeight.Black,
                                 color = Color.Black
                             )
@@ -312,7 +310,7 @@ fun FineDetailScreen(
                                 )
                                 Spacer(Modifier.width(12.dp))
                                 Text(
-                                    stringResource(R.string.confirmar_pago),
+                                    "MARCAR PAGADA (ADMIN)",
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
@@ -324,7 +322,7 @@ fun FineDetailScreen(
             // ─── COMENTARIS ───────────────────────────────────────────────────
             item {
                 Text(
-                    text = stringResource(R.string.comentaris, currentFine.comments.size),
+                    "COMENTARIS (${comments.size})",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(0.4f),
                     letterSpacing = 2.sp
@@ -334,7 +332,7 @@ fun FineDetailScreen(
             if (comments.isEmpty()) {
                 item {
                     Text(
-                        stringResource(R.string.no_comentaris),
+                        "Sense comentaris encara. Sigues el primer! 💬",
                         color = Color.White.copy(0.2f),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
@@ -365,11 +363,7 @@ fun FineDetailScreen(
                             value = commentText,
                             onValueChange = { commentText = it },
                             placeholder = {
-                                Text(
-                                    stringResource(R.string.escriu_comentaris),
-                                    color = Color.Gray,
-                                    fontSize = 14.sp
-                                )
+                                Text("Escriu un comentari...", color = Color.Gray, fontSize = 14.sp)
                             },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
@@ -390,7 +384,7 @@ fun FineDetailScreen(
                                 }
                             }
                         ) {
-                            Icon(Icons.Rounded.Send, stringResource(R.string.enviar), tint = PenaltyGreen)
+                            Icon(Icons.Rounded.Send, "Enviar", tint = PenaltyGreen)
                         }
                     }
                 }

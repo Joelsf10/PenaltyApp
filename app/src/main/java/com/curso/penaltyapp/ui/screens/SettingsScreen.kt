@@ -49,12 +49,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.curso.penaltyapp.R
 import com.curso.penaltyapp.ui.theme.PenaltyGreen
 import com.curso.penaltyapp.ui.theme.PenaltyRed
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
@@ -76,14 +74,14 @@ fun SettingsScreen(
             containerColor = Color(0xFF1A1D1B),
             title = {
                 Text(
-                    stringResource(R.string.logout),
+                    "Tancar sessió",
                     color = Color.White,
                     style = MaterialTheme.typography.titleMedium
                 )
             },
             text = {
                 Text(
-                    stringResource(R.string.logout_confirm),
+                    "Estàs segur que vols sortir de l'aplicació?",
                     color = Color.White.copy(alpha = 0.7f)
                 )
             },
@@ -95,12 +93,12 @@ fun SettingsScreen(
                         onLogout()                   // navega al Login netejant el back stack
                     }
                 ) {
-                    Text(stringResource(R.string.exit),color = PenaltyRed, fontWeight = FontWeight.Bold)
+                    Text("Sortir", color = PenaltyRed, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text(stringResource(R.string.cancelar),color = Color.White.copy(alpha = 0.5f))
+                    Text("Cancel·lar", color = Color.White.copy(alpha = 0.5f))
                 }
             }
         )
@@ -116,7 +114,7 @@ fun SettingsScreen(
                 ),
                 title = {
                     Text(
-                        text = stringResource(R.string.config),
+                        "CONFIGURACIÓ",
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         fontWeight = FontWeight.Black
@@ -126,7 +124,7 @@ fun SettingsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.Rounded.ArrowBackIosNew,
-                            stringResource(R.string.back),
+                            "Tornar",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -145,15 +143,15 @@ fun SettingsScreen(
         ) {
 
             // ─── APARENÇA ───────────────────────────────────────────────────
-            item { SettingsSectionHeader(stringResource(R.string.apariencia))}
+            item { SettingsSectionHeader("APARENÇA") }
             item {
                 var showThemeDialog by remember { mutableStateOf(false) }
                 SettingsItem(
-                    title = stringResource(R.string.theme),
+                    title = "Tema de l'app",
                     subtitle = when (settings.theme) {
-                        "dark" -> stringResource(R.string.dark)
-                        "light" -> stringResource(R.string.light)
-                        else -> stringResource(R.string.follow_system)
+                        "dark" -> "Fosc"
+                        "light" -> "Clar"
+                        else -> "Seguir sistema"
                     },
                     icon = Icons.Rounded.DarkMode,
                     onClick = { showThemeDialog = true }
@@ -161,12 +159,12 @@ fun SettingsScreen(
 
                 if (showThemeDialog) {
                     SettingsSelectionDialog(
-                        title = stringResource(R.string.select_theme),
+                        title = "Selecciona el tema",
                         currentValue = settings.theme,
                         options = listOf(
-                            "system" to stringResource(R.string.follow_system),
-                            "light" to stringResource(R.string.light),
-                            "dark" to stringResource(R.string.dark)
+                            "system" to "Seguir sistema",
+                            "light" to "Clar",
+                            "dark" to "Fosc"
                         ),
                         onSelect = { settingsViewModel.setTheme(it) },
                         onDismiss = { showThemeDialog = false }
@@ -175,11 +173,11 @@ fun SettingsScreen(
             }
 
             // ─── NOTIFICACIONS ──────────────────────────────────────────────
-            item { SettingsSectionHeader(stringResource(R.string.xx_i_not)) }
+            item { SettingsSectionHeader("XARXA I NOTIFICACIONS") }
             item {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.notificacions),
-                    subtitle = stringResource(R.string.noti_sub),
+                    title = "Notificacions de multes",
+                    subtitle = "Avisar quan et posin una multa",
                     icon = Icons.Rounded.Notifications,
                     checked = settings.notificationsEnabled,
                     onCheckedChange = { settingsViewModel.setNotificationsEnabled(it) }
@@ -187,8 +185,8 @@ fun SettingsScreen(
             }
             item {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.mostrar_multes),
-                    subtitle = stringResource(R.string.inclou_hist),
+                    title = "Mostrar multes pagades",
+                    subtitle = "Inclou l'historial complet",
                     icon = Icons.Rounded.CheckCircle,
                     checked = settings.showPaidFines,
                     onCheckedChange = { settingsViewModel.setShowPaidFines(it) }
@@ -196,11 +194,11 @@ fun SettingsScreen(
             }
 
             // ─── PAGAMENTS ────────────────────────────────────────────────────────
-            item { SettingsSectionHeader(stringResource(R.string.pagos)) }
+            item { SettingsSectionHeader("PAGAMENTS") }
             item {
                 SettingsSwitchItem(
-                    title = stringResource(R.string.NFC_validation),
-                    subtitle = stringResource(R.string.NFC_check),
+                    title = "Validació NFC",
+                    subtitle = "Confirmació de pagaments físics",
                     icon = Icons.Rounded.Nfc,
                     checked = settings.nfcEnabled,
                     onCheckedChange = { settingsViewModel.setNfcEnabled(it) }
@@ -208,11 +206,11 @@ fun SettingsScreen(
             }
 
             // ─── IDIOMA ───────────────────────────────────────────────────────
-            item { SettingsSectionHeader(stringResource(R.string.idioma)) }
+            item { SettingsSectionHeader("IDIOMA") }
             item {
                 var showLangDialog by remember { mutableStateOf(false) }
                 SettingsItem(
-                    title = stringResource(R.string.app_idioma),
+                    title = "Idioma de l'app",
                     subtitle = when (settings.language) {
                         "ca" -> "Català"
                         "es" -> "Castellano"
@@ -225,7 +223,7 @@ fun SettingsScreen(
 
                 if (showLangDialog) {
                     SettingsSelectionDialog(
-                        title = stringResource(R.string.idioma_select),
+                        title = "Selecciona l'idioma",
                         currentValue = settings.language,
                         options = listOf("ca" to "Català", "es" to "Castellano", "en" to "English"),
                         onSelect = { settingsViewModel.setLanguage(it) },
@@ -235,7 +233,7 @@ fun SettingsScreen(
             }
 
             // ─── SESSIÓ ───────────────────────────────────────────────────────
-            item { SettingsSectionHeader(stringResource(R.string.session)) }
+            item { SettingsSectionHeader("SESSIÓ") }
             item {
                 Surface(
                     modifier = Modifier
@@ -258,13 +256,13 @@ fun SettingsScreen(
                         Spacer(Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                stringResource(R.string.logout),
+                                "Tancar sessió",
                                 color = PenaltyRed,
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(
-                                stringResource(R.string.logout_check),
+                                "Sortiràs del teu compte actual",
                                 color = PenaltyRed.copy(alpha = 0.5f),
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -279,18 +277,18 @@ fun SettingsScreen(
             }
 
             // ─── INFO ─────────────────────────────────────────────────────────
-            item { SettingsSectionHeader(stringResource(R.string.info)) }
+            item { SettingsSectionHeader("INFORMACIÓ") }
             item {
                 SettingsItem(
-                    title = stringResource(R.string.version),
-                    subtitle = stringResource(R.string.version_subtitle),
+                    title = "Versió de l'app",
+                    subtitle = "Penalty v1.0.0 · Fase Elaboració",
                     icon = Icons.Rounded.Info,
                     showChevron = false
                 )
             }
             item {
                 SettingsItem(
-                    title = stringResource(R.string.desenvolupadors),
+                    title = "Desenvolupadors",
                     subtitle = "Jon Stegherr · Joel Sambola",
                     icon = Icons.Rounded.Code,
                     showChevron = false
