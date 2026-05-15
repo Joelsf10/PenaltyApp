@@ -51,7 +51,7 @@ fun HomeScreen(
     val recentFines = uiState.fines.take(3)
 
     Scaffold(
-        containerColor = Color(0xFF0F1210) // Negro profundo coherente con el Login
+        containerColor = Color(0xFF0F1210)
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -78,7 +78,6 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        // Badge del nom de l'equip
                         Surface(
                             color = Color.White.copy(alpha = 0.05f),
                             shape = RoundedCornerShape(50.dp),

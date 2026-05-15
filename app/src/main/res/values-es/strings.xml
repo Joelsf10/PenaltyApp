@@ -9,12 +9,39 @@
     <string name="multar">MULTAR</string>
     <string name="multas_activas">MULTAS ACTIVAS</string>
     <string name="multas_recientes">MULTAS RECIENTES</string>
+    <string name="multa_details">Detalles de la sanción</string>
+    <string name="multa_why">Motivo de la sanción</string>
+    <string name="reactions">REACCIONES</string>
+    <string name="NFC_pay">Pagar con NFC</string>
+    <string name="NFC_disp">ACERCA EL DISPOSITIVO</string>
+    <string name="NFC_scan">ESCANENADO NFC...</string>
+    <string name="NFC_payment">PAGO COMPLETADO</string>
+    <string name="NFC_confirm">La multa se ha pagado con éxito.</string>
+    <string name="NFC_nodisponible">NFC NO DISPONIBLE</string>
+    <string name="NFC_error">ERROR DE LECTURA</string>
+    <string name="NFC_nosupp">Este dispositivo no soporta pagos NFC.</string>
+    <string name="NFC_nopay">No se ha podido completar el pago.</string>
+    <string name="NFC_manual">CONFIRMAR MANUALMENTE</string>
+    <string name="NFC_intentar">REINTENTAR ESCANEO</string>
+    <string name="multa_importe">IMPORTE A PAGAR</string>
+    <string name="capitan">CAPITÁN</string>
+    <string name="jugador">JUGADOR</string>
+    <string name="confirmar_pago">Confirmar pago (admin)</string>
+    <string name="comentaris">Comentarios (%1$d)</string>
+    <string name="no_comentaris">Aún no hay comentarios. Sé el primero.</string>
+    <string name="registro">REGISTRO GENERAL</string>
+    <string name="escriu_comentaris">Escribe un comentario...</string>
+    <string name="enviar">Enviar</string>
+    <string name="back">Atrás</string>
     <string name="ver_multas">VER TODAS</string>
     <string name="fine_description">Breve descripción del incidente...</string>
     <string name="historial">HISTORIAL</string>
     <string name="ranking">RANKING</string>
     <string name="personal_summary">RESUMEN PERSONAL</string>
     <string name="personal_pendiente">PENDIENTE</string>
+    <string name="personal_pagada">PAGADA</string>
+    <string name="personal_disputa">EN DISPUTA</string>
+    <string name="error_multa">Multa no encontrada</string>
     <string name="personal_total">TOTAL</string>
     <string name="bote">El bote total</string>
     <string name="late_at_training">Retraso entrenamiento</string>
@@ -33,6 +60,13 @@
     <string name="correu">Correo electrónico</string>
     <string name="contrasenya">Contraseña</string>
     <string name="sensecompte">¿Todavía no tienes cuenta?</string>
+    <string name="crearcompte">CREA TU CUENTA</string>
+    <string name="name">Nombre completo</string>
+    <string name="continuar">CONTINUAR</string>
+    <string name="configura_equip">CONFIGURA EL EQUIPO</string>
+    <string name="unir_equip">UNIRSE</string>
+    <string name="crear_equip">CREAR</string>
+
 
 
 

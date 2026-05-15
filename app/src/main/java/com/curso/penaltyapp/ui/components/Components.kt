@@ -1,7 +1,6 @@
 package com.curso.penaltyapp.ui.components
 
 
-import android.R.attr.category
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +22,7 @@ import com.curso.penaltyapp.data.model.Fine
 import com.curso.penaltyapp.data.model.FineStatus
 import com.curso.penaltyapp.ui.theme.*
 import androidx.compose.ui.res.stringResource
+import com.curso.penaltyapp.R
 
 // ─── USER AVATAR ──────────────────────────────────────────────────────────────
 
@@ -54,9 +54,9 @@ fun UserAvatar(
 @Composable
 fun FineStatusBadge(status: FineStatus) {
     val (label, color) = when (status) {
-        FineStatus.PENDING -> "Pendent" to PenaltyRed
-        FineStatus.PAID -> "Pagada" to PenaltyGreen
-        FineStatus.DISPUTED -> "En disputa" to PenaltyYellow
+        FineStatus.PENDING -> stringResource(R.string.personal_pendiente) to PenaltyRed
+        FineStatus.PAID -> stringResource(R.string.personal_pagada) to PenaltyGreen
+        FineStatus.DISPUTED -> stringResource(R.string.personal_disputa) to PenaltyYellow
     }
     Surface(
         color = color.copy(alpha = 0.15f),

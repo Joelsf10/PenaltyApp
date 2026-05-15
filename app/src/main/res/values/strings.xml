@@ -16,7 +16,36 @@
     <string name="ranking">RÀNQUING</string>
     <string name="personal_summary">RESUM PERSONAL</string>
     <string name="personal_pendiente">PENDENT</string>
+    <string name="personal_pagada">PAGADA</string>
+    <string name="personal_disputa">EN DISPUTA</string>
     <string name="personal_total">TOTAL</string>
+    <string name="error_multa">Multa no trobada</string>
+    <string name="multa_details">Detalls de la sanció</string>
+    <string name="multa_why">Motiu de la sanció</string>
+    <string name="reactions">REACCIONS</string>
+    <string name="NFC_pay">Pagar amb NFC</string>
+    <string name="NFC_disp">APROPA EL DISPOSITIU</string>
+    <string name="NFC_scan">ESCANEJANT NFC...</string>
+    <string name="NFC_payment">PAGAMENT COMPLETAT</string>
+    <string name="NFC_confirm">La multa sha pagat amb èxit.</string>
+    <string name="NFC_nodisponible">NFC NO DISPONBILE</string>
+    <string name="NFC_error">ERROR DE LECTURA</string>
+    <string name="NFC_nosupp">Este dispositiu no soporta pagaments NFC.</string>
+    <string name="NFC_nopay">No sha completat el pagament.</string>
+    <string name="NFC_manual">CONFIRMAR MANUALMENT</string>
+    <string name="NFC_intentar">REINTENTAR ESCANEIG</string>
+    <string name="confirmar_pago">Confirmar pagament (admin)</string>
+    <string name="comentaris">Comentaris (%1$d)</string>
+    <string name="no_comentaris">Sense comentaris encara. Sigues el primer! </string>
+    <string name="escriu_comentaris">Escriu un comentari...</string>
+    <string name="enviar">Enviar</string>
+    <string name="registro">REGISTRE GENERAL</string>
+    <string name="multa_importe">IMPORT A PAGAR</string>
+    <string name="capitan">CAPITÀ</string>
+    <string name="jugador">JUGADOR</string>
+
+    <string name="back">Tornar</string>
+
     <string name="fine_description">Breu descripció del incident...</string>
     <string name="late_at_training">Retard entrenament</string>
     <string name="late_at_match">Retard partit</string>
@@ -33,6 +62,15 @@
     <string name="correu">Correu electrònic</string>
     <string name="contrasenya">Contrasenya</string>
     <string name="sensecompte">Encara no tens compte?</string>
+    <string name="crearcompte">CREA EL TEU COMPTE</string>
+    <string name="name">Nom complet</string>
+    <string name="continuar">CONTINUAR</string>
+    <string name="configura_equip">CONFIGURA EL EQUIP</string>
+    <string name="unir_equip">UNIR-SE</string>
+    <string name="crear_equip">CREAR</string>
+
+
+
 
 
 
