@@ -51,12 +51,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.curso.penaltyapp.R
 import com.curso.penaltyapp.ui.theme.PenaltyGreen
 import com.curso.penaltyapp.ui.theme.PenaltyRed
 import com.curso.penaltyapp.ui.theme.PenaltyYellow
@@ -122,7 +120,7 @@ fun NfcPaymentScreen(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
                 title = {
                     Text(
-                        stringResource(R.string.NFC_pay),
+                        "PAGAMENT NFC",
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         color = Color.White
@@ -165,7 +163,7 @@ fun NfcPaymentScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            stringResource(R.string.multa_importe),
+                            "IMPORT A PAGAR",
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.Gray,
                             letterSpacing = 2.sp
@@ -182,7 +180,7 @@ fun NfcPaymentScreen(
                             modifier = Modifier.padding(top = 8.dp)
                         ) {
                             Text(
-                                stringResource(fine.category.label).uppercase(),
+                                it.category.label.uppercase(),
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = PenaltyGreen,
@@ -229,14 +227,14 @@ fun NfcPaymentScreen(
 
                             Spacer(Modifier.height(48.dp))
                             Text(
-                                text = stringResource(R.string.NFC_disp),
+                                text = "APROPA EL DISPOSITIU",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = 1.sp
                             )
                             Text(
-                                text = stringResource(R.string.NFC_scan),
+                                text = "Escanejant sensor NFC...",
                                 color = Color.Gray,
                                 modifier = Modifier.padding(top = 8.dp)
                             )
@@ -254,13 +252,13 @@ fun NfcPaymentScreen(
                             )
                             Spacer(Modifier.height(24.dp))
                             Text(
-                                text = stringResource(R.string.NFC_payment),
+                                text = "PAGAMENT COMPLETAT",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White
                             )
                             Text(
-                                text = stringResource(R.string.NFC_confirm),
+                                text = "La multa s'ha marcat com a pagada.",
                                 textAlign = TextAlign.Center,
                                 color = Color.Gray,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -284,16 +282,16 @@ fun NfcPaymentScreen(
                             )
                             Spacer(Modifier.height(24.dp))
                             Text(
-                                text = if (isNoNfc) stringResource(R.string.NFC_nodisponible) else stringResource(R.string.NFC_error),
+                                text = if (isNoNfc) "NFC NO DISPONIBLE" else "ERROR DE LECTURA",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White
                             )
                             Text(
                                 text = if (isNoNfc)
-                                    stringResource(R.string.NFC_nosupp)
+                                    "Aquest dispositiu no suporta pagaments físics."
                                 else
-                                    stringResource(R.string.NFC_nopay),
+                                    "No s'ha pogut completar l'escaneig.",
                                 color = Color.Gray,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -314,7 +312,7 @@ fun NfcPaymentScreen(
                                     colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
                                 ) {
                                     Text(
-                                        stringResource(R.string.NFC_manual),
+                                        "CONFIRMAR MANUALMENT",
                                         fontWeight = FontWeight.Black,
                                         color = Color.Black
                                     )
@@ -332,7 +330,7 @@ fun NfcPaymentScreen(
                                     )
                                 ) {
                                     Text(
-                                        stringResource(R.string.NFC_intentar),
+                                        "REINTENTAR ESCANEIG",
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold
                                     )

@@ -20,8 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.curso.penaltyapp.data.model.FineCategory
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.AddFineViewModel
-import androidx.compose.ui.res.stringResource
-import com.curso.penaltyapp.R
+import com.curso.penaltyapp.viewmodel.FinesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +65,7 @@ fun AddFineScreen(
                 ),
                 title = {
                     Text(
-                        text = stringResource(R.string.nomina_sancions).uppercase(),
+                        "NÒMINA DE SANCIONS",
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         fontWeight = FontWeight.Black
@@ -92,7 +91,7 @@ fun AddFineScreen(
             item {
                 Column {
                     Text(
-                        text = stringResource(R.string.membre_sancionat),
+                        "MEMBRE SANCIONAT",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(0.4f),
                         letterSpacing = 2.sp
@@ -103,7 +102,7 @@ fun AddFineScreen(
                         onExpandedChange = { userExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = selectedUser?.name ?: stringResource(R.string.membre_seleccion),
+                            value = selectedUser?.name ?: "Selecciona un membre",
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
@@ -139,7 +138,7 @@ fun AddFineScreen(
             item {
                 Column {
                     Text(
-                        stringResource(R.string.categoria_i_motiu).uppercase(),
+                        "CATEGORIA I MOTIU",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(0.4f),
                         letterSpacing = 2.sp
@@ -150,7 +149,7 @@ fun AddFineScreen(
                         onExpandedChange = { categoryExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = stringResource(selectedCategory.label),
+                            value = selectedCategory.label,
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
@@ -187,10 +186,7 @@ fun AddFineScreen(
                         value = uiState.reason,
                         onValueChange = addFineViewModel::onReasonChanged,
                         placeholder = {
-                            Text(
-                                text = stringResource(R.string.fine_description),
-                                color = Color.Gray
-                            )
+                            Text("Breu descripció dels fets...", color = Color.Gray)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp),
@@ -215,7 +211,7 @@ fun AddFineScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                stringResource(R.string.importe_sancion),
+                                "IMPORT DE LA SANCIÓ",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = PenaltyRed.copy(0.6f),
                                 letterSpacing = 1.sp
@@ -256,7 +252,7 @@ fun AddFineScreen(
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.multar) + " " + (selectedUser?.name ?: ""),
+                        "MULTAR A ${selectedUser?.name ?: ""}",
                         fontWeight = FontWeight.Black,
                         letterSpacing = 2.sp
                     )
