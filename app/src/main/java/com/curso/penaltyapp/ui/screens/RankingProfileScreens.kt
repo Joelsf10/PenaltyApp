@@ -13,10 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.curso.penaltyapp.R
+import com.curso.penaltyapp.data.repository.FakeRepository
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
@@ -103,10 +106,9 @@ fun ProfileScreen(
 ) {
     val currentUser by finesViewModel.currentUser.collectAsStateWithLifecycle()
     val myFines = finesViewModel.myFines
-    val pendingCount = myFines.count { it.status.name == "PENDING" }
-    val paidCount = myFines.count { it.status.name == "PAID" }
-    val team by finesViewModel.team.collectAsStateWithLifecycle()
-    val isAdmin = currentUser?.role?.name == "ADMIN"
+    // Comptem les multes per estat per mostrar les estadístiques
+    val pendingCount = myFines.count { it.status.name == stringResource(R.string.personal_pendiente) }
+    val paidCount = myFines.count { it.status.name == stringResource(R.string.personal_pagada) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)),
@@ -139,7 +141,7 @@ fun ProfileScreen(
                         border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
                     ) {
                         Text(
-                            text = if (currentUser?.role?.name == "ADMIN") "CAPITÀ" else "JUGADOR",
+                            text = if (currentUser.role.name == "ADMIN") stringResource(R.string.capitan) else stringResource(R.string.jugador),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                             color = PenaltyGreen,
                             style = MaterialTheme.typography.labelSmall,

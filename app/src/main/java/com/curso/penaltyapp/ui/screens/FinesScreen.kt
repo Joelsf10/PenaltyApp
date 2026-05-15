@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,6 +22,9 @@ import com.curso.penaltyapp.data.model.UserRole
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import androidx.compose.ui.unit.sp
+import com.curso.penaltyapp.R
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +44,7 @@ fun FinesScreen(
                     containerColor = Color.Transparent
                 ),
                 title = {
-                    Text(
-                        "REGISTRE GENERAL",
+                    Text(text = stringResource(R.string.registro),
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 4.sp,
                         color = Color.White,
@@ -79,7 +82,7 @@ fun FinesScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val statuses = listOf(null, FineStatus.PENDING, FineStatus.PAID, FineStatus.DISPUTED)
-                val labels = listOf("TOTES", "PENDENTS", "PAGADES", "DISPUTA")
+                val labels = listOf(R.string.personal_total,R.string.personal_pendiente, R.string.personal_pagada, R.string.personal_disputa)
 
                 items(statuses.size) { index ->
                     val isSelected = uiState.filterStatus == statuses[index]
@@ -94,7 +97,7 @@ fun FinesScreen(
                             modifier = Modifier.padding(horizontal = 16.dp)
                         ) {
                             Text(
-                                text = labels[index],
+                                text = stringResource(labels[index]),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Black,
                                 color = if (isSelected) Color.Black else Color.White.copy(0.6f)
@@ -127,12 +130,7 @@ fun FinesScreen(
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text("🛡️", fontSize = 40.sp)
-                                    Text(
-                                        "HISTORIAL NET",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = Color.White.copy(0.3f),
-                                        letterSpacing = 2.sp
-                                    )
+                                    Text(stringResource(R.string.historial), style = MaterialTheme.typography.labelSmall, color = Color.White.copy(0.3f), letterSpacing = 2.sp)
                                 }
                             }
                         }

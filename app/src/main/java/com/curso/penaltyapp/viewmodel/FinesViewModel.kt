@@ -1,10 +1,15 @@
 package com.curso.penaltyapp.viewmodel
 
+
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.curso.penaltyapp.data.model.*
-import com.curso.penaltyapp.data.repository.AuthRepository
-import com.curso.penaltyapp.data.repository.FirestoreRepository
+import com.curso.penaltyapp.R
+import com.curso.penaltyapp.data.repository.FakeRepository
+import com.curso.penaltyapp.data.model.Comment
+import com.curso.penaltyapp.data.model.Fine
+import com.curso.penaltyapp.data.model.FineCategory
+import com.curso.penaltyapp.data.model.FineStatus
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -15,7 +20,7 @@ data class FinesUiState(
     val isLoading: Boolean = false,
     val filterStatus: FineStatus? = null,
     val errorMessage: String? = null,
-    val successMessage: String? = null
+    val successMessage: Int? = null
 )
 
 class FinesViewModel : ViewModel() {
@@ -138,15 +143,15 @@ class FinesViewModel : ViewModel() {
                 comments = emptyList(),
                 reactions = emptyMap()
             )
-            FirestoreRepository.addFine(newFine)
-            _uiState.update { it.copy(successMessage = "Multa afegida correctament!") }
+            repo.addFine(newFine)
+            _uiState.update { it.copy(successMessage = (R.string.multa_afegida))}
         }
     }
 
     fun markFineAsPaid(fineId: String, viaNfc: Boolean = false) {
         viewModelScope.launch {
-            FirestoreRepository.markAsPaid(fineId)
-            val msg = if (viaNfc) "Pagament validat via NFC ✓" else "Multa marcada com a pagada"
+            repo.markAsPaid(fineId)
+            val msg = if (viaNfc) (R.string.NFC_validado) else (R.string.multa_pag_manual)
             _uiState.update { it.copy(successMessage = msg) }
         }
     }

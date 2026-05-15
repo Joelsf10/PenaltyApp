@@ -22,12 +22,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.curso.penaltyapp.R
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.RegisterViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
@@ -76,7 +77,7 @@ fun RegisterScreen(
                 ),
                 title = {
                     Text(
-                        "REGISTRE",
+                        stringResource(R.string.register_title),
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         color = Color.White
@@ -104,7 +105,7 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "CREA EL TEU COMPTE",
+                stringResource(R.string.crearcompte),
                 style = MaterialTheme.typography.labelSmall,
                 color = PenaltyGreen,
                 letterSpacing = 2.sp
@@ -114,7 +115,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = registerViewModel::onNameChanged,
-                label = { Text("Nom complet") },
+                label = { Text(stringResource(R.string.name)) },
                 leadingIcon = { Icon(Icons.Rounded.Person, null) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -126,7 +127,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = registerViewModel::onEmailChanged,
-                label = { Text("Correu electrònic") },
+                label = { Text(stringResource(R.string.correu)) },
                 leadingIcon = { Icon(Icons.Rounded.Email, null) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
@@ -164,12 +165,14 @@ fun RegisterScreen(
             Spacer(Modifier.height(40.dp))
 
             AnimatedVisibility(visible = authError != null) {
-                Text(
-                    text = authError ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                authError?.let {
+                    Text(
+                        text = stringResource(it),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
             }
 
             Button(
@@ -188,7 +191,7 @@ fun RegisterScreen(
                 if (isLoading) {
                     CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(20.dp))
                 } else {
-                    Text("CONTINUAR", fontWeight = FontWeight.Black, color = Color.Black)
+                    Text(stringResource(R.string.continuar), fontWeight = FontWeight.Black, color = Color.Black)
                 }
             }
         }
@@ -236,7 +239,7 @@ fun TeamSetupScreen(
         Text("⚽", fontSize = 48.sp)
         Spacer(Modifier.height(16.dp))
         Text(
-            "CONFIGURA L'EQUIP",
+            stringResource(R.string.configura_equip),
             style = MaterialTheme.typography.labelSmall,
             color = Color.White,
             letterSpacing = 3.sp
@@ -270,14 +273,14 @@ fun TeamSetupScreen(
         ) {
             Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }) {
                 Text(
-                    "UNIR-SE",
+                    stringResource(R.string.unir_equip),
                     modifier = Modifier.padding(12.dp),
                     style = MaterialTheme.typography.labelSmall
                 )
             }
             Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }) {
                 Text(
-                    "CREAR",
+                    stringResource(R.string.crear_equip),
                     modifier = Modifier.padding(12.dp),
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -290,8 +293,8 @@ fun TeamSetupScreen(
             OutlinedTextField(
                 value = inviteCode,
                 onValueChange = { inviteCode = it.uppercase() },
-                label = { Text("Codi d'invitació") },
-                placeholder = { Text("PEN-XXXX") },
+                label = { Text(stringResource(R.string.invitecode)) },
+                placeholder = { Text(stringResource(R.string.codigo)) },
                 leadingIcon = { Icon(Icons.Rounded.Key, null, tint = PenaltyGreen) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -301,7 +304,7 @@ fun TeamSetupScreen(
             OutlinedTextField(
                 value = teamName,
                 onValueChange = { teamName = it },
-                label = { Text("Nom de l'equip") },
+                label = { Text(stringResource(R.string.teamname)) },
                 leadingIcon = { Icon(Icons.Rounded.Groups, null, tint = PenaltyGreen) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -379,18 +382,11 @@ fun TeamSetupScreen(
             shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
         ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    color = Color.Black,
-                    modifier = Modifier.size(20.dp)
-                )
-            } else {
-                Text(
-                    if (selectedTab == 0) "UNIR-SE ARA" else "CREAR EQUIP",
-                    fontWeight = FontWeight.Black,
-                    color = Color.Black
-                )
-            }
+            Text(
+                if (selectedTab == 0) stringResource(R.string.unir_equip) else stringResource(R.string.crear_equip),
+                fontWeight = FontWeight.Black,
+                color = Color.Black
+            )
         }
     }
 }
