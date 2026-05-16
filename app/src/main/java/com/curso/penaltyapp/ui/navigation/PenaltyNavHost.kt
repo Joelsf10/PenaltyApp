@@ -107,8 +107,10 @@ fun PenaltyNavHost(
                 settingsViewModel = settingsViewModel,
                 onNavigateBack = { navController.popBackStack() },
                 onLogout = {
+                    finesViewModel.reload()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             )

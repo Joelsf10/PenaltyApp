@@ -1,5 +1,7 @@
 package com.curso.penaltyapp
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,11 +9,21 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,30 +34,36 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.curso.penaltyapp.ui.navigation.PenaltyNavHost
 import com.curso.penaltyapp.ui.navigation.Screen
-import com.curso.penaltyapp.ui.theme.*
+import com.curso.penaltyapp.ui.theme.PenaltyGreen
+import com.curso.penaltyapp.ui.theme.PenaltyTheme
 import com.curso.penaltyapp.viewmodel.FinesViewModel
 import com.curso.penaltyapp.viewmodel.SettingsViewModel
-import com.google.firebase.BuildConfig
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
-import com.curso.penaltyapp.R
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Emulador Firebase
-        if (BuildConfig.DEBUG) {
-            Firebase.auth.useEmulator("10.0.2.2", 9099)
-            Firebase.firestore.useEmulator("10.0.2.2", 8080)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                1001
+            )
         }
-
         setContent {
             PenaltyApp(settingsViewModel = settingsViewModel)
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("penalty_lang", Context.MODE_PRIVATE)
+        val lang = prefs.getString("language", "ca") ?: "ca"
+        val locale = java.util.Locale(lang)
+        java.util.Locale.setDefault(locale)
+        val config = android.content.res.Configuration(newBase.resources.configuration)
+        config.setLocale(locale)
+        super.attachBaseContext(newBase.createConfigurationContext(config))
     }
 }
 
@@ -74,7 +92,7 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
             Triple(Screen.Home, stringResource(R.string.inicio), Icons.Default.Home),
             Triple(Screen.Fines, stringResource(R.string.multas), Icons.Default.Receipt),
             Triple(Screen.Ranking, stringResource(R.string.ranking2), Icons.Default.EmojiEvents),
-            Triple(Screen.Profile,  stringResource(R.string.perfil),Icons.Default.Person)
+            Triple(Screen.Profile, stringResource(R.string.perfil), Icons.Default.Person)
         )
 
         Scaffold(
@@ -151,3 +169,4 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
         }
     }
 }
+

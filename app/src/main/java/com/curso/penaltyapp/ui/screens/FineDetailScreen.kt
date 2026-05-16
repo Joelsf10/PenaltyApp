@@ -276,23 +276,28 @@ fun FineDetailScreen(
             if (currentFine.status == FineStatus.PENDING) {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Button(
-                            onClick = { onNavigateToNfcPayment(fineId) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
-                        ) {
-                            Icon(Icons.Rounded.Nfc, null, tint = Color.Black)
-                            Spacer(Modifier.width(12.dp))
-                            Text(
-                                stringResource(R.string.NFC_pay),
-                                fontWeight = FontWeight.Black,
-                                color = Color.Black
-                            )
+
+                        // Botó NFC — només per a l'usuari sancionat
+                        if (currentFine.userId == currentUser?.id) {
+                            Button(
+                                onClick = { onNavigateToNfcPayment(fineId) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
+                            ) {
+                                Icon(Icons.Rounded.Nfc, null, tint = Color.Black)
+                                Spacer(Modifier.width(12.dp))
+                                Text(
+                                    stringResource(R.string.NFC_pay),
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.Black
+                                )
+                            }
                         }
 
+                        // Botó admin — només per al capità
                         if (isAdmin) {
                             OutlinedButton(
                                 onClick = { finesViewModel.markFineAsPaid(fineId) },

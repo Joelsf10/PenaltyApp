@@ -37,6 +37,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val _registerSuccess = MutableStateFlow(false)
     val registerSuccess: StateFlow<Boolean> = _registerSuccess.asStateFlow()
 
+    private val _logoutComplete = MutableStateFlow(false)
+    val logoutComplete: StateFlow<Boolean> = _logoutComplete.asStateFlow()
+
     init {
         viewModelScope.launch {
             if (AuthRepository.isLoggedIn) {
@@ -72,6 +75,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     // ─── AUTH ─────────────────────────────────────────────────────────────────
 
+    private fun saveFcmToken(uid: String) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    viewModelScope.launch {
+                        FirestoreRepository.saveFcmToken(uid, token)
+                    }
+                }
+            }
+    }
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _isAuthLoading.value = true
@@ -79,6 +93,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val result = AuthRepository.login(email, password)
             result.onSuccess { firebaseUser ->
                 prefsRepo.setLoggedIn(true, firebaseUser.uid)
+                saveFcmToken(firebaseUser.uid)
             }
             result.onFailure { error ->
                 _authError.value = mapFirebaseError(error.message)
@@ -94,6 +109,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val result = AuthRepository.register(email, password)
             result.onSuccess { firebaseUser ->
                 prefsRepo.setLoggedIn(true, firebaseUser.uid)
+                saveFcmToken(firebaseUser.uid)
                 _registerSuccess.value = true
             }
             result.onFailure { error ->
@@ -105,9 +121,20 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun logout() {
         viewModelScope.launch {
+            // Esborra el token FCM de l'usuari actual abans de fer logout
+            val uid = AuthRepository.currentFirebaseUser?.uid
+            if (uid != null) {
+                FirestoreRepository.clearFcmToken(uid)
+            }
             AuthRepository.logout()
-            prefsRepo.setLoggedIn(false)
+            prefsRepo.setLoggedIn(false, "")
+            _registerSuccess.value = false
+            _authError.value = null
         }
+    }
+
+    fun clearLogoutComplete() {
+        _logoutComplete.value = false
     }
 
     fun clearAuthError() {
@@ -145,8 +172,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch { prefsRepo.setNfcEnabled(enabled) }
     }
 
-    fun setLanguage(language: String) {
-        viewModelScope.launch { prefsRepo.setLanguage(language) }
+    fun setLanguage(language: String, activity: android.app.Activity) {
+        viewModelScope.launch {
+            prefsRepo.setLanguage(language)
+            // Guardar a SharedPreferences per attachBaseContext
+            val prefs = activity.getSharedPreferences("penalty_lang", android.content.Context.MODE_PRIVATE)
+            prefs.edit().putString("language", language).apply()
+            // Reiniciar l'activitat per aplicar el canvi
+            activity.recreate()
+        }
     }
 
     fun setShowPaidFines(show: Boolean) {

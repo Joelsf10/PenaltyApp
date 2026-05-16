@@ -227,4 +227,16 @@ object FirestoreRepository {
         db.collection("teams").document(teamId)
             .update("inviteCode", newCode.uppercase()).await()
     }
+
+    // ─── NOTIFICATIONS ───────────────────────────────────────────────────────────────────
+
+    suspend fun saveFcmToken(userId: String, token: String) {
+        db.collection("users").document(userId)
+            .update("fcmToken", token).await()
+    }
+
+    suspend fun clearFcmToken(userId: String) {
+        db.collection("users").document(userId)
+            .update("fcmToken", null).await()
+    }
 }
