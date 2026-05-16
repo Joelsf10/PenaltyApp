@@ -151,8 +151,7 @@ fun AddFineScreen(
                         onExpandedChange = { categoryExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = selectedCategory.label,
-                            onValueChange = {},
+                            value = stringResource(selectedCategory.label),                            onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded)
@@ -171,7 +170,7 @@ fun AddFineScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            "${cat.label} (${cat.defaultAmount}€)",
+                                            "${stringResource(cat.label)} (${cat.defaultAmount}€)",
                                             color = Color.White
                                         )
                                     },

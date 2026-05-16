@@ -157,7 +157,7 @@ fun FineDetailScreen(
                                     fontSize = 20.sp
                                 )
                                 Text(
-                                    currentFine.category.label.uppercase(),
+                                    stringResource(currentFine.category.label).uppercase(),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = PenaltyGreen,
                                     letterSpacing = 1.sp

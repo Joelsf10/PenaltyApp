@@ -71,7 +71,8 @@ dependencies {
     //Cloud Firestore
     implementation("com.google.firebase:firebase-firestore")
     //Notificaciones Push
-    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.1.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

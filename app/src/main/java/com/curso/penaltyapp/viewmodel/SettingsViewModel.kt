@@ -13,6 +13,7 @@ import com.curso.penaltyapp.data.repository.userPreferencesDataStore
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.curso.penaltyapp.R
+import com.curso.penaltyapp.firebase.MyFirebaseMessagingService
 
 data class SettingsUiState(
     val theme: String = "system",
@@ -73,15 +74,23 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     // ─── AUTH ─────────────────────────────────────────────────────────────────
 
     fun login(email: String, password: String) {
+
         viewModelScope.launch {
             _isAuthLoading.value = true
             _authError.value = null
             val result = AuthRepository.login(email, password)
             result.onSuccess { firebaseUser ->
                 prefsRepo.setLoggedIn(true, firebaseUser.uid)
+                val user = FirestoreRepository
+                    .getUserById(firebaseUser.uid)
+                user?.let {
+                    MyFirebaseMessagingService
+                        .subscribeToTeam(it.teamId)
+                }
             }
             result.onFailure { error ->
-                _authError.value = mapFirebaseError(error.message)
+                _authError.value =
+                    mapFirebaseError(error.message)
             }
             _isAuthLoading.value = false
         }

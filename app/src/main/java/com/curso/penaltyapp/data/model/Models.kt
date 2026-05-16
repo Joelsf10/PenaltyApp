@@ -1,5 +1,7 @@
 package com.curso.penaltyapp.data.model
 
+import androidx.compose.ui.res.stringResource
+import com.curso.penaltyapp.R
 import com.google.firebase.Timestamp
 import java.time.Instant
 import java.time.LocalDateTime
@@ -42,6 +44,7 @@ data class Fine(
     val userId: String,
     val userName: String,
     val userInitials: String,
+    val teamId: String,
     val category: FineCategory,
     val amount: Double,
     val reason: String,
@@ -60,17 +63,17 @@ enum class FineStatus {
     DISPUTED   // En disputa: el jugador ha protestat la multa
 }
 
-enum class FineCategory(val label: String, val defaultAmount: Double) {
-    LATE_TRAINING("Retard entrenament", 2.0),
-    LATE_MATCH("Retard partit", 5.0),
-    MISSING_TRAINING("Falta entrenament", 10.0),
-    MISSING_MATCH("Falta partit", 20.0),
-    BAD_ATTITUDE("Mala actitud", 5.0),
-    PHONE_IN_TRAINING("Mòbil a l'entrenament", 3.0),
-    YELLOW_CARD("Targeta groga", 5.0),
-    RED_CARD("Targeta vermella", 15.0),
-    EQUIPMENT("Equipació incorrecta", 2.0),
-    CUSTOM("Personalitzada", 0.0)
+enum class FineCategory(val label: Int, val defaultAmount: Double) {
+    LATE_TRAINING(R.string.late_at_training, 2.0),
+    LATE_MATCH(R.string.late_at_match, 5.0),
+    MISSING_TRAINING(R.string.no_training, 10.0),
+    MISSING_MATCH(R.string.no_match, 20.0),
+    BAD_ATTITUDE(R.string.bad_attitude, 5.0),
+    PHONE_IN_TRAINING(R.string.mobile_training, 3.0),
+    YELLOW_CARD(R.string.yellow_card, 5.0),
+    RED_CARD(R.string.red_card, 15.0),
+    EQUIPMENT(R.string.dress_code, 2.0),
+    CUSTOM(R.string.custom, 0.0)
 }
 
 // ─── COMMENT ──────────────────────────────────────────────────────────────────

@@ -183,7 +183,7 @@ fun NfcPaymentScreen(
                             modifier = Modifier.padding(top = 8.dp)
                         ) {
                             Text(
-                                it.category.label.uppercase(),
+                                stringResource(it.category.label).uppercase(),
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = PenaltyGreen,

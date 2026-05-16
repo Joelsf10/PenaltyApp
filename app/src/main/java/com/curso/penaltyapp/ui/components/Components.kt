@@ -106,7 +106,7 @@ fun FineCard(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = fine.category.label,
+                            text= (stringResource(fine.category.label)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

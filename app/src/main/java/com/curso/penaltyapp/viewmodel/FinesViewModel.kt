@@ -133,6 +133,7 @@ class FinesViewModel : ViewModel() {
                 userId = targetUserId,
                 userName = user.name,
                 userInitials = user.photoInitials,
+                teamId = user.teamId,
                 category = category,
                 amount = amount,
                 reason = reason,
