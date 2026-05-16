@@ -36,17 +36,22 @@ class FinesViewModel : ViewModel() {
 
     private val _team = MutableStateFlow<Team?>(null)
     val team: StateFlow<Team?> = _team.asStateFlow()
-    val ranking: List<RankingEntry>
-        get() = _users.value
-            .sortedByDescending { it.totalFines }
-            .mapIndexed { idx, user ->
-                RankingEntry(
-                    user = user,
-                    position = idx + 1,
-                    totalAmount = user.totalFines,
-                    fineCount = _allFines.value.count { it.userId == user.id }
-                )
-            }
+    val ranking: StateFlow<List<RankingEntry>> = combine(_users, _allFines) { users, fines ->
+        users.sortedByDescending { user ->
+            fines.filter { it.userId == user.id }.sumOf { it.amount }
+        }.mapIndexed { idx, user ->
+            RankingEntry(
+                user = user,
+                position = idx + 1,
+                totalAmount = fines.filter { it.userId == user.id }.sumOf { it.amount },
+                fineCount = fines.count { it.userId == user.id }
+            )
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList()
+    )
 
     val pendingFines: List<Fine>
         get() = _allFines.value.filter { it.status == FineStatus.PENDING }

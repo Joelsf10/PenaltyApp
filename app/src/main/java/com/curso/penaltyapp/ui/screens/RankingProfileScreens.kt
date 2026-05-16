@@ -27,7 +27,7 @@ import com.curso.penaltyapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RankingScreen(finesViewModel: FinesViewModel) {
-    val ranking = finesViewModel.ranking
+    val ranking by finesViewModel.ranking.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = Color(0xFF0F1210),

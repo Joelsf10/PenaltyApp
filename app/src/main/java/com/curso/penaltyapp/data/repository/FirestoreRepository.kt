@@ -57,8 +57,18 @@ object FirestoreRepository {
     }
 
     suspend fun markAsPaid(fineId: String) {
+        // Obtenir les dades de la multa abans de marcar-la com a pagada
+        val fineDoc = db.collection("fines").document(fineId).get().await()
+        val userId = fineDoc.getString("userId") ?: return
+        val amount = fineDoc.getDouble("amount") ?: 0.0
+
+        // Marcar la multa com a pagada
         db.collection("fines").document(fineId)
             .update("status", FineStatus.PAID.name).await()
+
+        // Actualitzar pendingFines de l'usuari
+        db.collection("users").document(userId)
+            .update("pendingFines", com.google.firebase.firestore.FieldValue.increment(-amount)).await()
     }
 
     suspend fun addReaction(fineId: String, emoji: String) {
