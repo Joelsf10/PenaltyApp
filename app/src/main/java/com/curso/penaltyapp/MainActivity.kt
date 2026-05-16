@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,6 +29,7 @@ import com.google.firebase.BuildConfig
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.curso.penaltyapp.R
 
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
@@ -69,10 +71,10 @@ fun PenaltyApp(settingsViewModel: SettingsViewModel) {
 
         // Definició dels elements de la bottom nav: destinació, etiqueta i icona
         val bottomNavItems = listOf(
-            Triple(Screen.Home, "Inici", Icons.Default.Home),
-            Triple(Screen.Fines, "Multes", Icons.Default.Receipt),
-            Triple(Screen.Ranking, "Rànquing", Icons.Default.EmojiEvents),
-            Triple(Screen.Profile, "Perfil", Icons.Default.Person)
+            Triple(Screen.Home, stringResource(R.string.inicio), Icons.Default.Home),
+            Triple(Screen.Fines, stringResource(R.string.multas), Icons.Default.Receipt),
+            Triple(Screen.Ranking, stringResource(R.string.ranking2), Icons.Default.EmojiEvents),
+            Triple(Screen.Profile,  stringResource(R.string.perfil),Icons.Default.Person)
         )
 
         Scaffold(

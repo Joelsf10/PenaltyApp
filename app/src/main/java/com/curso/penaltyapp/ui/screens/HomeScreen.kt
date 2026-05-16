@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +49,8 @@ import com.curso.penaltyapp.ui.theme.PenaltyGreenLight
 import com.curso.penaltyapp.ui.theme.PenaltyRed
 import com.curso.penaltyapp.ui.theme.PenaltyYellow
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import com.curso.penaltyapp.R
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,7 +112,7 @@ fun HomeScreen(
                         }
 
                         Text(
-                            text = "EL POT TOTAL",
+                            text = stringResource(R.string.bote),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White.copy(alpha = 0.4f),
                             letterSpacing = 4.sp
@@ -147,7 +150,7 @@ fun HomeScreen(
                                 )
                                 Spacer(Modifier.width(10.dp))
                                 Text(
-                                    text = "${pendingFines.size} MULTES ACTIVES",
+                                    text = "${pendingFines.size} {${stringResource(R.string.multas_activas)}}",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = PenaltyGreen,
                                     fontWeight = FontWeight.Black,
@@ -173,7 +176,7 @@ fun HomeScreen(
 
                     if (isAdmin) {
                         QuickActionButton(
-                            label = "MULTAR",
+                            label = stringResource(R.string.multar),
                             icon = Icons.Rounded.Add,
                             color = PenaltyRed,
                             onClick = onNavigateToAddFine,
@@ -181,14 +184,14 @@ fun HomeScreen(
                         )
                     }
                     QuickActionButton(
-                        label = "HISTORIAL",
+                        label = stringResource(R.string.historial),
                         icon = Icons.Rounded.FormatListBulleted,
                         color = Color.White,
                         onClick = onNavigateToFines,
                         modifier = actionModifier
                     )
                     QuickActionButton(
-                        label = "RÀNQUING",
+                        label = stringResource(R.string.ranking),
                         icon = Icons.Rounded.EmojiEvents,
                         color = PenaltyYellow,
                         onClick = onNavigateToRanking,
@@ -202,7 +205,7 @@ fun HomeScreen(
                 Spacer(Modifier.height(48.dp))
                 Column(modifier = Modifier.padding(horizontal = 24.dp)) {
                     Text(
-                        text = "RESUM PERSONAL",
+                        text = stringResource(R.string.personal_summary),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.3f),
                         letterSpacing = 3.sp
@@ -210,14 +213,14 @@ fun HomeScreen(
                     Spacer(Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         StatsCard(
-                            title = "PENDENT",
+                            title = stringResource(R.string.personal_pendiente),
                             value = "${String.format("%.2f", currentUser?.pendingFines ?: 0.0)}€",
                             icon = Icons.Rounded.Warning,
                             color = PenaltyRed,
                             modifier = Modifier.weight(1f)
                         )
                         StatsCard(
-                            title = "TOTAL",
+                            title = stringResource(R.string.personal_total),
                             value = "${String.format("%.2f", currentUser?.totalFines ?: 0.0)}€",
                             icon = Icons.Rounded.Receipt,
                             color = Color.White,
@@ -238,14 +241,14 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "MULTES RECENTS",
+                        stringResource(R.string.multas_recientes),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.3f),
                         letterSpacing = 3.sp
                     )
                     TextButton(onClick = onNavigateToFines) {
                         Text(
-                            "VEURE TOTES",
+                            stringResource(R.string.ver_multas),
                             color = PenaltyGreen,
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Black,

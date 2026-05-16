@@ -45,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ import com.curso.penaltyapp.ui.components.UserAvatar
 import com.curso.penaltyapp.ui.theme.PenaltyGreen
 import com.curso.penaltyapp.ui.theme.PenaltyRed
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import com.curso.penaltyapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +87,7 @@ fun FineDetailScreen(
                 .background(Color(0xFF0F1210)),
             contentAlignment = Alignment.Center
         ) {
-            Text("Multa no trobada", color = Color.White)
+            Text(text = stringResource(R.string.error_multa), color = Color.White)
         }
         return
     }
@@ -101,7 +103,8 @@ fun FineDetailScreen(
                 ),
                 title = {
                     Text(
-                        "DETALL DE LA SANCIÓ",
+                        stringResource(R.string.multa_details),
+
                         style = MaterialTheme.typography.labelSmall,
                         letterSpacing = 3.sp,
                         color = Color.White
@@ -111,7 +114,7 @@ fun FineDetailScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.Rounded.ArrowBackIosNew,
-                            "Tornar",
+                            stringResource(R.string.back),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -174,7 +177,7 @@ fun FineDetailScreen(
                         Spacer(Modifier.height(20.dp))
 
                         Text(
-                            "MOTIU DE LA SANCIÓ",
+                            stringResource(R.string.multa_why),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White.copy(0.4f),
                             letterSpacing = 2.sp
@@ -210,7 +213,7 @@ fun FineDetailScreen(
             // ─── REACCIONS ────────────────────────────────────────────────────
             item {
                 Text(
-                    "REACCIONS",
+                    stringResource(R.string.reactions),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(0.4f),
                     letterSpacing = 2.sp
@@ -284,7 +287,7 @@ fun FineDetailScreen(
                             Icon(Icons.Rounded.Nfc, null, tint = Color.Black)
                             Spacer(Modifier.width(12.dp))
                             Text(
-                                "PAGAR AMB NFC",
+                                stringResource(R.string.NFC_pay),
                                 fontWeight = FontWeight.Black,
                                 color = Color.Black
                             )
@@ -310,7 +313,7 @@ fun FineDetailScreen(
                                 )
                                 Spacer(Modifier.width(12.dp))
                                 Text(
-                                    "MARCAR PAGADA (ADMIN)",
+                                    stringResource(R.string.multa_pag_manual),
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
@@ -322,7 +325,7 @@ fun FineDetailScreen(
             // ─── COMENTARIS ───────────────────────────────────────────────────
             item {
                 Text(
-                    "COMENTARIS (${comments.size})",
+                    "{${stringResource(R.string.comentaris)} (${comments.size})",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(0.4f),
                     letterSpacing = 2.sp
@@ -332,7 +335,7 @@ fun FineDetailScreen(
             if (comments.isEmpty()) {
                 item {
                     Text(
-                        "Sense comentaris encara. Sigues el primer! 💬",
+                        stringResource(R.string.no_comentaris),
                         color = Color.White.copy(0.2f),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
@@ -363,7 +366,7 @@ fun FineDetailScreen(
                             value = commentText,
                             onValueChange = { commentText = it },
                             placeholder = {
-                                Text("Escriu un comentari...", color = Color.Gray, fontSize = 14.sp)
+                                Text(stringResource(R.string.escriu_comentaris), color = Color.Gray, fontSize = 14.sp)
                             },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
@@ -384,7 +387,7 @@ fun FineDetailScreen(
                                 }
                             }
                         ) {
-                            Icon(Icons.Rounded.Send, "Enviar", tint = PenaltyGreen)
+                            Icon(Icons.Rounded.Send, stringResource(R.string.enviar), tint = PenaltyGreen)
                         }
                     }
                 }

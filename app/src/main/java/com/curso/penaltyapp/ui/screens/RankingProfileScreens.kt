@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.curso.penaltyapp.ui.components.*
 import com.curso.penaltyapp.ui.theme.*
 import com.curso.penaltyapp.viewmodel.FinesViewModel
+import com.curso.penaltyapp.R
 
 // ─── Ranking Screen ───────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,18 +34,20 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
-                title = { Text("RÀNQUING", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White, fontWeight = FontWeight.Black) }
+                title = { Text(stringResource(R.string.ranking), style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White, fontWeight = FontWeight.Black) }
             )
         }
     ) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             contentPadding = PaddingValues(20.dp, bottom = 100.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
                 Text(
-                    text = "QUI HA FALLAT MÉS AL VESTIDOR?",
+                    text = stringResource(R.string.fallador),
                     style = MaterialTheme.typography.labelSmall,
                     color = PenaltyGreen,
                     modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
@@ -63,7 +67,9 @@ fun RankingScreen(finesViewModel: FinesViewModel) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, if (entry.position <= 3) podiumColor.copy(0.3f) else Color.White.copy(0.05f))
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -109,13 +115,17 @@ fun ProfileScreen(
     val isAdmin = currentUser?.role?.name == "ADMIN"
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF0F1210)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0F1210)),
         contentPadding = PaddingValues(bottom = 100.dp)
     ) {
         // ─── CAPÇALERA DE PERFIL ──────────────────────────────────────────────
         item {
             Box(
-                modifier = Modifier.fillMaxWidth().padding(top = 40.dp, bottom = 24.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 40.dp, bottom = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -139,7 +149,7 @@ fun ProfileScreen(
                         border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
                     ) {
                         Text(
-                            text = if (currentUser?.role?.name == "ADMIN") "CAPITÀ" else "JUGADOR",
+                            text = if (currentUser?.role?.name == "ADMIN") stringResource(R.string.capitan) else stringResource(R.string.jugador),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                             color = PenaltyGreen,
                             style = MaterialTheme.typography.labelSmall,
@@ -153,25 +163,29 @@ fun ProfileScreen(
         // ─── ESTADÍSTIQUES PERSONALS ──────────────────────────────────────────
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                StatsCard("PENDENTS", "$pendingCount", icon = Icons.Default.Warning, color = PenaltyRed, modifier = Modifier.weight(1f))
-                StatsCard("PAGADES", "$paidCount", icon = Icons.Default.CheckCircle, color = PenaltyGreen, modifier = Modifier.weight(1f))
+                StatsCard(stringResource(R.string.personal_pendientes), "$pendingCount", icon = Icons.Default.Warning, color = PenaltyRed, modifier = Modifier.weight(1f))
+                StatsCard(stringResource(R.string.personal_pagadas), "$paidCount", icon = Icons.Default.CheckCircle, color = PenaltyGreen, modifier = Modifier.weight(1f))
                 if (isAdmin) {
                     var showChangeCode by remember { mutableStateOf(false) }
                     var newCode by remember { mutableStateOf("") }
 
                     Spacer(Modifier.height(16.dp))
                     Surface(
-                        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth(),
                         color = PenaltyGreen.copy(0.05f),
                         shape = RoundedCornerShape(20.dp),
                         border = androidx.compose.foundation.BorderStroke(1.dp, PenaltyGreen.copy(0.2f))
                     ) {
                         Column(modifier = Modifier.padding(20.dp)) {
                             Text(
-                                "CODI D'INVITACIÓ",
+                                stringResource(R.string.codigo),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = PenaltyGreen.copy(0.6f),
                                 letterSpacing = 2.sp
@@ -189,7 +203,7 @@ fun ProfileScreen(
                                 OutlinedTextField(
                                     value = newCode,
                                     onValueChange = { newCode = it.uppercase() },
-                                    placeholder = { Text("Nou codi (ex: PEN-XXXX)") },
+                                    placeholder = { Text("{${stringResource(R.string.new_codigo)}} (ex: PEN-XXXX)") },
                                     singleLine = true,
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -208,7 +222,7 @@ fun ProfileScreen(
                                         modifier = Modifier.weight(1f),
                                         border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.2f))
                                     ) {
-                                        Text("CANCEL·LAR", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                                        Text(stringResource(R.string.cancelar), color = Color.White, style = MaterialTheme.typography.labelSmall)
                                     }
                                     Button(
                                         onClick = {
@@ -221,13 +235,13 @@ fun ProfileScreen(
                                         modifier = Modifier.weight(1f),
                                         colors = ButtonDefaults.buttonColors(containerColor = PenaltyGreen)
                                     ) {
-                                        Text("GUARDAR", color = Color.Black, style = MaterialTheme.typography.labelSmall)
+                                        Text(stringResource(R.string.guardar), color = Color.Black, style = MaterialTheme.typography.labelSmall)
                                     }
                                 }
                             } else {
                                 TextButton(onClick = { showChangeCode = true }) {
                                     Text(
-                                        "CANVIAR CODI",
+                                        stringResource(R.string.new_codigo),
                                         color = PenaltyGreen,
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold
@@ -256,8 +270,8 @@ fun ProfileScreen(
                     Icon(Icons.Default.Settings, null, tint = PenaltyGreen)
                     Spacer(Modifier.width(16.dp))
                     Column {
-                        Text("CONFIGURACIÓ", color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
-                        Text("Tema, notificacions, NFC...", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.config), color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        Text(stringResource(R.string.snnfc), color = Color.Gray, style = MaterialTheme.typography.bodySmall)
                     }
                     Spacer(Modifier.weight(1f))
                     Icon(Icons.Default.ChevronRight, null, tint = Color.White.copy(0.3f))
@@ -281,19 +295,21 @@ fun TeamMembersScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Transparent),
-                title = { Text("MEMBRES", style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
+                title = { Text(stringResource(R.string.members), style = MaterialTheme.typography.labelSmall, letterSpacing = 3.sp, color = Color.White) },
                 navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.Default.ArrowBack, null, tint = Color.White) } }
             )
         }
     ) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             contentPadding = PaddingValues(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
                 Text(
-                    "FC PENALTY · ${users.size} MEMBRES",
+                    text = "FC PENALTY · ${users.size} ${stringResource(R.string.members)}",
                     style = MaterialTheme.typography.labelSmall,
                     color = PenaltyGreen,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -306,14 +322,16 @@ fun TeamMembersScreen(
                     border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(0.05f))
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         UserAvatar(initials = member.photoInitials, size = 44)
                         Spacer(Modifier.width(16.dp))
                         Column(Modifier.weight(1f)) {
                             Text(member.name, color = Color.White, fontWeight = FontWeight.Bold)
-                            Text(if (member.role.name == "ADMIN") "Capità" else "Jugador", color = Color.Gray, style = MaterialTheme.typography.labelSmall)
+                            Text(if (member.role.name == "ADMIN") stringResource(R.string.capitan) else stringResource(R.string.jugador), color = Color.Gray, style = MaterialTheme.typography.labelSmall)
                         }
                         Column(horizontalAlignment = Alignment.End) {
                             Text(

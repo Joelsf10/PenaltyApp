@@ -1,7 +1,9 @@
 package com.curso.penaltyapp.viewmodel
 
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.curso.penaltyapp.R
 import com.curso.penaltyapp.data.model.*
 import com.curso.penaltyapp.data.repository.AuthRepository
 import com.curso.penaltyapp.data.repository.FirestoreRepository
@@ -10,12 +12,13 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.UUID
 
+
 data class FinesUiState(
     val fines: List<Fine> = emptyList(),
     val isLoading: Boolean = false,
     val filterStatus: FineStatus? = null,
     val errorMessage: String? = null,
-    val successMessage: String? = null
+    val successMessage: Int? = null
 )
 
 class FinesViewModel : ViewModel() {
@@ -139,18 +142,25 @@ class FinesViewModel : ViewModel() {
                 reactions = emptyMap()
             )
             FirestoreRepository.addFine(newFine)
-            _uiState.update { it.copy(successMessage = "Multa afegida correctament!") }
+            _uiState.update { it.copy(successMessage = R.string.multa_afegida) }
         }
     }
 
     fun markFineAsPaid(fineId: String, viaNfc: Boolean = false) {
         viewModelScope.launch {
             FirestoreRepository.markAsPaid(fineId)
-            val msg = if (viaNfc) "Pagament validat via NFC ✓" else "Multa marcada com a pagada"
-            _uiState.update { it.copy(successMessage = msg) }
+
+            val msg = if (viaNfc) {
+                R.string.NFC_validado
+            } else {
+                R.string.multa_pag_manual
+            }
+
+            _uiState.update {
+                it.copy(successMessage = msg)
+            }
         }
     }
-
     fun addComment(fineId: String, text: String) {
         viewModelScope.launch {
             if (text.isBlank()) return@launch

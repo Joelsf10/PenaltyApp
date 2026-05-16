@@ -1,5 +1,6 @@
 package com.curso.penaltyapp.viewmodel
 
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.curso.penaltyapp.data.model.User
@@ -10,10 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.curso.penaltyapp.R
+
 
 data class TeamSetupUiState(
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val error: Int? = null,
     val success: Boolean = false,
     val inviteCode: String? = null  // per mostrar el codi quan es crea equip
 )
@@ -32,7 +35,7 @@ class TeamViewModel : ViewModel() {
             val team = FirestoreRepository.getTeamByInviteCode(inviteCode)
             if (team == null) {
                 _uiState.value = TeamSetupUiState(
-                    error = "Codi d'invitació incorrecte"
+                    error = R.string.fake_codi
                 )
                 return@launch
             }
@@ -58,7 +61,7 @@ class TeamViewModel : ViewModel() {
             val uid = AuthRepository.currentFirebaseUser?.uid ?: return@launch
 
             if (teamName.isBlank()) {
-                _uiState.value = TeamSetupUiState(error = "El nom de l'equip no pot estar buit")
+                _uiState.value = TeamSetupUiState(error = R.string.teamname_error)
                 return@launch
             }
 
