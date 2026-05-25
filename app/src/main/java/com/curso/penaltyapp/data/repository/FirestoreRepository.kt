@@ -17,8 +17,8 @@ object FirestoreRepository {
 
     // ─── FINES ───────────────────────────────────────────────────────────────
 
-    fun getFinesFlow(): Flow<List<Fine>> = callbackFlow {
-        val listener: ListenerRegistration = db.collection("fines")
+    fun getFinesFlow(teamId: String): Flow<List<Fine>> = callbackFlow {
+        val listener: ListenerRegistration = db.collection("fines").whereEqualTo("teamId", teamId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) return@addSnapshotListener
                 val fines = snapshot.documents.mapNotNull { doc ->
@@ -28,6 +28,7 @@ object FirestoreRepository {
                             userId = doc.getString("userId") ?: "",
                             userName = doc.getString("userName") ?: "",
                             userInitials = doc.getString("userInitials") ?: "",
+                            teamId = doc.getString("teamId") ?: "",
                             category = FineCategory.valueOf(doc.getString("category") ?: "CUSTOM"),
                             amount = doc.getDouble("amount") ?: 0.0,
                             reason = doc.getString("reason") ?: "",
@@ -48,6 +49,7 @@ object FirestoreRepository {
             "userId" to fine.userId,
             "userName" to fine.userName,
             "userInitials" to fine.userInitials,
+            "teamId" to fine.teamId,
             "category" to fine.category.name,
             "amount" to fine.amount,
             "reason" to fine.reason,

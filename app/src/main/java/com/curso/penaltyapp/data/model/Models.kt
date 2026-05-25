@@ -42,6 +42,7 @@ data class Fine(
     val userId: String,
     val userName: String,
     val userInitials: String,
+    val teamId: String,
     val category: FineCategory,
     val amount: Double,
     val reason: String,

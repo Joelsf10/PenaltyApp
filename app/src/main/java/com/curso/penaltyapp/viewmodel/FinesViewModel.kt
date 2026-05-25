@@ -66,7 +66,6 @@ class FinesViewModel : ViewModel() {
 
     init {
         loadCurrentUser()
-        loadFines()
     }
 
     private fun loadCurrentUser() {
@@ -75,6 +74,7 @@ class FinesViewModel : ViewModel() {
                 val uid = AuthRepository.currentFirebaseUser?.uid ?: return@launch
                 val user = FirestoreRepository.getUserById(uid)
                 _currentUser.value = user
+                loadFines()
                 user?.teamId?.let { teamId ->
                     val teamData = FirestoreRepository.getTeamById(teamId)
                     _team.value = teamData
@@ -88,8 +88,11 @@ class FinesViewModel : ViewModel() {
 
     private fun loadFines() {
         viewModelScope.launch {
-            FirestoreRepository.getFinesFlow().collect { allFines ->
+            val teamId = _currentUser.value?.teamId ?: return@launch
+
+            FirestoreRepository.getFinesFlow(teamId).collect { allFines ->
                 _allFines.value = allFines
+
                 _uiState.update { state ->
                     state.copy(
                         fines = filterFines(allFines, state.filterStatus),
@@ -138,6 +141,7 @@ class FinesViewModel : ViewModel() {
                 userId = targetUserId,
                 userName = user.name,
                 userInitials = user.photoInitials,
+                teamId = _currentUser.value?.teamId ?: "",
                 category = category,
                 amount = amount,
                 reason = reason,
