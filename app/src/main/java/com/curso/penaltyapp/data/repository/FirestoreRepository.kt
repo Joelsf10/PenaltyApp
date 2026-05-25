@@ -3,6 +3,8 @@ package com.curso.penaltyapp.data.repository
 import com.curso.penaltyapp.data.model.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -66,9 +68,12 @@ object FirestoreRepository {
         db.collection("fines").document(fineId)
             .update("status", FineStatus.PAID.name).await()
 
-        // Actualitzar pendingFines de l'usuari
+        // Actualitzar pendingFines de l'usuari (utilitzem set amb merge per evitar errors si el doc no existeix)
         db.collection("users").document(userId)
-            .update("pendingFines", com.google.firebase.firestore.FieldValue.increment(-amount)).await()
+            .set(
+                mapOf("pendingFines" to FieldValue.increment(-amount)),
+                SetOptions.merge()
+            ).await()
     }
 
     suspend fun addReaction(fineId: String, emoji: String) {
@@ -132,7 +137,8 @@ object FirestoreRepository {
             "totalFines" to user.totalFines,
             "pendingFines" to user.pendingFines
         )
-        db.collection("users").document(user.id).set(data).await()
+        // Utilitzem merge per no sobreescriure altres camps com fcmToken
+        db.collection("users").document(user.id).set(data, SetOptions.merge()).await()
     }
 
     suspend fun getUserById(userId: String): User? {
@@ -241,12 +247,22 @@ object FirestoreRepository {
     // ─── NOTIFICATIONS ───────────────────────────────────────────────────────────────────
 
     suspend fun saveFcmToken(userId: String, token: String) {
-        db.collection("users").document(userId)
-            .update("fcmToken", token).await()
+        try {
+            val data = mapOf("fcmToken" to token)
+            db.collection("users").document(userId)
+                .set(data, SetOptions.merge()).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     suspend fun clearFcmToken(userId: String) {
-        db.collection("users").document(userId)
-            .update("fcmToken", null).await()
+        try {
+            val data = mapOf("fcmToken" to null)
+            db.collection("users").document(userId)
+                .set(data, SetOptions.merge()).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
