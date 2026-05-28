@@ -214,14 +214,14 @@ fun HomeScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         StatsCard(
                             title = stringResource(R.string.personal_pendiente),
-                            value = "${String.format("%.2f", currentUser?.pendingFines ?: 0.0)}€",
+                            value = "${String.format("%.2f", finesViewModel.myPendingAmount)}€",
                             icon = Icons.Rounded.Warning,
                             color = PenaltyRed,
                             modifier = Modifier.weight(1f)
                         )
                         StatsCard(
                             title = stringResource(R.string.personal_total),
-                            value = "${String.format("%.2f", currentUser?.totalFines ?: 0.0)}€",
+                            value =  "${String.format("%.2f", finesViewModel.myTotalAmount)}€",
                             icon = Icons.Rounded.Receipt,
                             color = Color.White,
                             modifier = Modifier.weight(1f)

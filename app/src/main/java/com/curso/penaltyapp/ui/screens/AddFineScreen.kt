@@ -120,17 +120,15 @@ fun AddFineScreen(
                             expanded = userExpanded,
                             onDismissRequest = { userExpanded = false }
                         ) {
-                            users
-                                .filter { it.id != currentUser?.id }
-                                .forEach { user ->
-                                    DropdownMenuItem(
-                                        text = { Text(user.name, color = Color.White) },
-                                        onClick = {
-                                            addFineViewModel.onUserSelected(user.id)
-                                            userExpanded = false
-                                        }
-                                    )
-                                }
+                            users.forEach { user ->
+                                DropdownMenuItem(
+                                    text = { Text(user.name, color = Color.White) },
+                                    onClick = {
+                                        addFineViewModel.onUserSelected(user.id)
+                                        userExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }

@@ -70,12 +70,6 @@ object FirestoreRepository {
         db.collection("fines").document(fineId)
             .update("status", FineStatus.PAID.name).await()
 
-        // Actualitzar pendingFines de l'usuari (utilitzem set amb merge per evitar errors si el doc no existeix)
-        db.collection("users").document(userId)
-            .set(
-                mapOf("pendingFines" to FieldValue.increment(-amount)),
-                SetOptions.merge()
-            ).await()
     }
 
     suspend fun addReaction(fineId: String, emoji: String) {

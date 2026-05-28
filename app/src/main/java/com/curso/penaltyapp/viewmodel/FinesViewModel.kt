@@ -59,6 +59,15 @@ class FinesViewModel : ViewModel() {
     val myFines: List<Fine>
         get() = _allFines.value.filter { it.userId == currentUser.value?.id }
 
+    val myPendingAmount: Double
+        get() = myFines
+            .filter { it.status == FineStatus.PENDING }
+            .sumOf { it.amount }
+
+    val myTotalAmount: Double
+        get() = myFines
+            .filter { it.status == FineStatus.PAID }
+            .sumOf { it.amount }
     val totalPot: Double
         get() = _allFines.value
             .filter { it.status == FineStatus.PAID }
